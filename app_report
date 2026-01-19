@@ -1,5 +1,5 @@
 import { addPropertyControls, ControlType } from "framer"
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 
 const DS = {
     colors: {
