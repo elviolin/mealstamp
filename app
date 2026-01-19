@@ -1681,10 +1681,10 @@ export default function MealStamp(props: any) {
 1. Carefully analyze the image and identify ALL visible food items
 2. Consider cooking methods, ingredients, and regional variations
 3. Be specific with dish names (e.g., "김치찌개" not just "soup", "카르보나라 파스타" not just "pasta")
-4. Estimate realistic portions based on plate/bowl size and visual cues
+4. IMPORTANT for portions: Assume standard restaurant/home serving sizes. Use concrete measurements like "1인분", "1공기", "200g", "1개", "1컵". NEVER use vague terms like "소량", "약간", "조금". If it looks like a normal meal portion, say "1인분".
 5. ${foodContext}
 6. Output food names in ${outputLang}
-7. Return ONLY valid JSON: {"foods":[{"name":"specific dish name","amount":"portion estimate","calories":""}]}`,
+7. Return ONLY valid JSON: {"foods":[{"name":"specific dish name","amount":"1인분/200g/1개 etc","calories":""}]}`,
                             },
                             {
                                 role: "user",
