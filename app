@@ -1697,7 +1697,7 @@ export default function MealStamp(props: any) {
                                         type: "image_url",
                                         image_url: {
                                             url: imageData,
-                                            detail: "high",
+                                            detail: "low",
                                         },
                                     },
                                 ],
