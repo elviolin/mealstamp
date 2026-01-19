@@ -1,0 +1,1026 @@
+import React, { useState, useEffect } from "react"
+
+const DS = {
+    colors: {
+        black: "#000000",
+        white: "#FFFFFF",
+        gray: {
+            50: "#FAFAFA",
+            100: "#F5F5F5",
+            200: "#EEEEEE",
+            300: "#E0E0E0",
+            400: "#BDBDBD",
+            500: "#9E9E9E",
+            600: "#757575",
+            700: "#616161",
+            800: "#424242",
+            900: "#212121",
+        },
+        primary: "#2196F3",
+        success: "#4CAF50",
+        warning: "#FF9800",
+        danger: "#E53935",
+    },
+    font: {
+        body: "'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+    },
+    radius: { sm: 10, md: 14, lg: 18, xl: 22, full: 9999 },
+    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    fontSize: { xs: 11, sm: 13, md: 15, lg: 17, xl: 20, xxl: 28 },
+}
+
+const STORAGE = {
+    profile: "mr_profile",
+    records: "mr_records",
+}
+
+const SCREENS = {
+    HOME: "home",
+    ADD_MEAL: "add_meal",
+    HISTORY: "history",
+    SETTINGS: "settings",
+}
+
+interface Profile {
+    height: number
+    weight: number
+    age: number
+    gender: "male" | "female"
+    activityLevel: number
+    manualBMR: number | null
+    dailyGoal: number | null
+}
+
+interface MealRecord {
+    id: string
+    date: string
+    mealType: "breakfast" | "lunch" | "dinner" | "snack"
+    foods: { name: string; calories: number }[]
+    totalCalories: number
+    timestamp: number
+}
+
+const defaultProfile: Profile = {
+    height: 170,
+    weight: 65,
+    age: 30,
+    gender: "male",
+    activityLevel: 1.55,
+    manualBMR: null,
+    dailyGoal: null,
+}
+
+const calculateBMR = (profile: Profile): number => {
+    if (profile.manualBMR) return profile.manualBMR
+    const { height, weight, age, gender } = profile
+    if (gender === "male") {
+        return Math.round(88.362 + 13.397 * weight + 4.799 * height - 5.677 * age)
+    }
+    return Math.round(447.593 + 9.247 * weight + 3.098 * height - 4.330 * age)
+}
+
+const calculateTDEE = (profile: Profile): number => {
+    return Math.round(calculateBMR(profile) * profile.activityLevel)
+}
+
+const getDailyGoal = (profile: Profile): number => {
+    if (profile.dailyGoal) return profile.dailyGoal
+    return calculateTDEE(profile)
+}
+
+const formatDate = (date: Date): string => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+}
+
+const getToday = (): string => formatDate(new Date())
+
+const i18n = {
+    ko: {
+        home: "홈",
+        history: "기록",
+        settings: "설정",
+        todayCalories: "오늘 섭취 칼로리",
+        remainingCalories: "남은 칼로리",
+        overCalories: "초과 칼로리",
+        goal: "목표",
+        bmr: "기초대사량",
+        tdee: "일일 소비 칼로리",
+        addMeal: "식사 추가",
+        breakfast: "아침",
+        lunch: "점심",
+        dinner: "저녁",
+        snack: "간식",
+        save: "저장",
+        cancel: "취소",
+        delete: "삭제",
+        profile: "프로필",
+        height: "키 (cm)",
+        weight: "몸무게 (kg)",
+        age: "나이",
+        gender: "성별",
+        male: "남성",
+        female: "여성",
+        activityLevel: "활동량",
+        sedentary: "거의 없음",
+        light: "가벼운 활동",
+        moderate: "보통 활동",
+        active: "활발한 활동",
+        veryActive: "매우 활발",
+        manualBMR: "기초대사량 직접 입력",
+        manualGoal: "일일 목표 직접 입력",
+        auto: "자동 계산",
+        thisWeek: "이번 주",
+        thisMonth: "이번 달",
+        average: "평균",
+        total: "총",
+        kcal: "kcal",
+        noRecords: "기록이 없습니다",
+        foodName: "음식 이름",
+        calories: "칼로리",
+        addFood: "음식 추가",
+        mealType: "식사 종류",
+        saved: "저장되었습니다",
+        deleted: "삭제되었습니다",
+        onTrack: "잘하고 있어요!",
+        needMore: "더 드셔도 돼요",
+        tooMuch: "조금 줄여보세요",
+    },
+} as const
+
+type I18nKey = keyof typeof i18n.ko
+
+const Icon = {
+    Home: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+    ),
+    History: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+        </svg>
+    ),
+    Settings: () => (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+        </svg>
+    ),
+    Plus: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12h14" />
+        </svg>
+    ),
+    Trash: () => (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6" />
+        </svg>
+    ),
+    Back: () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 18l-6-6 6-6" />
+        </svg>
+    ),
+    Check: () => (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <polyline points="20 6 9 17 4 12" />
+        </svg>
+    ),
+}
+
+interface ButtonProps {
+    children: React.ReactNode
+    variant?: "primary" | "secondary" | "danger"
+    onClick?: () => void
+    disabled?: boolean
+    style?: React.CSSProperties
+}
+
+const Button: React.FC<ButtonProps> = ({ children, variant = "primary", onClick, disabled = false, style = {} }) => {
+    const base: React.CSSProperties = {
+        width: "100%",
+        padding: "14px 20px",
+        fontSize: DS.fontSize.md,
+        fontWeight: 600,
+        fontFamily: DS.font.body,
+        border: "none",
+        borderRadius: DS.radius.md,
+        cursor: disabled ? "not-allowed" : "pointer",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        transition: DS.transition,
+        opacity: disabled ? 0.4 : 1,
+    }
+    const variants: Record<string, React.CSSProperties> = {
+        primary: { background: DS.colors.black, color: DS.colors.white },
+        secondary: { background: DS.colors.gray[100], color: DS.colors.black },
+        danger: { background: DS.colors.danger, color: DS.colors.white },
+    }
+    return (
+        <button onClick={onClick} disabled={disabled} style={{ ...base, ...variants[variant], ...style }}>
+            {children}
+        </button>
+    )
+}
+
+interface ProgressRingProps {
+    progress: number
+    size?: number
+    strokeWidth?: number
+    color?: string
+}
+
+const ProgressRing: React.FC<ProgressRingProps> = ({ progress, size = 200, strokeWidth = 12, color = DS.colors.primary }) => {
+    const radius = (size - strokeWidth) / 2
+    const circumference = radius * 2 * Math.PI
+    const offset = circumference - (Math.min(progress, 100) / 100) * circumference
+    const isOver = progress > 100
+
+    return (
+        <svg width={size} height={size} style={{ transform: "rotate(-90deg)" }}>
+            <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={DS.colors.gray[200]}
+                strokeWidth={strokeWidth}
+            />
+            <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={isOver ? DS.colors.danger : color}
+                strokeWidth={strokeWidth}
+                strokeDasharray={circumference}
+                strokeDashoffset={offset}
+                strokeLinecap="round"
+                style={{ transition: "stroke-dashoffset 0.5s ease" }}
+            />
+        </svg>
+    )
+}
+
+interface TabBarProps {
+    activeTab: string
+    onTabChange: (tab: string) => void
+    t: (key: I18nKey) => string
+}
+
+const TabBar: React.FC<TabBarProps> = ({ activeTab, onTabChange, t }) => (
+    <div
+        style={{
+            display: "flex",
+            justifyContent: "space-around",
+            padding: "8px 16px",
+            paddingBottom: "max(8px, env(safe-area-inset-bottom))",
+            background: DS.colors.white,
+            borderTop: `1px solid ${DS.colors.gray[200]}`,
+        }}
+    >
+        {[
+            { key: SCREENS.HOME, icon: Icon.Home, label: t("home") },
+            { key: SCREENS.HISTORY, icon: Icon.History, label: t("history") },
+            { key: SCREENS.SETTINGS, icon: Icon.Settings, label: t("settings") },
+        ].map((tab) => (
+            <button
+                key={tab.key}
+                onClick={() => onTabChange(tab.key)}
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 4,
+                    padding: "8px 16px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: activeTab === tab.key ? DS.colors.black : DS.colors.gray[400],
+                }}
+            >
+                <tab.icon />
+                <span style={{ fontSize: DS.fontSize.xs, fontWeight: 500 }}>{tab.label}</span>
+            </button>
+        ))}
+    </div>
+)
+
+interface ToastProps {
+    show: boolean
+    message: string
+}
+
+const Toast: React.FC<ToastProps> = ({ show, message }) => {
+    if (!show) return null
+    return (
+        <div
+            style={{
+                position: "fixed",
+                bottom: 100,
+                left: "50%",
+                transform: "translateX(-50%)",
+                background: DS.colors.black,
+                color: DS.colors.white,
+                padding: "12px 20px",
+                borderRadius: DS.radius.full,
+                fontSize: DS.fontSize.sm,
+                fontWeight: 500,
+                zIndex: 3000,
+            }}
+        >
+            {message}
+        </div>
+    )
+}
+
+interface MealCardProps {
+    record: MealRecord
+    onDelete: (id: string) => void
+    t: (key: I18nKey) => string
+}
+
+const MealCard: React.FC<MealCardProps> = ({ record, onDelete, t }) => {
+    const mealLabels: Record<string, string> = {
+        breakfast: t("breakfast"),
+        lunch: t("lunch"),
+        dinner: t("dinner"),
+        snack: t("snack"),
+    }
+    const mealEmoji: Record<string, string> = {
+        breakfast: "🌅",
+        lunch: "☀️",
+        dinner: "🌙",
+        snack: "🍪",
+    }
+
+    return (
+        <div
+            style={{
+                background: DS.colors.white,
+                borderRadius: DS.radius.md,
+                padding: 16,
+                marginBottom: 10,
+            }}
+        >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 20 }}>{mealEmoji[record.mealType]}</span>
+                    <span style={{ fontWeight: 600 }}>{mealLabels[record.mealType]}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontWeight: 700, fontSize: DS.fontSize.lg }}>{record.totalCalories} kcal</span>
+                    <button
+                        onClick={() => onDelete(record.id)}
+                        style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: DS.colors.gray[400],
+                            padding: 4,
+                        }}
+                    >
+                        <Icon.Trash />
+                    </button>
+                </div>
+            </div>
+            <div style={{ fontSize: DS.fontSize.sm, color: DS.colors.gray[600] }}>
+                {record.foods.map((f, i) => (
+                    <span key={i}>
+                        {f.name} ({f.calories})
+                        {i < record.foods.length - 1 && ", "}
+                    </span>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+const CalorieReport: React.FC = () => {
+    const [screen, setScreen] = useState(SCREENS.HOME)
+    const [profile, setProfile] = useState<Profile>(defaultProfile)
+    const [records, setRecords] = useState<MealRecord[]>([])
+    const [showToast, setShowToast] = useState(false)
+    const [toastMessage, setToastMessage] = useState("")
+
+    const [mealType, setMealType] = useState<"breakfast" | "lunch" | "dinner" | "snack">("lunch")
+    const [foods, setFoods] = useState<{ name: string; calories: string }[]>([{ name: "", calories: "" }])
+
+    const t = (key: I18nKey): string => i18n.ko[key] || key
+
+    useEffect(() => {
+        const savedProfile = localStorage.getItem(STORAGE.profile)
+        if (savedProfile) setProfile(JSON.parse(savedProfile))
+        const savedRecords = localStorage.getItem(STORAGE.records)
+        if (savedRecords) setRecords(JSON.parse(savedRecords))
+    }, [])
+
+    const saveProfile = (newProfile: Profile) => {
+        setProfile(newProfile)
+        localStorage.setItem(STORAGE.profile, JSON.stringify(newProfile))
+    }
+
+    const saveRecords = (newRecords: MealRecord[]) => {
+        setRecords(newRecords)
+        localStorage.setItem(STORAGE.records, JSON.stringify(newRecords))
+    }
+
+    const toast = (msg: string) => {
+        setToastMessage(msg)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 1500)
+    }
+
+    const todayRecords = records.filter((r) => r.date === getToday())
+    const todayCalories = todayRecords.reduce((sum, r) => sum + r.totalCalories, 0)
+    const dailyGoal = getDailyGoal(profile)
+    const remainingCalories = dailyGoal - todayCalories
+    const progress = (todayCalories / dailyGoal) * 100
+
+    const addMeal = () => {
+        const validFoods = foods.filter((f) => f.name && f.calories)
+        if (validFoods.length === 0) return
+
+        const newRecord: MealRecord = {
+            id: Date.now().toString(),
+            date: getToday(),
+            mealType,
+            foods: validFoods.map((f) => ({ name: f.name, calories: parseInt(f.calories) || 0 })),
+            totalCalories: validFoods.reduce((sum, f) => sum + (parseInt(f.calories) || 0), 0),
+            timestamp: Date.now(),
+        }
+
+        saveRecords([...records, newRecord])
+        setFoods([{ name: "", calories: "" }])
+        setScreen(SCREENS.HOME)
+        toast(t("saved"))
+    }
+
+    const deleteMeal = (id: string) => {
+        saveRecords(records.filter((r) => r.id !== id))
+        toast(t("deleted"))
+    }
+
+    const getWeekRecords = () => {
+        const today = new Date()
+        const weekStart = new Date(today)
+        weekStart.setDate(today.getDate() - today.getDay())
+        return records.filter((r) => new Date(r.date) >= weekStart)
+    }
+
+    const getMonthRecords = () => {
+        const today = new Date()
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1)
+        return records.filter((r) => new Date(r.date) >= monthStart)
+    }
+
+    const container: React.CSSProperties = {
+        width: "100%",
+        height: "100vh",
+        background: DS.colors.gray[50],
+        fontFamily: DS.font.body,
+        color: DS.colors.black,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+    }
+
+    // HOME SCREEN
+    if (screen === SCREENS.HOME) {
+        const getMessage = () => {
+            if (remainingCalories > 500) return t("needMore")
+            if (remainingCalories > 0) return t("onTrack")
+            return t("tooMuch")
+        }
+        const messageColor = remainingCalories < 0 ? DS.colors.danger : remainingCalories > 500 ? DS.colors.primary : DS.colors.success
+
+        return (
+            <div style={container}>
+                <Toast show={showToast} message={toastMessage} />
+                <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+                    <div style={{ textAlign: "center", marginBottom: 24, paddingTop: 20 }}>
+                        <h1 style={{ fontSize: DS.fontSize.xl, fontWeight: 700, margin: 0 }}>
+                            {new Date().toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" })}
+                        </h1>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 24, position: "relative" }}>
+                        <ProgressRing progress={progress} size={200} strokeWidth={14} />
+                        <div
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                textAlign: "center",
+                            }}
+                        >
+                            <div style={{ fontSize: DS.fontSize.xxl, fontWeight: 700 }}>{todayCalories}</div>
+                            <div style={{ fontSize: DS.fontSize.sm, color: DS.colors.gray[500] }}>/ {dailyGoal} kcal</div>
+                        </div>
+                    </div>
+
+                    <div
+                        style={{
+                            background: DS.colors.white,
+                            borderRadius: DS.radius.lg,
+                            padding: 20,
+                            marginBottom: 20,
+                            textAlign: "center",
+                        }}
+                    >
+                        <div style={{ fontSize: DS.fontSize.sm, color: DS.colors.gray[500], marginBottom: 4 }}>
+                            {remainingCalories >= 0 ? t("remainingCalories") : t("overCalories")}
+                        </div>
+                        <div style={{ fontSize: 32, fontWeight: 700, color: remainingCalories >= 0 ? DS.colors.success : DS.colors.danger }}>
+                            {Math.abs(remainingCalories)} kcal
+                        </div>
+                        <div style={{ fontSize: DS.fontSize.sm, color: messageColor, marginTop: 8, fontWeight: 500 }}>
+                            {getMessage()}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: 20 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                            <h2 style={{ fontSize: DS.fontSize.lg, fontWeight: 600, margin: 0 }}>오늘의 식사</h2>
+                        </div>
+                        {todayRecords.length === 0 ? (
+                            <div
+                                style={{
+                                    background: DS.colors.white,
+                                    borderRadius: DS.radius.md,
+                                    padding: 30,
+                                    textAlign: "center",
+                                    color: DS.colors.gray[400],
+                                }}
+                            >
+                                {t("noRecords")}
+                            </div>
+                        ) : (
+                            todayRecords.map((record) => (
+                                <MealCard key={record.id} record={record} onDelete={deleteMeal} t={t} />
+                            ))
+                        )}
+                    </div>
+
+                    <Button onClick={() => setScreen(SCREENS.ADD_MEAL)}>
+                        <Icon.Plus /> {t("addMeal")}
+                    </Button>
+                </div>
+                <TabBar activeTab={screen} onTabChange={setScreen} t={t} />
+            </div>
+        )
+    }
+
+    // ADD MEAL SCREEN
+    if (screen === SCREENS.ADD_MEAL) {
+        return (
+            <div style={container}>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "12px 16px",
+                        background: DS.colors.white,
+                        borderBottom: `1px solid ${DS.colors.gray[200]}`,
+                    }}
+                >
+                    <button
+                        onClick={() => setScreen(SCREENS.HOME)}
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: 8 }}
+                    >
+                        <Icon.Back />
+                    </button>
+                    <h1 style={{ flex: 1, textAlign: "center", fontSize: DS.fontSize.lg, fontWeight: 600, margin: 0 }}>
+                        {t("addMeal")}
+                    </h1>
+                    <div style={{ width: 40 }} />
+                </div>
+
+                <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+                    <div style={{ marginBottom: 20 }}>
+                        <label style={{ display: "block", fontSize: DS.fontSize.sm, fontWeight: 600, marginBottom: 8 }}>
+                            {t("mealType")}
+                        </label>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                            {(["breakfast", "lunch", "dinner", "snack"] as const).map((type) => (
+                                <button
+                                    key={type}
+                                    onClick={() => setMealType(type)}
+                                    style={{
+                                        padding: "12px 8px",
+                                        background: mealType === type ? DS.colors.black : DS.colors.white,
+                                        color: mealType === type ? DS.colors.white : DS.colors.black,
+                                        border: `1px solid ${mealType === type ? DS.colors.black : DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        cursor: "pointer",
+                                        fontSize: DS.fontSize.sm,
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    {t(type)}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: 20 }}>
+                        <label style={{ display: "block", fontSize: DS.fontSize.sm, fontWeight: 600, marginBottom: 8 }}>
+                            음식 목록
+                        </label>
+                        {foods.map((food, i) => (
+                            <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                                <input
+                                    type="text"
+                                    value={food.name}
+                                    onChange={(e) => {
+                                        const newFoods = [...foods]
+                                        newFoods[i].name = e.target.value
+                                        setFoods(newFoods)
+                                    }}
+                                    placeholder={t("foodName")}
+                                    style={{
+                                        flex: 2,
+                                        padding: "12px 14px",
+                                        fontSize: 16,
+                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        outline: "none",
+                                    }}
+                                />
+                                <input
+                                    type="number"
+                                    value={food.calories}
+                                    onChange={(e) => {
+                                        const newFoods = [...foods]
+                                        newFoods[i].calories = e.target.value
+                                        setFoods(newFoods)
+                                    }}
+                                    placeholder="kcal"
+                                    style={{
+                                        flex: 1,
+                                        padding: "12px 14px",
+                                        fontSize: 16,
+                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        outline: "none",
+                                    }}
+                                />
+                                {foods.length > 1 && (
+                                    <button
+                                        onClick={() => setFoods(foods.filter((_, idx) => idx !== i))}
+                                        style={{
+                                            padding: "0 12px",
+                                            background: DS.colors.gray[100],
+                                            border: "none",
+                                            borderRadius: DS.radius.sm,
+                                            cursor: "pointer",
+                                            color: DS.colors.danger,
+                                        }}
+                                    >
+                                        <Icon.Trash />
+                                    </button>
+                                )}
+                            </div>
+                        ))}
+                        <button
+                            onClick={() => setFoods([...foods, { name: "", calories: "" }])}
+                            style={{
+                                width: "100%",
+                                padding: 12,
+                                background: DS.colors.gray[100],
+                                border: `1px dashed ${DS.colors.gray[300]}`,
+                                borderRadius: DS.radius.sm,
+                                cursor: "pointer",
+                                fontSize: DS.fontSize.sm,
+                                color: DS.colors.gray[600],
+                            }}
+                        >
+                            + {t("addFood")}
+                        </button>
+                    </div>
+
+                    <div
+                        style={{
+                            background: DS.colors.white,
+                            borderRadius: DS.radius.md,
+                            padding: 16,
+                            marginBottom: 20,
+                        }}
+                    >
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <span style={{ color: DS.colors.gray[600] }}>총 칼로리</span>
+                            <span style={{ fontWeight: 700, fontSize: DS.fontSize.lg }}>
+                                {foods.reduce((sum, f) => sum + (parseInt(f.calories) || 0), 0)} kcal
+                            </span>
+                        </div>
+                    </div>
+
+                    <Button onClick={addMeal} disabled={!foods.some((f) => f.name && f.calories)}>
+                        <Icon.Check /> {t("save")}
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
+    // HISTORY SCREEN
+    if (screen === SCREENS.HISTORY) {
+        const weekRecords = getWeekRecords()
+        const monthRecords = getMonthRecords()
+        const weekAvg = weekRecords.length > 0 ? Math.round(weekRecords.reduce((sum, r) => sum + r.totalCalories, 0) / 7) : 0
+        const monthTotal = monthRecords.reduce((sum, r) => sum + r.totalCalories, 0)
+
+        const groupedByDate = records.reduce((acc: Record<string, MealRecord[]>, r) => {
+            if (!acc[r.date]) acc[r.date] = []
+            acc[r.date].push(r)
+            return acc
+        }, {})
+
+        const sortedDates = Object.keys(groupedByDate).sort((a, b) => b.localeCompare(a))
+
+        return (
+            <div style={container}>
+                <Toast show={showToast} message={toastMessage} />
+                <div style={{ padding: "20px 20px 0" }}>
+                    <h1 style={{ fontSize: DS.fontSize.xl, fontWeight: 700, margin: "0 0 20px" }}>{t("history")}</h1>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
+                        <div style={{ background: DS.colors.white, borderRadius: DS.radius.md, padding: 16 }}>
+                            <div style={{ fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                {t("thisWeek")} {t("average")}
+                            </div>
+                            <div style={{ fontSize: DS.fontSize.xl, fontWeight: 700 }}>{weekAvg} kcal</div>
+                        </div>
+                        <div style={{ background: DS.colors.white, borderRadius: DS.radius.md, padding: 16 }}>
+                            <div style={{ fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                {t("thisMonth")} {t("total")}
+                            </div>
+                            <div style={{ fontSize: DS.fontSize.xl, fontWeight: 700 }}>{monthTotal} kcal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ flex: 1, overflowY: "auto", padding: "0 20px 20px" }}>
+                    {sortedDates.length === 0 ? (
+                        <div
+                            style={{
+                                background: DS.colors.white,
+                                borderRadius: DS.radius.md,
+                                padding: 40,
+                                textAlign: "center",
+                                color: DS.colors.gray[400],
+                            }}
+                        >
+                            {t("noRecords")}
+                        </div>
+                    ) : (
+                        sortedDates.map((date) => {
+                            const dayRecords = groupedByDate[date]
+                            const dayTotal = dayRecords.reduce((sum, r) => sum + r.totalCalories, 0)
+                            const isOver = dayTotal > dailyGoal
+
+                            return (
+                                <div key={date} style={{ marginBottom: 20 }}>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginBottom: 8,
+                                        }}
+                                    >
+                                        <span style={{ fontWeight: 600 }}>
+                                            {new Date(date).toLocaleDateString("ko-KR", { month: "short", day: "numeric", weekday: "short" })}
+                                        </span>
+                                        <span
+                                            style={{
+                                                fontWeight: 600,
+                                                color: isOver ? DS.colors.danger : DS.colors.success,
+                                            }}
+                                        >
+                                            {dayTotal} / {dailyGoal} kcal
+                                        </span>
+                                    </div>
+                                    {dayRecords.map((record) => (
+                                        <MealCard key={record.id} record={record} onDelete={deleteMeal} t={t} />
+                                    ))}
+                                </div>
+                            )
+                        })
+                    )}
+                </div>
+                <TabBar activeTab={screen} onTabChange={setScreen} t={t} />
+            </div>
+        )
+    }
+
+    // SETTINGS SCREEN
+    if (screen === SCREENS.SETTINGS) {
+        const bmr = calculateBMR(profile)
+        const tdee = calculateTDEE(profile)
+
+        const activityLevels = [
+            { value: 1.2, label: t("sedentary") },
+            { value: 1.375, label: t("light") },
+            { value: 1.55, label: t("moderate") },
+            { value: 1.725, label: t("active") },
+            { value: 1.9, label: t("veryActive") },
+        ]
+
+        return (
+            <div style={container}>
+                <Toast show={showToast} message={toastMessage} />
+                <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+                    <h1 style={{ fontSize: DS.fontSize.xl, fontWeight: 700, margin: "0 0 20px" }}>{t("settings")}</h1>
+
+                    <div style={{ background: DS.colors.white, borderRadius: DS.radius.lg, padding: 20, marginBottom: 16 }}>
+                        <h2 style={{ fontSize: DS.fontSize.md, fontWeight: 600, margin: "0 0 16px" }}>{t("profile")}</h2>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+                            <div>
+                                <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                    {t("height")}
+                                </label>
+                                <input
+                                    type="number"
+                                    value={profile.height}
+                                    onChange={(e) => saveProfile({ ...profile, height: parseInt(e.target.value) || 0 })}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px 12px",
+                                        fontSize: 16,
+                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        boxSizing: "border-box",
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                    {t("weight")}
+                                </label>
+                                <input
+                                    type="number"
+                                    value={profile.weight}
+                                    onChange={(e) => saveProfile({ ...profile, weight: parseInt(e.target.value) || 0 })}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px 12px",
+                                        fontSize: 16,
+                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        boxSizing: "border-box",
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+                            <div>
+                                <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                    {t("age")}
+                                </label>
+                                <input
+                                    type="number"
+                                    value={profile.age}
+                                    onChange={(e) => saveProfile({ ...profile, age: parseInt(e.target.value) || 0 })}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px 12px",
+                                        fontSize: 16,
+                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                        borderRadius: DS.radius.sm,
+                                        boxSizing: "border-box",
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                    {t("gender")}
+                                </label>
+                                <div style={{ display: "flex", gap: 8 }}>
+                                    {(["male", "female"] as const).map((g) => (
+                                        <button
+                                            key={g}
+                                            onClick={() => saveProfile({ ...profile, gender: g })}
+                                            style={{
+                                                flex: 1,
+                                                padding: "10px",
+                                                background: profile.gender === g ? DS.colors.black : DS.colors.white,
+                                                color: profile.gender === g ? DS.colors.white : DS.colors.black,
+                                                border: `1px solid ${profile.gender === g ? DS.colors.black : DS.colors.gray[200]}`,
+                                                borderRadius: DS.radius.sm,
+                                                cursor: "pointer",
+                                                fontSize: DS.fontSize.sm,
+                                            }}
+                                        >
+                                            {t(g)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                {t("activityLevel")}
+                            </label>
+                            <select
+                                value={profile.activityLevel}
+                                onChange={(e) => saveProfile({ ...profile, activityLevel: parseFloat(e.target.value) })}
+                                style={{
+                                    width: "100%",
+                                    padding: "10px 12px",
+                                    fontSize: 16,
+                                    border: `1px solid ${DS.colors.gray[200]}`,
+                                    borderRadius: DS.radius.sm,
+                                    background: DS.colors.white,
+                                }}
+                            >
+                                {activityLevels.map((level) => (
+                                    <option key={level.value} value={level.value}>
+                                        {level.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style={{ background: DS.colors.white, borderRadius: DS.radius.lg, padding: 20, marginBottom: 16 }}>
+                        <h2 style={{ fontSize: DS.fontSize.md, fontWeight: 600, margin: "0 0 16px" }}>칼로리 설정</h2>
+
+                        <div style={{ marginBottom: 16 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                                <span style={{ color: DS.colors.gray[600] }}>{t("bmr")} ({t("auto")})</span>
+                                <span style={{ fontWeight: 600 }}>{bmr} kcal</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                                <span style={{ color: DS.colors.gray[600] }}>{t("tdee")} ({t("auto")})</span>
+                                <span style={{ fontWeight: 600 }}>{tdee} kcal</span>
+                            </div>
+                        </div>
+
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                {t("manualBMR")} (선택)
+                            </label>
+                            <input
+                                type="number"
+                                value={profile.manualBMR || ""}
+                                onChange={(e) => saveProfile({ ...profile, manualBMR: e.target.value ? parseInt(e.target.value) : null })}
+                                placeholder={`${t("auto")}: ${bmr}`}
+                                style={{
+                                    width: "100%",
+                                    padding: "10px 12px",
+                                    fontSize: 16,
+                                    border: `1px solid ${DS.colors.gray[200]}`,
+                                    borderRadius: DS.radius.sm,
+                                    boxSizing: "border-box",
+                                }}
+                            />
+                        </div>
+
+                        <div>
+                            <label style={{ display: "block", fontSize: DS.fontSize.xs, color: DS.colors.gray[500], marginBottom: 4 }}>
+                                {t("manualGoal")} (선택)
+                            </label>
+                            <input
+                                type="number"
+                                value={profile.dailyGoal || ""}
+                                onChange={(e) => saveProfile({ ...profile, dailyGoal: e.target.value ? parseInt(e.target.value) : null })}
+                                placeholder={`${t("auto")}: ${tdee}`}
+                                style={{
+                                    width: "100%",
+                                    padding: "10px 12px",
+                                    fontSize: 16,
+                                    border: `1px solid ${DS.colors.gray[200]}`,
+                                    borderRadius: DS.radius.sm,
+                                    boxSizing: "border-box",
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div style={{ background: DS.colors.gray[100], borderRadius: DS.radius.md, padding: 16, fontSize: DS.fontSize.sm, color: DS.colors.gray[600] }}>
+                        <p style={{ margin: "0 0 8px" }}>
+                            <strong>기초대사량(BMR)</strong>: 아무것도 하지 않아도 소비되는 칼로리
+                        </p>
+                        <p style={{ margin: 0 }}>
+                            <strong>일일소비칼로리(TDEE)</strong>: BMR × 활동량 = 하루에 실제로 소비하는 칼로리
+                        </p>
+                    </div>
+                </div>
+                <TabBar activeTab={screen} onTabChange={setScreen} t={t} />
+            </div>
+        )
+    }
+
+    return null
+}
+
+export default CalorieReport
