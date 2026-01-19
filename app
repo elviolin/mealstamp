@@ -1565,7 +1565,7 @@ export default function MealStamp(props: any) {
             out
         )
         if (isFrontCamera) ctx.setTransform(1, 0, 0, 1, 0, 0)
-        const imageData = canvas.toDataURL("image/jpeg", 0.82)
+        const imageData = canvas.toDataURL("image/jpeg", 0.92)
         setCapturedImage(imageData)
         setTimestamp(new Date())
         setTimeout(() => {
@@ -1611,7 +1611,7 @@ export default function MealStamp(props: any) {
                     out,
                     out
                 )
-                const imageData = canvas.toDataURL("image/jpeg", 0.85)
+                const imageData = canvas.toDataURL("image/jpeg", 0.92)
                 setCapturedImage(imageData)
                 setTimestamp(new Date())
                 const useAI = isPro || recordMode === RECORD_MODE.AI
@@ -1677,26 +1677,33 @@ export default function MealStamp(props: any) {
                         messages: [
                             {
                                 role: "system",
-                                content: `You are a food-photo parsing assistant. Extract visible food items only. Do NOT compute calories. Consider ${foodContext}. Output food names in ${outputLang}. Output JSON only: {"foods":[{"name":"string","amount":"portion","calories":""}]}`,
+                                content: `You are an expert food recognition assistant specialized in identifying dishes from photos. Your task:
+1. Carefully analyze the image and identify ALL visible food items
+2. Consider cooking methods, ingredients, and regional variations
+3. Be specific with dish names (e.g., "김치찌개" not just "soup", "카르보나라 파스타" not just "pasta")
+4. Estimate realistic portions based on plate/bowl size and visual cues
+5. ${foodContext}
+6. Output food names in ${outputLang}
+7. Return ONLY valid JSON: {"foods":[{"name":"specific dish name","amount":"portion estimate","calories":""}]}`,
                             },
                             {
                                 role: "user",
                                 content: [
                                     {
                                         type: "text",
-                                        text: "List visible food items with rough portion. JSON only.",
+                                        text: "Identify all food items in this image. Be specific with dish names and estimate portions accurately. Consider the cultural context and cooking style visible. JSON only.",
                                     },
                                     {
                                         type: "image_url",
                                         image_url: {
                                             url: imageData,
-                                            detail: "low",
+                                            detail: "high",
                                         },
                                     },
                                 ],
                             },
                         ],
-                        max_tokens: 600,
+                        max_tokens: 1000,
                         temperature: 0.1,
                     }),
                 }
