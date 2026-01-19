@@ -1569,7 +1569,7 @@ export default function MealStamp(props: any) {
         setCapturedImage(imageData)
         setTimestamp(new Date())
         setTimeout(() => {
-            const useAI = isPro || recordMode === RECORD_MODE.AI
+            const useAI = recordMode === RECORD_MODE.AI
             if (!useAI) {
                 setFoods([{ name: "", amount: "", calories: "" }])
                 setScreen(SCREENS.RESULT)
@@ -1614,7 +1614,7 @@ export default function MealStamp(props: any) {
                 const imageData = canvas.toDataURL("image/jpeg", 0.92)
                 setCapturedImage(imageData)
                 setTimestamp(new Date())
-                const useAI = isPro || recordMode === RECORD_MODE.AI
+                const useAI = recordMode === RECORD_MODE.AI
                 if (!useAI) {
                     setFoods([{ name: "", amount: "", calories: "" }])
                     setScreen(SCREENS.RESULT)
@@ -2250,15 +2250,12 @@ export default function MealStamp(props: any) {
                                             isPro: true,
                                         },
                                     ].map((item) => {
-                                        const active = isPro
-                                                ? item.key === RECORD_MODE.AI
-                                                : recordMode === item.key,
+                                        const active = recordMode === item.key,
                                             isAI = item.key === RECORD_MODE.AI
                                         return (
                                             <button
                                                 key={item.key}
                                                 onClick={() => {
-                                                    if (isPro) return
                                                     if (isAI && !canUseAI) {
                                                         setShowUpgrade(true)
                                                         return
@@ -2270,10 +2267,7 @@ export default function MealStamp(props: any) {
                                                 style={{
                                                     flex: 1,
                                                     border: "none",
-                                                    cursor:
-                                                        isPro && !isAI
-                                                            ? "default"
-                                                            : "pointer",
+                                                    cursor: "pointer",
                                                     borderRadius:
                                                         DS.radius.full,
                                                     padding: "8px 0",
@@ -2285,10 +2279,7 @@ export default function MealStamp(props: any) {
                                                     color: active
                                                         ? "#000"
                                                         : "rgba(255,255,255,0.7)",
-                                                    opacity:
-                                                        isPro && !isAI
-                                                            ? 0.4
-                                                            : 1,
+                                                    opacity: 1,
                                                     display: "flex",
                                                     alignItems: "center",
                                                     justifyContent: "center",
@@ -2453,15 +2444,15 @@ export default function MealStamp(props: any) {
                             height: 72,
                             borderRadius: "50%",
                             background:
-                                isPro || recordMode === RECORD_MODE.AI
+                                recordMode === RECORD_MODE.AI
                                     ? "linear-gradient(135deg, #E8F4FC 0%, #FFE8EC 25%, #FFFEF5 50%, #F5E8F5 75%, #E8F4FC 100%)"
                                     : "#fff",
                             backgroundSize:
-                                isPro || recordMode === RECORD_MODE.AI
+                                recordMode === RECORD_MODE.AI
                                     ? "300% 300%"
                                     : "100% 100%",
                             animation:
-                                isPro || recordMode === RECORD_MODE.AI
+                                recordMode === RECORD_MODE.AI
                                     ? "geminiGlow 4s ease infinite"
                                     : "none",
                             border: "none",
@@ -2470,13 +2461,13 @@ export default function MealStamp(props: any) {
                             alignItems: "center",
                             justifyContent: "center",
                             boxShadow:
-                                isPro || recordMode === RECORD_MODE.AI
+                                recordMode === RECORD_MODE.AI
                                     ? undefined
                                     : "0 4px 20px rgba(0,0,0,0.3)",
                             padding: 0,
                         }}
                     >
-                        {isPro || recordMode === RECORD_MODE.AI ? (
+                        {recordMode === RECORD_MODE.AI ? (
                             <Icon.Sparkle size={20} />
                         ) : (
                             <div
