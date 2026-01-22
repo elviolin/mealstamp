@@ -1598,19 +1598,16 @@ const SimpleCard = ({
             }}
         >
             {capturedImage && (
-                <img
-                    src={capturedImage}
-                    alt=""
+                <div
                     style={{
                         position: "absolute",
-                        top: -2,
-                        left: -2,
-                        right: -2,
-                        bottom: -2,
-                        width: "calc(100% + 4px)",
-                        height: "calc(100% + 4px)",
-                        objectFit: "cover",
-                        display: "block",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundImage: `url(${capturedImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                     }}
                 />
             )}
@@ -1722,19 +1719,16 @@ const DetailedCard = ({
             }}
         >
             {capturedImage && (
-                <img
-                    src={capturedImage}
-                    alt=""
+                <div
                     style={{
                         position: "absolute",
-                        top: -2,
-                        left: -2,
-                        right: -2,
-                        bottom: -2,
-                        width: "calc(100% + 4px)",
-                        height: "calc(100% + 4px)",
-                        objectFit: "cover",
-                        display: "block",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundImage: `url(${capturedImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                     }}
                 />
             )}
