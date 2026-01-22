@@ -2515,12 +2515,12 @@ const HealthCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
-                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
+                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center", fontFamily: fontStyle }}>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.carbs}{food.carbs || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.protein}{food.protein || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fat}{food.fat || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fiber}{food.fiber || 0}</span>
-                                <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2 }}>{food.calories || 0}kcal</span>
+                                <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2, ...glowStyle }}>{food.calories || 0}kcal</span>
                             </div>
                         </div>
                     ))}
@@ -2601,22 +2601,22 @@ const HealthCard = ({
                     }}
                 >
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalCarbs}g</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalCarbs}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.carbs}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalProtein}g</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalProtein}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.protein}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFat}g</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFat}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fat}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFiber}g</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFiber}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
                     </div>
                 </div>
