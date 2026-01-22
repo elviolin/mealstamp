@@ -52,6 +52,7 @@ interface CardProps {
     lang?: string
     theme?: string
     foods?: Food[]
+    aspectRatio?: { width: number; height: number }
 }
 
 interface SheetProps {
@@ -182,6 +183,11 @@ const SCREENS = {
 }
 const CARD_TYPES = { SIMPLE: "simple", DETAILED: "detailed" }
 const CARD_THEMES = { DEFAULT: "default", DIGITAL: "digital", NEON: "neon" }
+const ASPECT_RATIOS = {
+    PORTRAIT: { key: "3:4", width: 3, height: 4 },
+    LANDSCAPE: { key: "4:3", width: 4, height: 3 },
+    SQUARE: { key: "1:1", width: 1, height: 1 },
+}
 const RECORD_MODE = { MANUAL: "manual", AI: "ai" }
 const STORAGE = {
     apiKey: "ms_key",
@@ -1563,19 +1569,21 @@ const SimpleCard = ({
     cardRef,
     lang = "ko",
     theme = "default",
+    aspectRatio = { width: 3, height: 4 },
 }: CardProps) => {
     const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
     const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
     const mainFontSize = isDigital ? 38 : isNeon ? 26 : 32
     const subFontSize = isDigital ? 13 : isNeon ? 9 : 11
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
+    const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
 
     return (
         <div
             ref={cardRef}
             style={{
                 width: "100%",
-                aspectRatio: "1/1",
+                aspectRatio: ratioString,
                 overflow: "hidden",
                 position: "relative",
                 background: "#000",
@@ -1684,6 +1692,7 @@ const DetailedCard = ({
     cardRef,
     lang = "ko",
     theme = "default",
+    aspectRatio = { width: 3, height: 4 },
 }: CardProps) => {
     const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
     const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
@@ -1691,13 +1700,14 @@ const DetailedCard = ({
     const mainFontSize = isDigital ? 30 : isNeon ? 24 : 26
     const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
+    const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
 
     return (
         <div
             ref={cardRef}
             style={{
                 width: "100%",
-                aspectRatio: "1/1",
+                aspectRatio: ratioString,
                 overflow: "hidden",
                 position: "relative",
                 background: "#000",
@@ -1865,6 +1875,7 @@ export default function MealStamp(props: any) {
     )
     const [selectedCardType, setSelectedCardType] = useState(CARD_TYPES.SIMPLE)
     const [selectedTheme, setSelectedTheme] = useState(CARD_THEMES.DEFAULT)
+    const [selectedAspectRatio, setSelectedAspectRatio] = useState(ASPECT_RATIOS.PORTRAIT)
     const [isCalculating, setIsCalculating] = useState(false)
     const [isFrontCamera, setIsFrontCamera] = useState(false)
     const [showToast, setShowToast] = useState(false)
@@ -1919,15 +1930,20 @@ export default function MealStamp(props: any) {
     useEffect(() => {
         if (typeof window === "undefined" || !window.visualViewport) return
         const viewport = window.visualViewport
+        let initialHeight = viewport.height
+
         const handleResize = () => {
-            const height = window.innerHeight - viewport.height
-            setKeyboardHeight(height > 50 ? height : 0)
+            // Use initial viewport height as reference for keyboard detection
+            if (viewport.height < initialHeight - 50) {
+                setKeyboardHeight(initialHeight - viewport.height)
+            } else {
+                setKeyboardHeight(0)
+                initialHeight = viewport.height // Update reference when keyboard is closed
+            }
         }
         viewport.addEventListener("resize", handleResize)
-        viewport.addEventListener("scroll", handleResize)
         return () => {
             viewport.removeEventListener("resize", handleResize)
-            viewport.removeEventListener("scroll", handleResize)
         }
     }, [])
 
@@ -3329,16 +3345,17 @@ export default function MealStamp(props: any) {
 
                 <div
                     style={{
-                        position: "absolute",
-                        bottom: keyboardHeight,
+                        position: "fixed",
+                        bottom: 0,
                         left: 0,
                         right: 0,
+                        transform: `translateY(-${keyboardHeight}px)`,
                         padding: `12px ${DS.content.paddingX}px`,
-                        paddingBottom: keyboardHeight > 0 ? 14 : "max(16px, env(safe-area-inset-bottom))",
+                        paddingBottom: keyboardHeight > 0 ? 10 : "max(14px, env(safe-area-inset-bottom))",
                         background: keyboardHeight > 0 ? DS.colors.white : DS.colors.gray[50],
                         borderTop: keyboardHeight > 0 ? `1px solid ${DS.colors.gray[200]}` : "none",
                         zIndex: 100,
-                        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                        transition: "transform 0.15s ease-out, padding 0.15s ease-out, background 0.15s ease-out",
                         boxShadow: keyboardHeight > 0 ? "0 -4px 20px rgba(0,0,0,0.08)" : "none",
                     }}
                 >
@@ -3476,124 +3493,18 @@ export default function MealStamp(props: any) {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        paddingTop: 10,
+                        justifyContent: "center",
                     }}
                 >
-                    <div
-                        style={{
-                            display: "flex",
-                            background: DS.colors.gray[200],
-                            borderRadius: DS.radius.sm,
-                            padding: 3,
-                            marginBottom: 12,
-                            width: "100%",
-                            maxWidth: 240,
-                        }}
-                    >
-                        {[
-                            { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
-                            {
-                                key: CARD_TYPES.DETAILED,
-                                labelKey: "detailed",
-                                isPro: true,
-                            },
-                        ].map((item) => (
-                            <button
-                                key={item.key}
-                                onClick={() =>
-                                    setSelectedCardType(item.key as any)
-                                }
-                                style={{
-                                    flex: 1,
-                                    padding: 10,
-                                    fontSize: DS.fontSize.sm,
-                                    fontWeight: 600,
-                                    color:
-                                        selectedCardType === item.key
-                                            ? DS.colors.black
-                                            : DS.colors.gray[500],
-                                    background:
-                                        selectedCardType === item.key
-                                            ? DS.colors.white
-                                            : "transparent",
-                                    border: "none",
-                                    borderRadius: DS.radius.sm - 2,
-                                    cursor: "pointer",
-                                    boxShadow:
-                                        selectedCardType === item.key
-                                            ? "0 1px 3px rgba(0,0,0,0.08)"
-                                            : "none",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: 4,
-                                }}
-                            >
-                                {item.isPro && <Icon.Sparkle size={11} />}
-                                {t(item.labelKey)}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
-                        {[
-                            {
-                                key: CARD_THEMES.DEFAULT,
-                                label: t("themeDefault"),
-                            },
-                            {
-                                key: CARD_THEMES.DIGITAL,
-                                label: t("themeDigital"),
-                            },
-                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
-                        ].map((item) => {
-                            const isProTheme =
-                                selectedCardType === CARD_TYPES.DETAILED ||
-                                item.key !== CARD_THEMES.DEFAULT
-                            return (
-                                <button
-                                    key={item.key}
-                                    onClick={() => {
-                                        setSelectedTheme(item.key)
-                                        localStorage.setItem(
-                                            STORAGE.theme,
-                                            item.key
-                                        )
-                                    }}
-                                    style={{
-                                        padding: "7px 12px",
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 600,
-                                        color:
-                                            selectedTheme === item.key
-                                                ? DS.colors.white
-                                                : DS.colors.gray[500],
-                                        background:
-                                            selectedTheme === item.key
-                                                ? DS.colors.black
-                                                : DS.colors.gray[100],
-                                        border: "none",
-                                        borderRadius: DS.radius.full,
-                                        cursor: "pointer",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 4,
-                                    }}
-                                >
-                                    {isProTheme && <Icon.Sparkle size={9} />}
-                                    {item.label}
-                                </button>
-                            )
-                        })}
-                    </div>
-
+                    {/* Card Preview */}
                     <div
                         style={{
                             width: "100%",
-                            maxWidth: 250,
+                            maxWidth: selectedAspectRatio.width > selectedAspectRatio.height ? 280 : 220,
                             boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
                             borderRadius: DS.radius.xl,
                             overflow: "hidden",
+                            marginBottom: 16,
                         }}
                     >
                         {selectedCardType === CARD_TYPES.SIMPLE ? (
@@ -3604,6 +3515,7 @@ export default function MealStamp(props: any) {
                                 cardRef={simpleCardRef}
                                 lang={lang}
                                 theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
                             />
                         ) : (
                             <DetailedCard
@@ -3614,8 +3526,97 @@ export default function MealStamp(props: any) {
                                 cardRef={detailedCardRef}
                                 lang={lang}
                                 theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
                             />
                         )}
+                    </div>
+
+                    {/* Options Row */}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                        {/* Card Type */}
+                        {[
+                            { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
+                            { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
+                        ].map((item) => (
+                            <button
+                                key={item.key}
+                                onClick={() => setSelectedCardType(item.key as any)}
+                                style={{
+                                    padding: "6px 12px",
+                                    fontSize: DS.fontSize.xs,
+                                    fontWeight: 600,
+                                    color: selectedCardType === item.key ? DS.colors.white : DS.colors.gray[500],
+                                    background: selectedCardType === item.key ? DS.colors.black : DS.colors.gray[100],
+                                    border: "none",
+                                    borderRadius: DS.radius.full,
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                }}
+                            >
+                                {item.isPro && <Icon.Sparkle size={9} />}
+                                {t(item.labelKey)}
+                            </button>
+                        ))}
+
+                        <div style={{ width: 1, height: 20, background: DS.colors.gray[200], margin: "0 4px" }} />
+
+                        {/* Theme */}
+                        {[
+                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
+                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
+                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
+                        ].map((item) => {
+                            const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
+                            return (
+                                <button
+                                    key={item.key}
+                                    onClick={() => {
+                                        setSelectedTheme(item.key)
+                                        localStorage.setItem(STORAGE.theme, item.key)
+                                    }}
+                                    style={{
+                                        padding: "6px 10px",
+                                        fontSize: DS.fontSize.xs,
+                                        fontWeight: 600,
+                                        color: selectedTheme === item.key ? DS.colors.white : DS.colors.gray[500],
+                                        background: selectedTheme === item.key ? DS.colors.black : DS.colors.gray[100],
+                                        border: "none",
+                                        borderRadius: DS.radius.full,
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 3,
+                                    }}
+                                >
+                                    {isProTheme && <Icon.Sparkle size={8} />}
+                                    {item.label}
+                                </button>
+                            )
+                        })}
+                    </div>
+
+                    {/* Aspect Ratio Row */}
+                    <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                        {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => (
+                            <button
+                                key={ratio.key}
+                                onClick={() => setSelectedAspectRatio(ratio)}
+                                style={{
+                                    padding: "6px 12px",
+                                    fontSize: DS.fontSize.xs,
+                                    fontWeight: 600,
+                                    color: selectedAspectRatio.key === ratio.key ? DS.colors.white : DS.colors.gray[500],
+                                    background: selectedAspectRatio.key === ratio.key ? DS.colors.gray[700] : DS.colors.gray[100],
+                                    border: "none",
+                                    borderRadius: DS.radius.full,
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {ratio.key}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
