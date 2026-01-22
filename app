@@ -1,6 +1,72 @@
 import { addPropertyControls, ControlType } from "framer"
 import { useState, useRef, useEffect, useCallback } from "react"
 
+// ============================================
+// Types & Interfaces
+// ============================================
+interface Food {
+    name: string
+    amount: string
+    calories: string
+}
+
+interface TimestampFormatted {
+    date: string
+    time: string
+    day: string
+}
+
+interface ButtonProps {
+    children: React.ReactNode
+    variant?: "primary" | "secondary" | "ghost"
+    disabled?: boolean
+    onClick?: () => void
+    style?: React.CSSProperties
+}
+
+interface IconButtonProps {
+    onClick?: () => void
+    children: React.ReactNode
+    color?: string
+}
+
+interface HeaderProps {
+    left?: React.ReactNode
+    center?: React.ReactNode
+    right?: React.ReactNode
+    background?: string
+    color?: string
+}
+
+interface BottomSheetProps {
+    show: boolean
+    onClose: () => void
+    children: React.ReactNode
+}
+
+interface CardProps {
+    capturedImage: string | null
+    timestamp: Date | null
+    totalCalories: number
+    cardRef: React.RefObject<HTMLDivElement>
+    lang?: string
+    theme?: string
+    foods?: Food[]
+}
+
+interface SheetProps {
+    show: boolean
+    onClose: () => void
+    t: (key: string, params?: Record<string, any>) => string
+    isPro?: boolean
+    aiCredits?: number
+    onBuyPro?: () => void
+    onActivate?: () => void
+}
+
+// ============================================
+// Design System
+// ============================================
 const DS = {
     colors: {
         black: "#000000",
@@ -525,6 +591,89 @@ const i18n: Record<string, Record<string, string>> = {
     },
 }
 
+// ============================================
+// Utility Functions
+// ============================================
+const formatTimestamp = (
+    timestamp: Date | null,
+    lang: string,
+    isSpecialTheme: boolean
+): TimestampFormatted => {
+    if (!timestamp) return { date: "", time: "", day: "" }
+
+    const dayNames = isSpecialTheme
+        ? ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+        : DAY_NAMES[lang] || DAY_NAMES.en
+
+    const date = isSpecialTheme
+        ? `${String(timestamp.getFullYear()).slice(2)}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`
+        : `${timestamp.getFullYear()}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`
+
+    return {
+        date,
+        time: `${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`,
+        day: dayNames[timestamp.getDay()],
+    }
+}
+
+const getCardStyles = (theme: string) => {
+    const isDigital = theme === CARD_THEMES.DIGITAL
+    const isNeon = theme === CARD_THEMES.NEON
+    const isSpecialTheme = isDigital || isNeon
+
+    return {
+        isDigital,
+        isNeon,
+        isSpecialTheme,
+        fontStyle: isDigital ? DS.font.digital : isNeon ? DS.font.neon : "inherit",
+        glowStyle: isNeon ? { textShadow: "0 0 10px rgba(255,255,255,0.8)" } : {},
+    }
+}
+
+// ============================================
+// Common Styles
+// ============================================
+const commonStyles = {
+    sheetTitle: {
+        fontSize: DS.fontSize.xl,
+        fontWeight: 700,
+        marginBottom: 6,
+    } as React.CSSProperties,
+    sheetDesc: {
+        fontSize: DS.fontSize.sm,
+        color: DS.colors.gray[600],
+        lineHeight: 1.5,
+        whiteSpace: "pre-wrap",
+    } as React.CSSProperties,
+    sheetIcon: {
+        width: 52,
+        height: 52,
+        borderRadius: DS.radius.full,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "0 auto 14px",
+    } as React.CSSProperties,
+    cardOverlay: {
+        position: "absolute",
+        bottom: -1,
+        left: -1,
+        right: -1,
+        pointerEvents: "none",
+    } as React.CSSProperties,
+    cardContainer: {
+        width: "100%",
+        aspectRatio: "1/1",
+        overflow: "hidden",
+        position: "relative",
+        background: "#000",
+        fontFamily: DS.font.body,
+    } as React.CSSProperties,
+}
+
+// ============================================
+// Icons
+// ============================================
 const Icon = {
     Back: () => (
         <svg
@@ -1025,6 +1174,210 @@ const AdBanner = () => (
     </div>
 )
 
+// ============================================
+// Sheet Components (extracted from duplicates)
+// ============================================
+const UpgradeSheet = ({
+    show,
+    onClose,
+    t,
+    onBuyPro,
+}: SheetProps) => (
+    <BottomSheet show={show} onClose={onClose}>
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{ ...commonStyles.sheetIcon, background: DS.colors.gray[100] }}>
+                <Icon.Sparkle size={22} />
+            </div>
+            <div style={commonStyles.sheetTitle}>{t("upgradeToPro")}</div>
+            <div style={commonStyles.sheetDesc}>{t("upgradeDesc")}</div>
+        </div>
+        <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+        <div style={{ height: 8 }} />
+        <Button variant="ghost" onClick={onClose}>{t("later")}</Button>
+    </BottomSheet>
+)
+
+const CreditInfoSheet = ({
+    show,
+    onClose,
+    t,
+    isPro = false,
+    aiCredits = 0,
+    onBuyPro,
+}: SheetProps) => (
+    <BottomSheet show={show} onClose={onClose}>
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{
+                ...commonStyles.sheetIcon,
+                background: isPro ? DS.colors.black : DS.colors.gray[100],
+                color: isPro ? "#fff" : DS.colors.black,
+            }}>
+                <Icon.Sparkle size={22} />
+            </div>
+            <div style={commonStyles.sheetTitle}>
+                {isPro ? t("usingPro") : t("aiCredits")}
+            </div>
+            <div style={commonStyles.sheetDesc}>
+                {isPro ? t("unlimitedDesc") : t("creditsLeft", { n: aiCredits })}
+            </div>
+        </div>
+        {!isPro && (
+            <>
+                <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+                <div style={{ height: 8 }} />
+            </>
+        )}
+        <Button variant={isPro ? "primary" : "ghost"} onClick={onClose}>
+            {isPro ? t("confirm") : t("later")}
+        </Button>
+    </BottomSheet>
+)
+
+const LanguageSheet = ({
+    show,
+    onClose,
+    lang,
+    onSelectLanguage,
+}: {
+    show: boolean
+    onClose: () => void
+    lang: string
+    onSelectLanguage: (code: string) => void
+}) => (
+    <BottomSheet show={show} onClose={onClose}>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+            <div style={{ fontSize: DS.fontSize.lg, fontWeight: 600 }}>
+                Select your language
+            </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+            {LANGUAGES.map((l) => (
+                <button
+                    key={l.code}
+                    onClick={() => onSelectLanguage(l.code)}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "14px 8px",
+                        background: lang === l.code ? DS.colors.gray[100] : DS.colors.white,
+                        border: lang === l.code
+                            ? `1.5px solid ${DS.colors.black}`
+                            : `1.5px solid ${DS.colors.gray[200]}`,
+                        borderRadius: DS.radius.md,
+                        cursor: "pointer",
+                    }}
+                >
+                    <span style={{ fontSize: 26 }}>{l.flag}</span>
+                    <span style={{ fontSize: DS.fontSize.xs, fontWeight: 500 }}>{l.name}</span>
+                </button>
+            ))}
+        </div>
+    </BottomSheet>
+)
+
+const ProCodeSheet = ({
+    show,
+    onClose,
+    t,
+    proCodeInput,
+    proCodeError,
+    onCodeChange,
+    onSubmit,
+}: {
+    show: boolean
+    onClose: () => void
+    t: (key: string) => string
+    proCodeInput: string
+    proCodeError: string
+    onCodeChange: (value: string) => void
+    onSubmit: () => void
+}) => (
+    <BottomSheet show={show} onClose={onClose}>
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{ fontSize: DS.fontSize.lg, fontWeight: 600 }}>{t("enterProCode")}</div>
+            <div style={{ fontSize: DS.fontSize.sm, color: DS.colors.gray[500], marginTop: 6 }}>
+                {t("enterProCodeDesc")}
+            </div>
+        </div>
+        <input
+            type="text"
+            value={proCodeInput}
+            onChange={(e) => onCodeChange(e.target.value.toUpperCase())}
+            placeholder="XXXX-XXXX-XXXX-XXXX"
+            style={{
+                width: "100%",
+                padding: "12px 14px",
+                fontSize: 16,
+                fontFamily: "monospace",
+                textAlign: "center",
+                border: `1.5px solid ${proCodeError ? DS.colors.danger : DS.colors.gray[200]}`,
+                borderRadius: DS.radius.md,
+                marginBottom: 8,
+                boxSizing: "border-box",
+                outline: "none",
+            }}
+        />
+        {proCodeError && (
+            <div style={{ color: DS.colors.danger, fontSize: DS.fontSize.sm, marginBottom: 10, textAlign: "center" }}>
+                {proCodeError}
+            </div>
+        )}
+        <Button onClick={onSubmit}>{t("activate")}</Button>
+        <div style={{ height: 10 }} />
+        <div style={{ textAlign: "center" }}>
+            <span style={{ fontSize: DS.fontSize.sm, color: DS.colors.gray[500] }}>
+                {t("noProCode")}{" "}
+            </span>
+            <button
+                onClick={() => window.open(LEMON_SQUEEZY_URL, "_blank")}
+                style={{
+                    fontSize: DS.fontSize.sm,
+                    color: DS.colors.black,
+                    fontWeight: 600,
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textDecoration: "underline",
+                }}
+            >
+                {t("purchaseHere")}
+            </button>
+        </div>
+    </BottomSheet>
+)
+
+const ProRequiredSheet = ({
+    show,
+    onClose,
+    t,
+    onBuyPro,
+    onWatchAd,
+}: SheetProps & { onWatchAd?: () => void }) => (
+    <BottomSheet show={show} onClose={onClose}>
+        <div style={{ textAlign: "center", marginBottom: 18 }}>
+            <div style={{ ...commonStyles.sheetIcon, background: DS.colors.black, color: "#fff" }}>
+                <Icon.Sparkle size={22} />
+            </div>
+            <div style={commonStyles.sheetTitle}>{t("proRequired")}</div>
+            <div style={{ ...commonStyles.sheetDesc, color: DS.colors.gray[500] }}>
+                {t("proRequiredDesc")}
+            </div>
+        </div>
+        <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+        <div style={{ height: 8 }} />
+        <Button variant="secondary" onClick={onWatchAd}>
+            <Icon.Play /> {t("watchAdFree")}
+        </Button>
+        <div style={{ height: 8 }} />
+        <Button variant="ghost" onClick={onClose}>{t("later")}</Button>
+    </BottomSheet>
+)
+
+// ============================================
+// Day Names & Card Components
+// ============================================
 const DAY_NAMES: Record<string, string[]> = {
     ko: ["일", "월", "화", "수", "목", "금", "토"],
     ja: ["日", "月", "火", "水", "木", "金", "土"],
@@ -1041,35 +1394,13 @@ const SimpleCard = ({
     cardRef,
     lang = "ko",
     theme = "default",
-}: any) => {
-    const isDigital = theme === CARD_THEMES.DIGITAL,
-        isNeon = theme === CARD_THEMES.NEON,
-        isSpecialTheme = isDigital || isNeon
-    const dayNames = isSpecialTheme
-        ? ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
-        : DAY_NAMES[lang] || DAY_NAMES.en
-    const ts = timestamp
-        ? {
-              date: isSpecialTheme
-                  ? `${String(timestamp.getFullYear()).slice(2)}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`
-                  : `${timestamp.getFullYear()}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`,
-              time: `${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`,
-              day: dayNames[timestamp.getDay()],
-          }
-        : { date: "", time: "", day: "" }
-    const fontStyle = isDigital
-        ? DS.font.digital
-        : isNeon
-          ? DS.font.neon
-          : "inherit"
+}: CardProps) => {
+    const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
+    const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
     const mainFontSize = isDigital ? 38 : isNeon ? 26 : 32
     const subFontSize = isDigital ? 13 : isNeon ? 9 : 11
-    const dateDisplay = isSpecialTheme
-        ? `${ts.date} ${ts.day}`
-        : `${ts.date} (${ts.day})`
-    const glowStyle = isNeon
-        ? { textShadow: "0 0 10px rgba(255,255,255,0.8)" }
-        : {}
+    const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
+
     return (
         <div
             ref={cardRef}
@@ -1180,40 +1511,18 @@ const DetailedCard = ({
     capturedImage,
     timestamp,
     totalCalories,
-    foods,
+    foods = [],
     cardRef,
     lang = "ko",
     theme = "default",
-}: any) => {
-    const isDigital = theme === CARD_THEMES.DIGITAL,
-        isNeon = theme === CARD_THEMES.NEON,
-        isSpecialTheme = isDigital || isNeon
-    const dayNames = isSpecialTheme
-        ? ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
-        : DAY_NAMES[lang] || DAY_NAMES.en
-    const ts = timestamp
-        ? {
-              date: isSpecialTheme
-                  ? `${String(timestamp.getFullYear()).slice(2)}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`
-                  : `${timestamp.getFullYear()}.${String(timestamp.getMonth() + 1).padStart(2, "0")}.${String(timestamp.getDate()).padStart(2, "0")}`,
-              time: `${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`,
-              day: dayNames[timestamp.getDay()],
-          }
-        : { date: "", time: "", day: "" }
+}: CardProps) => {
+    const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
+    const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
     const displayFoods = foods.slice(0, 5)
-    const fontStyle = isDigital
-        ? DS.font.digital
-        : isNeon
-          ? DS.font.neon
-          : "inherit"
     const mainFontSize = isDigital ? 30 : isNeon ? 24 : 26
     const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
-    const dateDisplay = isSpecialTheme
-        ? `${ts.date} ${ts.day}`
-        : `${ts.date} (${ts.day})`
-    const glowStyle = isNeon
-        ? { textShadow: "0 0 10px rgba(255,255,255,0.8)" }
-        : {}
+    const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
+
     return (
         <div
             ref={cardRef}
@@ -1981,7 +2290,7 @@ export default function MealStamp(props: any) {
                 <CaptureFlash show={showFlash} />
                 <style>{`@keyframes geminiGlow { 0%, 100% { background-position: 0% 50%; box-shadow: 0 0 24px rgba(200,230,255,0.6); } 50% { background-position: 100% 50%; box-shadow: 0 0 24px rgba(255,250,230,0.6); } }`}</style>
 
-                <BottomSheet
+                <LanguageSheet
                     show={showLangSheet}
                     onClose={() => {
                         if (localStorage.getItem(STORAGE.language)) {
@@ -1989,187 +2298,38 @@ export default function MealStamp(props: any) {
                             setShowLanguageSheet(false)
                         }
                     }}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 20 }}>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.lg,
-                                fontWeight: 600,
-                            }}
-                        >
-                            Select your language
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(3, 1fr)",
-                            gap: 10,
-                        }}
-                    >
-                        {LANGUAGES.map((l) => (
-                            <button
-                                key={l.code}
-                                onClick={() => {
-                                    selectLanguage(l.code)
-                                    setShowLanguageSheet(false)
-                                }}
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: 6,
-                                    padding: "14px 8px",
-                                    background:
-                                        lang === l.code
-                                            ? DS.colors.gray[100]
-                                            : DS.colors.white,
-                                    border:
-                                        lang === l.code
-                                            ? `1.5px solid ${DS.colors.black}`
-                                            : `1.5px solid ${DS.colors.gray[200]}`,
-                                    borderRadius: DS.radius.md,
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <span style={{ fontSize: 26 }}>{l.flag}</span>
-                                <span
-                                    style={{
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    {l.name}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                </BottomSheet>
+                    lang={lang}
+                    onSelectLanguage={(code) => {
+                        selectLanguage(code)
+                        setShowLanguageSheet(false)
+                    }}
+                />
 
-                <BottomSheet
+                <UpgradeSheet
                     show={showUpgrade}
                     onClose={() => setShowUpgrade(false)}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 18 }}>
-                        <div
-                            style={{
-                                width: 52,
-                                height: 52,
-                                borderRadius: DS.radius.full,
-                                background: DS.colors.gray[100],
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                margin: "0 auto 14px",
-                            }}
-                        >
-                            <Icon.Sparkle size={22} />
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.xl,
-                                fontWeight: 700,
-                                marginBottom: 6,
-                            }}
-                        >
-                            {t("upgradeToPro")}
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[600],
-                                lineHeight: 1.5,
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {t("upgradeDesc")}
-                        </div>
-                    </div>
-                    <Button
-                        onClick={() => {
-                            localStorage.setItem(STORAGE.pro, "true")
-                            setIsPro(true)
-                            setShowUpgrade(false)
-                            toast(t("proActivated"))
-                        }}
-                    >
-                        {t("buyPro")} · $2.99
-                    </Button>
-                    <div style={{ height: 8 }} />
-                    <Button
-                        variant="ghost"
-                        onClick={() => setShowUpgrade(false)}
-                    >
-                        {t("later")}
-                    </Button>
-                </BottomSheet>
+                    t={t}
+                    onBuyPro={() => {
+                        localStorage.setItem(STORAGE.pro, "true")
+                        setIsPro(true)
+                        setShowUpgrade(false)
+                        toast(t("proActivated"))
+                    }}
+                />
 
-                <BottomSheet
+                <CreditInfoSheet
                     show={showCreditInfo}
                     onClose={() => setShowCreditInfo(false)}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 18 }}>
-                        <div
-                            style={{
-                                width: 52,
-                                height: 52,
-                                borderRadius: DS.radius.full,
-                                background: isPro
-                                    ? DS.colors.black
-                                    : DS.colors.gray[100],
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                margin: "0 auto 14px",
-                                color: isPro ? "#fff" : DS.colors.black,
-                            }}
-                        >
-                            <Icon.Sparkle size={22} />
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.xl,
-                                fontWeight: 700,
-                                marginBottom: 6,
-                            }}
-                        >
-                            {isPro ? t("usingPro") : t("aiCredits")}
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[600],
-                                lineHeight: 1.5,
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {isPro
-                                ? t("unlimitedDesc")
-                                : t("creditsLeft", { n: aiCredits })}
-                        </div>
-                    </div>
-                    {!isPro && (
-                        <>
-                            <Button
-                                onClick={() => {
-                                    localStorage.setItem(STORAGE.pro, "true")
-                                    setIsPro(true)
-                                    setShowCreditInfo(false)
-                                    toast(t("proActivated"))
-                                }}
-                            >
-                                {t("buyPro")} · $2.99
-                            </Button>
-                            <div style={{ height: 8 }} />
-                        </>
-                    )}
-                    <Button
-                        variant={isPro ? "primary" : "ghost"}
-                        onClick={() => setShowCreditInfo(false)}
-                    >
-                        {isPro ? t("confirm") : t("later")}
-                    </Button>
-                </BottomSheet>
+                    t={t}
+                    isPro={isPro}
+                    aiCredits={aiCredits}
+                    onBuyPro={() => {
+                        localStorage.setItem(STORAGE.pro, "true")
+                        setIsPro(true)
+                        setShowCreditInfo(false)
+                        toast(t("proActivated"))
+                    }}
+                />
 
                 <div
                     style={{
@@ -2584,62 +2744,17 @@ export default function MealStamp(props: any) {
                     src={capturedImage}
                     onClose={() => setShowImageModal(false)}
                 />
-                <BottomSheet
+                <UpgradeSheet
                     show={showUpgrade}
                     onClose={() => setShowUpgrade(false)}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 18 }}>
-                        <div
-                            style={{
-                                width: 52,
-                                height: 52,
-                                borderRadius: DS.radius.full,
-                                background: DS.colors.gray[100],
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                margin: "0 auto 14px",
-                            }}
-                        >
-                            <Icon.Sparkle size={22} />
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.xl,
-                                fontWeight: 700,
-                                marginBottom: 6,
-                            }}
-                        >
-                            {t("upgradeToPro")}
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[600],
-                                lineHeight: 1.5,
-                            }}
-                        >
-                            {t("upgradeDesc")}
-                        </div>
-                    </div>
-                    <Button
-                        onClick={() => {
-                            localStorage.setItem(STORAGE.pro, "true")
-                            setIsPro(true)
-                            setShowUpgrade(false)
-                            toast(t("proActivated"))
-                        }}
-                    >
-                        {t("buyPro")} · $2.99
-                    </Button>
-                    <div style={{ height: 8 }} />
-                    <Button
-                        variant="ghost"
-                        onClick={() => setShowUpgrade(false)}
-                    >
-                        {t("later")}
-                    </Button>
-                </BottomSheet>
+                    t={t}
+                    onBuyPro={() => {
+                        localStorage.setItem(STORAGE.pro, "true")
+                        setIsPro(true)
+                        setShowUpgrade(false)
+                        toast(t("proActivated"))
+                    }}
+                />
 
                 <Header
                     left={
@@ -3092,66 +3207,16 @@ export default function MealStamp(props: any) {
                         savingType === "share" ? t("sharing") : t("saving")
                     }
                 />
-                <BottomSheet
+                <ProRequiredSheet
                     show={showUpgrade}
                     onClose={() => setShowUpgrade(false)}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 18 }}>
-                        <div
-                            style={{
-                                width: 52,
-                                height: 52,
-                                borderRadius: DS.radius.full,
-                                background: DS.colors.black,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                margin: "0 auto 14px",
-                                color: "#fff",
-                            }}
-                        >
-                            <Icon.Sparkle size={22} />
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.xl,
-                                fontWeight: 700,
-                                marginBottom: 6,
-                            }}
-                        >
-                            {t("proRequired")}
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[500],
-                                lineHeight: 1.5,
-                                whiteSpace: "pre-wrap",
-                            }}
-                        >
-                            {t("proRequiredDesc")}
-                        </div>
-                    </div>
-                    <Button
-                        onClick={() => {
-                            window.open(LEMON_SQUEEZY_URL, "_blank")
-                            setShowUpgrade(false)
-                        }}
-                    >
-                        {t("buyPro")} · $2.99
-                    </Button>
-                    <div style={{ height: 8 }} />
-                    <Button variant="secondary" onClick={watchAdAndSave}>
-                        <Icon.Play /> {t("watchAdFree")}
-                    </Button>
-                    <div style={{ height: 8 }} />
-                    <Button
-                        variant="ghost"
-                        onClick={() => setShowUpgrade(false)}
-                    >
-                        {t("later")}
-                    </Button>
-                </BottomSheet>
+                    t={t}
+                    onBuyPro={() => {
+                        window.open(LEMON_SQUEEZY_URL, "_blank")
+                        setShowUpgrade(false)
+                    }}
+                    onWatchAd={watchAdAndSave}
+                />
 
                 <Header
                     left={
@@ -3376,159 +3441,31 @@ export default function MealStamp(props: any) {
         return (
             <div style={container}>
                 <Toast show={showToast} message={toastMessage} />
-                <BottomSheet
+                <LanguageSheet
                     show={showLanguageSheet}
                     onClose={() => setShowLanguageSheet(false)}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 20 }}>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.lg,
-                                fontWeight: 600,
-                            }}
-                        >
-                            Select your language
-                        </div>
-                    </div>
-                    <div
-                        style={{
-                            display: "grid",
-                            gridTemplateColumns: "repeat(3, 1fr)",
-                            gap: 10,
-                        }}
-                    >
-                        {LANGUAGES.map((l) => (
-                            <button
-                                key={l.code}
-                                onClick={() => {
-                                    setLang(l.code)
-                                    localStorage.setItem(
-                                        STORAGE.language,
-                                        l.code
-                                    )
-                                    setShowLanguageSheet(false)
-                                }}
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                    gap: 6,
-                                    padding: "14px 8px",
-                                    background:
-                                        lang === l.code
-                                            ? DS.colors.gray[100]
-                                            : DS.colors.white,
-                                    border:
-                                        lang === l.code
-                                            ? `1.5px solid ${DS.colors.black}`
-                                            : `1.5px solid ${DS.colors.gray[200]}`,
-                                    borderRadius: DS.radius.md,
-                                    cursor: "pointer",
-                                }}
-                            >
-                                <span style={{ fontSize: 26 }}>{l.flag}</span>
-                                <span
-                                    style={{
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    {l.name}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                </BottomSheet>
-                <BottomSheet
+                    lang={lang}
+                    onSelectLanguage={(code) => {
+                        setLang(code)
+                        localStorage.setItem(STORAGE.language, code)
+                        setShowLanguageSheet(false)
+                    }}
+                />
+                <ProCodeSheet
                     show={showProCodeSheet}
                     onClose={() => {
                         setShowProCodeSheet(false)
                         setProCodeError("")
                     }}
-                >
-                    <div style={{ textAlign: "center", marginBottom: 18 }}>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.lg,
-                                fontWeight: 600,
-                            }}
-                        >
-                            {t("enterProCode")}
-                        </div>
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[500],
-                                marginTop: 6,
-                            }}
-                        >
-                            {t("enterProCodeDesc")}
-                        </div>
-                    </div>
-                    <input
-                        type="text"
-                        value={proCodeInput}
-                        onChange={(e) => {
-                            setProCodeInput(e.target.value.toUpperCase())
-                            setProCodeError("")
-                        }}
-                        placeholder="XXXX-XXXX-XXXX-XXXX"
-                        style={{
-                            width: "100%",
-                            padding: "12px 14px",
-                            fontSize: 16,
-                            fontFamily: "monospace",
-                            textAlign: "center",
-                            border: `1.5px solid ${proCodeError ? DS.colors.danger : DS.colors.gray[200]}`,
-                            borderRadius: DS.radius.md,
-                            marginBottom: 8,
-                            boxSizing: "border-box",
-                            outline: "none",
-                        }}
-                    />
-                    {proCodeError && (
-                        <div
-                            style={{
-                                color: DS.colors.danger,
-                                fontSize: DS.fontSize.sm,
-                                marginBottom: 10,
-                                textAlign: "center",
-                            }}
-                        >
-                            {proCodeError}
-                        </div>
-                    )}
-                    <Button onClick={handleProCodeSubmit}>
-                        {t("activate")}
-                    </Button>
-                    <div style={{ height: 10 }} />
-                    <div style={{ textAlign: "center" }}>
-                        <span
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.gray[500],
-                            }}
-                        >
-                            {t("noProCode")}{" "}
-                        </span>
-                        <button
-                            onClick={() =>
-                                window.open(LEMON_SQUEEZY_URL, "_blank")
-                            }
-                            style={{
-                                fontSize: DS.fontSize.sm,
-                                color: DS.colors.black,
-                                fontWeight: 600,
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                textDecoration: "underline",
-                            }}
-                        >
-                            {t("purchaseHere")}
-                        </button>
-                    </div>
-                </BottomSheet>
+                    t={t}
+                    proCodeInput={proCodeInput}
+                    proCodeError={proCodeError}
+                    onCodeChange={(value) => {
+                        setProCodeInput(value)
+                        setProCodeError("")
+                    }}
+                    onSubmit={handleProCodeSubmit}
+                />
 
                 <Header
                     left={
