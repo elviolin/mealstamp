@@ -4075,64 +4075,85 @@ export default function MealStamp(props: any) {
                     }
                 />
 
-                {/* Card Preview - Large & Centered */}
+                {/* Card Preview Area */}
                 <div
                     style={{
                         flex: 1,
                         display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: DS.content.paddingX,
+                        flexDirection: "column",
+                        overflow: "hidden",
                     }}
                 >
                     <div
                         style={{
-                            width: "100%",
-                            maxWidth: 280,
-                            boxShadow: "0 24px 80px rgba(0,0,0,0.18)",
-                            borderRadius: DS.radius.xl,
-                            overflow: "hidden",
+                            flex: 1,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: `20px ${DS.content.paddingX}px`,
+                            minHeight: 0,
                         }}
                     >
-                        {selectedCardType === CARD_TYPES.SIMPLE ? (
-                            <SimpleCard
-                                capturedImage={capturedImage}
-                                timestamp={timestamp}
-                                totalCalories={totalCalories}
-                                cardRef={simpleCardRef}
-                                lang={lang}
-                                theme={selectedTheme}
-                                aspectRatio={selectedAspectRatio}
-                            />
-                        ) : (
-                            <DetailedCard
-                                capturedImage={capturedImage}
-                                timestamp={timestamp}
-                                totalCalories={totalCalories}
-                                foods={foods}
-                                cardRef={detailedCardRef}
-                                lang={lang}
-                                theme={selectedTheme}
-                                aspectRatio={selectedAspectRatio}
-                            />
-                        )}
+                        <div
+                            style={{
+                                width: "100%",
+                                maxWidth: 260,
+                                boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+                                borderRadius: DS.radius.xl,
+                                overflow: "hidden",
+                            }}
+                        >
+                            {selectedCardType === CARD_TYPES.SIMPLE ? (
+                                <SimpleCard
+                                    capturedImage={capturedImage}
+                                    timestamp={timestamp}
+                                    totalCalories={totalCalories}
+                                    cardRef={simpleCardRef}
+                                    lang={lang}
+                                    theme={selectedTheme}
+                                    aspectRatio={selectedAspectRatio}
+                                />
+                            ) : (
+                                <DetailedCard
+                                    capturedImage={capturedImage}
+                                    timestamp={timestamp}
+                                    totalCalories={totalCalories}
+                                    foods={foods}
+                                    cardRef={detailedCardRef}
+                                    lang={lang}
+                                    theme={selectedTheme}
+                                    aspectRatio={selectedAspectRatio}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* Bottom Toolbar - Clean & Minimal */}
+                {/* Options Toolbar */}
                 <div
                     style={{
-                        padding: `20px ${DS.content.paddingX}px`,
-                        paddingBottom: `max(24px, env(safe-area-inset-bottom))`,
-                        background: DS.colors.white,
+                        padding: `16px ${DS.content.paddingX}px`,
+                        paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: 12,
+                        background: DS.colors.gray[50],
+                        borderTop: `1px solid ${DS.colors.gray[100]}`,
                     }}
                 >
-                    {/* Options Row */}
-                    <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 16 }}>
-                        {/* Card Type */}
+                    {/* Card Type Toggle */}
+                    <div
+                        style={{
+                            display: "flex",
+                            background: DS.colors.gray[200],
+                            borderRadius: DS.radius.full,
+                            padding: 3,
+                        }}
+                    >
                         {[
-                            { key: CARD_TYPES.SIMPLE, label: t("simple") },
-                            { key: CARD_TYPES.DETAILED, label: t("detailed"), isPro: true },
+                            { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
+                            { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
                         ].map((item) => {
                             const active = selectedCardType === item.key
                             return (
@@ -4140,28 +4161,32 @@ export default function MealStamp(props: any) {
                                     key={item.key}
                                     onClick={() => setSelectedCardType(item.key as any)}
                                     style={{
-                                        padding: "8px 16px",
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                        color: active ? DS.colors.white : DS.colors.gray[500],
-                                        background: active ? DS.colors.black : DS.colors.gray[100],
                                         border: "none",
-                                        borderRadius: DS.radius.full,
                                         cursor: "pointer",
+                                        borderRadius: DS.radius.full,
+                                        padding: "8px 20px",
+                                        fontSize: DS.fontSize.sm,
+                                        fontWeight: 600,
+                                        background: active ? DS.colors.white : "transparent",
+                                        color: active ? DS.colors.black : DS.colors.gray[500],
+                                        boxShadow: active ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
                                         display: "flex",
                                         alignItems: "center",
+                                        justifyContent: "center",
                                         gap: 4,
+                                        transition: "all 0.15s ease",
                                     }}
                                 >
                                     {item.isPro && <Icon.Sparkle size={10} />}
-                                    {item.label}
+                                    {t(item.labelKey)}
                                 </button>
                             )
                         })}
+                    </div>
 
-                        <div style={{ width: 1, height: 32, background: DS.colors.gray[200] }} />
-
-                        {/* Theme */}
+                    {/* Theme & Ratio Row */}
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                        {/* Theme Selector */}
                         {[
                             { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
                             { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
@@ -4177,28 +4202,29 @@ export default function MealStamp(props: any) {
                                         localStorage.setItem(STORAGE.theme, item.key)
                                     }}
                                     style={{
-                                        padding: "8px 12px",
-                                        fontSize: 13,
-                                        fontWeight: 500,
-                                        color: active ? DS.colors.black : DS.colors.gray[400],
-                                        background: "transparent",
-                                        border: "none",
+                                        padding: "6px 12px",
+                                        fontSize: DS.fontSize.xs,
+                                        fontWeight: 600,
+                                        color: active ? DS.colors.white : DS.colors.gray[500],
+                                        background: active ? DS.colors.black : DS.colors.white,
+                                        border: `1px solid ${active ? DS.colors.black : DS.colors.gray[200]}`,
                                         borderRadius: DS.radius.full,
                                         cursor: "pointer",
                                         display: "flex",
                                         alignItems: "center",
                                         gap: 3,
+                                        transition: "all 0.15s ease",
                                     }}
                                 >
-                                    {isProTheme && <Icon.Sparkle size={9} />}
+                                    {isProTheme && <Icon.Sparkle size={8} />}
                                     {item.label}
                                 </button>
                             )
                         })}
 
-                        <div style={{ width: 1, height: 32, background: DS.colors.gray[200] }} />
+                        <div style={{ width: 1, height: 24, background: DS.colors.gray[300], margin: "0 4px" }} />
 
-                        {/* Ratio - Only Portrait & Square */}
+                        {/* Aspect Ratio Selector - Portrait & Square only */}
                         {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE].map((ratio) => {
                             const active = selectedAspectRatio.key === ratio.key
                             return (
@@ -4206,14 +4232,15 @@ export default function MealStamp(props: any) {
                                     key={ratio.key}
                                     onClick={() => setSelectedAspectRatio(ratio)}
                                     style={{
-                                        padding: "8px 12px",
-                                        fontSize: 13,
-                                        fontWeight: 500,
-                                        color: active ? DS.colors.black : DS.colors.gray[400],
-                                        background: "transparent",
-                                        border: "none",
+                                        padding: "6px 10px",
+                                        fontSize: DS.fontSize.xs,
+                                        fontWeight: 600,
+                                        color: active ? DS.colors.white : DS.colors.gray[500],
+                                        background: active ? DS.colors.gray[700] : DS.colors.white,
+                                        border: `1px solid ${active ? DS.colors.gray[700] : DS.colors.gray[200]}`,
                                         borderRadius: DS.radius.full,
                                         cursor: "pointer",
+                                        transition: "all 0.15s ease",
                                     }}
                                 >
                                     {ratio.key}
@@ -4223,7 +4250,7 @@ export default function MealStamp(props: any) {
                     </div>
 
                     {/* Action Buttons */}
-                    <div style={{ display: "flex", gap: 12 }}>
+                    <div style={{ display: "flex", gap: 12, width: "100%" }}>
                         <Button
                             variant="secondary"
                             onClick={handleSave}
