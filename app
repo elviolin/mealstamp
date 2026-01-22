@@ -4473,7 +4473,7 @@ export default function MealStamp(props: any) {
                             { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
                             { key: CARD_THEMES.NEON, label: t("themeNeon") },
                         ].map((item) => {
-                            const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
+                            const isProTheme = selectedCardType === CARD_TYPES.DETAILED || selectedCardType === CARD_TYPES.HEALTH || item.key !== CARD_THEMES.DEFAULT
                             const active = selectedTheme === item.key
                             return (
                                 <button
