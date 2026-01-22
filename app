@@ -92,7 +92,12 @@ const DS = {
         neon: "'Orbitron', sans-serif",
     },
     radius: { sm: 10, md: 14, lg: 18, xl: 22, full: 9999 },
-    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    transition: {
+        fast: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+        normal: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        smooth: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        spring: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+    },
     header: { height: 52, paddingX: 8, iconSize: 44 },
     content: { paddingX: 20 },
     fontSize: { xs: 11, sm: 13, md: 15, lg: 17, xl: 20 },
@@ -139,6 +144,18 @@ if (typeof document !== "undefined") {
         c.innerHTML =
             '<span style="font-family:DS-Digital,monospace;font-weight:700">00:00</span><span style="font-family:Orbitron,sans-serif;font-weight:700">00:00</span>'
         document.body?.appendChild(c)
+    }
+    // Global button styles for hover/active effects
+    if (!document.getElementById("ms-global-styles")) {
+        const style = document.createElement("style")
+        style.id = "ms-global-styles"
+        style.textContent = `
+            button { -webkit-tap-highlight-color: transparent; }
+            button:active:not(:disabled) { transform: scale(0.97); }
+            button:hover:not(:disabled) { filter: brightness(0.95); }
+            input:focus { outline: none; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
+        `
+        document.head.appendChild(style)
     }
 }
 
@@ -823,7 +840,7 @@ const Button = ({
         alignItems: "center",
         justifyContent: "center",
         gap: 8,
-        transition: DS.transition,
+        transition: DS.transition.fast,
         opacity: disabled ? 0.4 : 1,
     }
     const variants: Record<string, React.CSSProperties> = {
@@ -856,7 +873,7 @@ const IconButton = ({ onClick, children, color = DS.colors.black }: any) => (
             alignItems: "center",
             justifyContent: "center",
             color,
-            transition: DS.transition,
+            transition: DS.transition.fast,
             flexShrink: 0,
         }}
     >
@@ -907,7 +924,7 @@ const Header = ({
     </div>
 )
 
-const BottomSheet = ({ show, onClose, children }: any) => {
+const BottomSheet = ({ show, onClose, children }: BottomSheetProps) => {
     if (!show) return null
     return (
         <div
@@ -916,13 +933,21 @@ const BottomSheet = ({ show, onClose, children }: any) => {
                 position: "fixed",
                 inset: 0,
                 zIndex: 2000,
-                background: "rgba(0,0,0,0.4)",
+                background: "rgba(0,0,0,0.5)",
                 display: "flex",
                 alignItems: "flex-end",
                 justifyContent: "center",
+                animation: "fadeIn 0.2s ease-out",
             }}
         >
-            <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
+            <style>{`
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes slideUpSpring {
+                    0% { transform: translateY(100%); }
+                    60% { transform: translateY(-3%); }
+                    100% { transform: translateY(0); }
+                }
+            `}</style>
             <div
                 onClick={(e) => e.stopPropagation()}
                 style={{
@@ -932,7 +957,8 @@ const BottomSheet = ({ show, onClose, children }: any) => {
                     borderRadius: `${DS.radius.xl}px ${DS.radius.xl}px 0 0`,
                     padding: `8px ${DS.popup.paddingX}px ${DS.popup.paddingBottom}px`,
                     paddingBottom: `max(${DS.popup.paddingBottom}px, calc(env(safe-area-inset-bottom) + 8px))`,
-                    animation: "slideUp 0.3s ease",
+                    animation: "slideUpSpring 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    boxShadow: "0 -4px 30px rgba(0,0,0,0.15)",
                 }}
             >
                 <div
@@ -950,98 +976,121 @@ const BottomSheet = ({ show, onClose, children }: any) => {
     )
 }
 
-const ImageModal = ({ show, src, onClose }: any) => {
+const ImageModal = ({ show, src, onClose }: { show: boolean; src: string | null; onClose: () => void }) => {
     if (!show || !src) return null
     return (
-        <div
-            onClick={onClose}
-            style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 2500,
-                background: "rgba(0,0,0,0.95)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 20,
-            }}
-        >
-            <button
+        <>
+            <style>{`
+                @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes modalZoomIn {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
+                }
+            `}</style>
+            <div
                 onClick={onClose}
                 style={{
-                    position: "absolute",
-                    top: "max(16px, env(safe-area-inset-top))",
-                    right: 16,
-                    width: 44,
-                    height: 44,
-                    borderRadius: DS.radius.full,
-                    background: "rgba(255,255,255,0.1)",
-                    border: "none",
-                    cursor: "pointer",
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 2500,
+                    background: "rgba(0,0,0,0.95)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "#fff",
+                    padding: 20,
+                    animation: "modalFadeIn 0.2s ease-out",
                 }}
             >
-                <Icon.X />
-            </button>
-            <img
-                src={src}
-                alt=""
-                style={{
-                    maxWidth: "100%",
-                    maxHeight: "80vh",
-                    borderRadius: DS.radius.lg,
-                    objectFit: "contain",
-                }}
-            />
-        </div>
+                <button
+                    onClick={onClose}
+                    style={{
+                        position: "absolute",
+                        top: "max(16px, env(safe-area-inset-top))",
+                        right: 16,
+                        width: 44,
+                        height: 44,
+                        borderRadius: DS.radius.full,
+                        background: "rgba(255,255,255,0.1)",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#fff",
+                        transition: DS.transition.fast,
+                    }}
+                >
+                    <Icon.X />
+                </button>
+                <img
+                    src={src}
+                    alt=""
+                    style={{
+                        maxWidth: "100%",
+                        maxHeight: "80vh",
+                        borderRadius: DS.radius.lg,
+                        objectFit: "contain",
+                        animation: "modalZoomIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    }}
+                />
+            </div>
+        </>
     )
 }
 
-const Toast = ({ show, message }: any) => {
+const Toast = ({ show, message }: { show: boolean; message: string }) => {
     if (!show) return null
     return (
-        <div
-            style={{
-                position: "fixed",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                background: DS.colors.black,
-                borderRadius: DS.radius.lg,
-                padding: "18px 22px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 8,
-                zIndex: 3000,
-                maxWidth: 260,
-                textAlign: "center",
-            }}
-        >
-            <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                style={{ stroke: "#fff", strokeWidth: 2.5 }}
-            >
-                <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span
+        <>
+            <style>{`
+                @keyframes toastPop {
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                    50% { transform: translate(-50%, -50%) scale(1.02); }
+                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                }
+            `}</style>
+            <div
                 style={{
-                    color: DS.colors.white,
-                    fontSize: DS.fontSize.sm,
-                    fontWeight: 500,
-                    lineHeight: 1.5,
-                    whiteSpace: "pre-wrap",
+                    position: "fixed",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    background: DS.colors.black,
+                    borderRadius: DS.radius.lg,
+                    padding: "18px 22px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 8,
+                    zIndex: 3000,
+                    maxWidth: 260,
+                    textAlign: "center",
+                    animation: "toastPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
                 }}
             >
-                {message}
-            </span>
-        </div>
+                <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    style={{ stroke: "#fff", strokeWidth: 2.5 }}
+                >
+                    <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span
+                    style={{
+                        color: DS.colors.white,
+                        fontSize: DS.fontSize.sm,
+                        fontWeight: 500,
+                        lineHeight: 1.5,
+                        whiteSpace: "pre-wrap",
+                    }}
+                >
+                    {message}
+                </span>
+            </div>
+        </>
     )
 }
 
@@ -1878,7 +1927,7 @@ export default function MealStamp(props: any) {
         setCapturedImage(imageData)
         setTimestamp(new Date())
         setTimeout(() => {
-            const useAI = recordMode === RECORD_MODE.AI
+            const useAI = isPro || recordMode === RECORD_MODE.AI
             if (!useAI) {
                 setFoods([{ name: "", amount: "", calories: "" }])
                 setScreen(SCREENS.RESULT)
@@ -1923,7 +1972,7 @@ export default function MealStamp(props: any) {
                 const imageData = canvas.toDataURL("image/jpeg", 0.92)
                 setCapturedImage(imageData)
                 setTimestamp(new Date())
-                const useAI = recordMode === RECORD_MODE.AI
+                const useAI = isPro || recordMode === RECORD_MODE.AI
                 if (!useAI) {
                     setFoods([{ name: "", amount: "", calories: "" }])
                     setScreen(SCREENS.RESULT)
