@@ -641,6 +641,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["1개", "반개", "100g", "한줌"],
         salad: ["1접시", "한그릇", "100g", "150g"],
         egg: ["1개", "2개", "3개", "100g"],
+        sidedish: ["조금", "적당량", "한젓가락", "50g"],
         default: ["1개", "1인분", "100g", "한접시"],
     },
     ja: {
@@ -653,6 +654,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["1個", "半分", "100g", "1カップ"],
         salad: ["1皿", "1人前", "100g", "150g"],
         egg: ["1個", "2個", "3個", "100g"],
+        sidedish: ["少々", "適量", "一箸", "50g"],
         default: ["1個", "1人前", "100g", "1皿"],
     },
     en: {
@@ -665,6 +667,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["1 piece", "1/2", "100g", "1 cup"],
         salad: ["1 plate", "1 bowl", "100g", "150g"],
         egg: ["1 egg", "2 eggs", "3 eggs", "100g"],
+        sidedish: ["a little", "some", "1 tbsp", "50g"],
         default: ["1 piece", "1 serving", "100g", "1 plate"],
     },
     zh: {
@@ -677,6 +680,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["一个", "半个", "100g", "一把"],
         salad: ["一盘", "一份", "100g", "150g"],
         egg: ["1个", "2个", "3个", "100g"],
+        sidedish: ["少许", "适量", "一筷子", "50g"],
         default: ["一个", "一份", "100g", "一盘"],
     },
     fr: {
@@ -689,6 +693,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["1 pièce", "1/2", "100g", "1 poignée"],
         salad: ["1 assiette", "1 bol", "100g", "150g"],
         egg: ["1 œuf", "2 œufs", "3 œufs", "100g"],
+        sidedish: ["un peu", "modéré", "1 c.à.s", "50g"],
         default: ["1 pièce", "1 portion", "100g", "1 assiette"],
     },
     de: {
@@ -701,6 +706,7 @@ const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
         fruit: ["1 Stück", "1/2", "100g", "1 Handvoll"],
         salad: ["1 Teller", "1 Schale", "100g", "150g"],
         egg: ["1 Ei", "2 Eier", "3 Eier", "100g"],
+        sidedish: ["wenig", "etwas", "1 EL", "50g"],
         default: ["1 Stück", "1 Portion", "100g", "1 Teller"],
     },
 }
@@ -716,6 +722,7 @@ const FOOD_CATEGORIES: Record<string, string[]> = {
     fruit: ["사과", "apple", "banana", "바나나", "orange", "오렌지", "りんご", "バナナ", "苹果", "香蕉", "pomme", "banane", "apfel", "과일", "fruit", "포도", "grape", "딸기", "strawberry"],
     salad: ["샐러드", "salad", "サラダ", "沙拉", "salade", "salat"],
     egg: ["계란", "달걀", "egg", "卵", "たまご", "鸡蛋", "蛋", "œuf", "ei", "eier"],
+    sidedish: ["볶음", "나물", "무침", "조림", "김치", "젓갈", "장아찌", "전", "튀김", "멸치", "콩자반", "pickled", "kimchi", "漬物", "おかず", "小菜", "泡菜", "banchan"],
 }
 
 const getFoodCategory = (foodName: string): string => {
@@ -3489,22 +3496,21 @@ export default function MealStamp(props: any) {
                     style={{
                         flex: 1,
                         overflowY: "auto",
-                        padding: `0 ${DS.content.paddingX}px`,
+                        padding: `20px ${DS.content.paddingX}px`,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        justifyContent: "center",
                     }}
                 >
                     {/* Card Preview */}
                     <div
                         style={{
                             width: "100%",
-                            maxWidth: selectedAspectRatio.width > selectedAspectRatio.height ? 280 : 220,
-                            boxShadow: "0 20px 60px rgba(0,0,0,0.25)",
+                            maxWidth: selectedAspectRatio.width > selectedAspectRatio.height ? 300 : 240,
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
                             borderRadius: DS.radius.xl,
                             overflow: "hidden",
-                            marginBottom: 16,
+                            marginBottom: 24,
                         }}
                     >
                         {selectedCardType === CARD_TYPES.SIMPLE ? (
@@ -3531,9 +3537,18 @@ export default function MealStamp(props: any) {
                         )}
                     </div>
 
-                    {/* Options Row */}
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
-                        {/* Card Type */}
+                    {/* Card Type Selector */}
+                    <div
+                        style={{
+                            display: "flex",
+                            background: DS.colors.gray[100],
+                            borderRadius: DS.radius.md,
+                            padding: 4,
+                            marginBottom: 16,
+                            width: "100%",
+                            maxWidth: 200,
+                        }}
+                    >
                         {[
                             { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
                             { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
@@ -3542,27 +3557,31 @@ export default function MealStamp(props: any) {
                                 key={item.key}
                                 onClick={() => setSelectedCardType(item.key as any)}
                                 style={{
-                                    padding: "6px 12px",
-                                    fontSize: DS.fontSize.xs,
+                                    flex: 1,
+                                    padding: "10px 16px",
+                                    fontSize: DS.fontSize.sm,
                                     fontWeight: 600,
-                                    color: selectedCardType === item.key ? DS.colors.white : DS.colors.gray[500],
-                                    background: selectedCardType === item.key ? DS.colors.black : DS.colors.gray[100],
+                                    color: selectedCardType === item.key ? DS.colors.black : DS.colors.gray[400],
+                                    background: selectedCardType === item.key ? DS.colors.white : "transparent",
                                     border: "none",
-                                    borderRadius: DS.radius.full,
+                                    borderRadius: DS.radius.md - 2,
                                     cursor: "pointer",
+                                    boxShadow: selectedCardType === item.key ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 4,
+                                    justifyContent: "center",
+                                    gap: 5,
+                                    transition: "all 0.15s ease",
                                 }}
                             >
-                                {item.isPro && <Icon.Sparkle size={9} />}
+                                {item.isPro && <Icon.Sparkle size={10} />}
                                 {t(item.labelKey)}
                             </button>
                         ))}
+                    </div>
 
-                        <div style={{ width: 1, height: 20, background: DS.colors.gray[200], margin: "0 4px" }} />
-
-                        {/* Theme */}
+                    {/* Theme Selector */}
+                    <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
                         {[
                             { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
                             { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
@@ -3577,41 +3596,43 @@ export default function MealStamp(props: any) {
                                         localStorage.setItem(STORAGE.theme, item.key)
                                     }}
                                     style={{
-                                        padding: "6px 10px",
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 600,
-                                        color: selectedTheme === item.key ? DS.colors.white : DS.colors.gray[500],
-                                        background: selectedTheme === item.key ? DS.colors.black : DS.colors.gray[100],
-                                        border: "none",
+                                        padding: "8px 16px",
+                                        fontSize: DS.fontSize.sm,
+                                        fontWeight: 500,
+                                        color: selectedTheme === item.key ? DS.colors.white : DS.colors.gray[600],
+                                        background: selectedTheme === item.key ? DS.colors.black : DS.colors.white,
+                                        border: `1px solid ${selectedTheme === item.key ? DS.colors.black : DS.colors.gray[200]}`,
                                         borderRadius: DS.radius.full,
                                         cursor: "pointer",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: 3,
+                                        gap: 4,
+                                        transition: "all 0.15s ease",
                                     }}
                                 >
-                                    {isProTheme && <Icon.Sparkle size={8} />}
+                                    {isProTheme && <Icon.Sparkle size={9} />}
                                     {item.label}
                                 </button>
                             )
                         })}
                     </div>
 
-                    {/* Aspect Ratio Row */}
-                    <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                    {/* Aspect Ratio Selector */}
+                    <div style={{ display: "flex", gap: 8 }}>
                         {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => (
                             <button
                                 key={ratio.key}
                                 onClick={() => setSelectedAspectRatio(ratio)}
                                 style={{
-                                    padding: "6px 12px",
-                                    fontSize: DS.fontSize.xs,
-                                    fontWeight: 600,
-                                    color: selectedAspectRatio.key === ratio.key ? DS.colors.white : DS.colors.gray[500],
-                                    background: selectedAspectRatio.key === ratio.key ? DS.colors.gray[700] : DS.colors.gray[100],
-                                    border: "none",
+                                    padding: "8px 16px",
+                                    fontSize: DS.fontSize.sm,
+                                    fontWeight: 500,
+                                    color: selectedAspectRatio.key === ratio.key ? DS.colors.white : DS.colors.gray[600],
+                                    background: selectedAspectRatio.key === ratio.key ? DS.colors.gray[800] : DS.colors.white,
+                                    border: `1px solid ${selectedAspectRatio.key === ratio.key ? DS.colors.gray[800] : DS.colors.gray[200]}`,
                                     borderRadius: DS.radius.full,
                                     cursor: "pointer",
+                                    transition: "all 0.15s ease",
                                 }}
                             >
                                 {ratio.key}
@@ -3620,14 +3641,14 @@ export default function MealStamp(props: any) {
                     </div>
                 </div>
 
+                {/* Bottom Buttons */}
                 <div
                     style={{
-                        padding: `14px ${DS.content.paddingX}px`,
-                        paddingBottom: "max(10px, env(safe-area-inset-bottom))",
-                        background: DS.colors.gray[50],
+                        padding: `16px ${DS.content.paddingX}px`,
+                        paddingBottom: "max(16px, env(safe-area-inset-bottom))",
                     }}
                 >
-                    <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+                    <div style={{ display: "flex", gap: 12 }}>
                         <Button
                             variant="secondary"
                             onClick={handleSave}
@@ -3650,7 +3671,6 @@ export default function MealStamp(props: any) {
                             {isSaving ? "..." : t("share")}
                         </Button>
                     </div>
-                    <AdBanner />
                 </div>
             </div>
         )
