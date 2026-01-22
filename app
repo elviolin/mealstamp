@@ -2390,36 +2390,6 @@ const DetailedCard = ({
                         </div>
                     </div>
                 </div>
-
-                {/* Macros Bar */}
-                {(totalCarbs > 0 || totalProtein > 0 || totalFiber > 0) && (
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: 16,
-                            marginTop: 10,
-                            padding: "8px 12px",
-                            background: "rgba(255,255,255,0.1)",
-                            borderRadius: 8,
-                        }}
-                    >
-                        <div style={{ textAlign: "center" }}>
-                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalCarbs}g</div>
-                            <div style={{ fontSize: 9, opacity: 0.6 }}>탄수화물</div>
-                        </div>
-                        <div style={{ width: 1, background: "rgba(255,255,255,0.2)" }} />
-                        <div style={{ textAlign: "center" }}>
-                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalProtein}g</div>
-                            <div style={{ fontSize: 9, opacity: 0.6 }}>단백질</div>
-                        </div>
-                        <div style={{ width: 1, background: "rgba(255,255,255,0.2)" }} />
-                        <div style={{ textAlign: "center" }}>
-                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalFiber}g</div>
-                            <div style={{ fontSize: 9, opacity: 0.6 }}>식이섬유</div>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     )
@@ -2492,7 +2462,7 @@ const HealthCard = ({
                     color: "#fff",
                 }}
             >
-                {/* Food items with macros */}
+                {/* Food items with calories and macros */}
                 <div style={{ marginBottom: 8 }}>
                     {displayFoods.map((food: any, i: number) => (
                         <div
@@ -2510,10 +2480,12 @@ const HealthCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
-                            <div style={{ display: "flex", gap: 8, fontSize: 10, opacity: 0.7 }}>
-                                <span>탄 {food.carbs || 0}</span>
-                                <span>단 {food.protein || 0}</span>
-                                <span>섬 {food.fiber || 0}</span>
+                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
+                                <span style={{ opacity: 0.9, fontWeight: 600 }}>{food.calories || 0}kcal</span>
+                                <span style={{ opacity: 0.5 }}>|</span>
+                                <span style={{ opacity: 0.6 }}>탄{food.carbs || 0}</span>
+                                <span style={{ opacity: 0.6 }}>단{food.protein || 0}</span>
+                                <span style={{ opacity: 0.6 }}>섬{food.fiber || 0}</span>
                             </div>
                         </div>
                     ))}
@@ -2524,39 +2496,13 @@ const HealthCard = ({
                     )}
                 </div>
 
-                {/* Total Macros Bar */}
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "10px 12px",
-                        background: "rgba(255,255,255,0.1)",
-                        borderRadius: 8,
-                        marginBottom: 8,
-                    }}
-                >
-                    <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalCarbs}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>탄수화물</div>
-                    </div>
-                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
-                    <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalProtein}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>단백질</div>
-                    </div>
-                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
-                    <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalFiber}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>식이섬유</div>
-                    </div>
-                </div>
-
                 {/* Time & Calories */}
                 <div
                     style={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "flex-end",
+                        marginBottom: 8,
                     }}
                 >
                     <div>
@@ -2606,6 +2552,32 @@ const HealthCard = ({
                         >
                             KCAL
                         </div>
+                    </div>
+                </div>
+
+                {/* Total Macros Bar - below time/date */}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "10px 12px",
+                        background: "rgba(255,255,255,0.1)",
+                        borderRadius: 8,
+                    }}
+                >
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalCarbs}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>탄수화물</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalProtein}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>단백질</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalFiber}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>식이섬유</div>
                     </div>
                 </div>
             </div>
