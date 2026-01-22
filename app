@@ -633,96 +633,440 @@ const i18n: Record<string, Record<string, string>> = {
 const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
     ko: {
         rice: ["한공기", "반공기", "100g", "150g"],
-        soup: ["1그릇", "한그릇", "200ml", "300ml"],
+        soup: ["1그릇", "한그릇", "200ml", "1인분"],
         drink: ["1잔", "한잔", "200ml", "500ml"],
         meat: ["100g", "150g", "200g", "1인분"],
         bread: ["1개", "한조각", "2조각", "100g"],
         noodle: ["1인분", "한그릇", "150g", "200g"],
         fruit: ["1개", "반개", "100g", "한줌"],
         salad: ["1접시", "한그릇", "100g", "150g"],
-        egg: ["1개", "2개", "3개", "100g"],
+        egg: ["1개", "2개", "3개", "계란후라이 1개"],
         sidedish: ["조금", "적당량", "한젓가락", "50g"],
+        cake: ["한조각", "1조각", "2조각", "1/8개"],
+        pizza: ["1조각", "2조각", "반판", "1판"],
+        sandwich: ["1개", "반개", "1인분", "150g"],
+        burger: ["1개", "세트", "단품", "200g"],
+        snack: ["한봉지", "반봉지", "50g", "100g"],
+        icecream: ["1개", "1스쿱", "2스쿱", "1컵"],
+        sushi: ["1개", "2개", "1접시", "1인분"],
+        dumpling: ["1개", "3개", "5개", "1인분"],
+        cookie: ["1개", "2개", "3개", "50g"],
+        chocolate: ["1개", "1조각", "반개", "30g"],
+        yogurt: ["1개", "1컵", "100g", "200g"],
+        cheese: ["1장", "2장", "30g", "50g"],
+        fish: ["1토막", "반마리", "100g", "1인분"],
+        seafood: ["100g", "150g", "1인분", "한접시"],
+        tofu: ["반모", "1/4모", "100g", "150g"],
+        vegetable: ["한줌", "1접시", "100g", "50g"],
+        nut: ["한줌", "10알", "20알", "30g"],
+        ricecake: ["1개", "2개", "3개", "100g"],
+        porridge: ["한그릇", "반그릇", "200g", "300g"],
+        curry: ["1인분", "한그릇", "200g", "300g"],
+        friedfood: ["1개", "2개", "3개", "100g"],
+        chicken: ["1조각", "2조각", "반마리", "1인분"],
+        taco: ["1개", "2개", "3개", "1인분"],
+        wrap: ["1개", "반개", "1인분", "200g"],
+        pancake: ["1장", "2장", "3장", "1인분"],
+        waffle: ["1개", "반개", "1인분", "150g"],
+        donut: ["1개", "반개", "2개", "100g"],
+        croissant: ["1개", "반개", "2개", "80g"],
+        bagel: ["1개", "반개", "2개", "100g"],
+        muffin: ["1개", "반개", "2개", "100g"],
+        pie: ["1조각", "2조각", "1/6개", "150g"],
+        pudding: ["1개", "1컵", "100g", "150g"],
+        jelly: ["1개", "2개", "100g", "1컵"],
+        cereal: ["한그릇", "1컵", "40g", "60g"],
+        oatmeal: ["한그릇", "1컵", "40g", "60g"],
+        granola: ["한줌", "50g", "100g", "1컵"],
+        smoothie: ["1잔", "1컵", "300ml", "500ml"],
+        milkshake: ["1잔", "1컵", "300ml", "500ml"],
+        latte: ["1잔", "톨", "그란데", "벤티"],
+        wine: ["1잔", "반잔", "150ml", "1병"],
+        beer: ["1캔", "1잔", "500ml", "1병"],
+        soju: ["1잔", "반병", "1병", "소주잔"],
+        cocktail: ["1잔", "반잔", "200ml", "300ml"],
         default: ["1개", "1인분", "100g", "한접시"],
     },
     ja: {
         rice: ["1杯", "半分", "100g", "150g"],
-        soup: ["1杯", "1碗", "200ml", "300ml"],
+        soup: ["1杯", "1碗", "200ml", "1人前"],
         drink: ["1杯", "200ml", "350ml", "500ml"],
         meat: ["100g", "150g", "200g", "1人前"],
         bread: ["1個", "1枚", "2枚", "100g"],
         noodle: ["1人前", "1杯", "150g", "200g"],
         fruit: ["1個", "半分", "100g", "1カップ"],
         salad: ["1皿", "1人前", "100g", "150g"],
-        egg: ["1個", "2個", "3個", "100g"],
+        egg: ["1個", "2個", "3個", "目玉焼き1個"],
         sidedish: ["少々", "適量", "一箸", "50g"],
+        cake: ["1切れ", "2切れ", "1/8個", "1ピース"],
+        pizza: ["1切れ", "2切れ", "半分", "1枚"],
+        sandwich: ["1個", "半分", "1人前", "150g"],
+        burger: ["1個", "セット", "単品", "200g"],
+        snack: ["1袋", "半袋", "50g", "100g"],
+        icecream: ["1個", "1スクープ", "2スクープ", "1カップ"],
+        sushi: ["1貫", "2貫", "1皿", "1人前"],
+        dumpling: ["1個", "3個", "5個", "1人前"],
+        cookie: ["1枚", "2枚", "3枚", "50g"],
+        chocolate: ["1個", "1かけ", "半分", "30g"],
+        yogurt: ["1個", "1カップ", "100g", "200g"],
+        cheese: ["1枚", "2枚", "30g", "50g"],
+        fish: ["1切れ", "半身", "100g", "1人前"],
+        seafood: ["100g", "150g", "1人前", "1皿"],
+        tofu: ["半丁", "1/4丁", "100g", "150g"],
+        vegetable: ["一握り", "1皿", "100g", "50g"],
+        nut: ["一握り", "10粒", "20粒", "30g"],
+        ricecake: ["1個", "2個", "3個", "100g"],
+        porridge: ["1杯", "半分", "200g", "300g"],
+        curry: ["1人前", "1皿", "200g", "300g"],
+        friedfood: ["1個", "2個", "3個", "100g"],
+        chicken: ["1ピース", "2ピース", "半羽", "1人前"],
+        taco: ["1個", "2個", "3個", "1人前"],
+        wrap: ["1個", "半分", "1人前", "200g"],
+        pancake: ["1枚", "2枚", "3枚", "1人前"],
+        waffle: ["1枚", "半分", "1人前", "150g"],
+        donut: ["1個", "半分", "2個", "100g"],
+        croissant: ["1個", "半分", "2個", "80g"],
+        bagel: ["1個", "半分", "2個", "100g"],
+        muffin: ["1個", "半分", "2個", "100g"],
+        pie: ["1切れ", "2切れ", "1/6個", "150g"],
+        pudding: ["1個", "1カップ", "100g", "150g"],
+        jelly: ["1個", "2個", "100g", "1カップ"],
+        cereal: ["1杯", "1カップ", "40g", "60g"],
+        oatmeal: ["1杯", "1カップ", "40g", "60g"],
+        granola: ["一握り", "50g", "100g", "1カップ"],
+        smoothie: ["1杯", "1カップ", "300ml", "500ml"],
+        milkshake: ["1杯", "1カップ", "300ml", "500ml"],
+        latte: ["1杯", "トール", "グランデ", "ベンティ"],
+        wine: ["1杯", "半杯", "150ml", "1本"],
+        beer: ["1缶", "1杯", "500ml", "1本"],
+        soju: ["1杯", "半本", "1本", "小グラス"],
+        cocktail: ["1杯", "半杯", "200ml", "300ml"],
         default: ["1個", "1人前", "100g", "1皿"],
     },
     en: {
         rice: ["1 bowl", "1/2 bowl", "100g", "1 cup"],
-        soup: ["1 bowl", "1 cup", "200ml", "300ml"],
+        soup: ["1 bowl", "1 cup", "200ml", "1 serving"],
         drink: ["1 glass", "1 cup", "200ml", "500ml"],
         meat: ["100g", "150g", "200g", "1 serving"],
         bread: ["1 slice", "2 slices", "1 piece", "100g"],
         noodle: ["1 serving", "1 bowl", "150g", "200g"],
         fruit: ["1 piece", "1/2", "100g", "1 cup"],
         salad: ["1 plate", "1 bowl", "100g", "150g"],
-        egg: ["1 egg", "2 eggs", "3 eggs", "100g"],
+        egg: ["1 egg", "2 eggs", "3 eggs", "fried egg"],
         sidedish: ["a little", "some", "1 tbsp", "50g"],
+        cake: ["1 slice", "2 slices", "1/8", "1 piece"],
+        pizza: ["1 slice", "2 slices", "half", "whole"],
+        sandwich: ["1 whole", "half", "1 serving", "150g"],
+        burger: ["1 burger", "combo", "single", "200g"],
+        snack: ["1 bag", "half bag", "50g", "100g"],
+        icecream: ["1 cone", "1 scoop", "2 scoops", "1 cup"],
+        sushi: ["1 piece", "2 pieces", "1 plate", "1 serving"],
+        dumpling: ["1 piece", "3 pieces", "5 pieces", "1 serving"],
+        cookie: ["1 cookie", "2 cookies", "3 cookies", "50g"],
+        chocolate: ["1 piece", "1 square", "half", "30g"],
+        yogurt: ["1 cup", "1 container", "100g", "200g"],
+        cheese: ["1 slice", "2 slices", "30g", "50g"],
+        fish: ["1 fillet", "half", "100g", "1 serving"],
+        seafood: ["100g", "150g", "1 serving", "1 plate"],
+        tofu: ["half block", "1/4 block", "100g", "150g"],
+        vegetable: ["handful", "1 plate", "100g", "50g"],
+        nut: ["handful", "10 pcs", "20 pcs", "30g"],
+        ricecake: ["1 piece", "2 pieces", "3 pieces", "100g"],
+        porridge: ["1 bowl", "half bowl", "200g", "300g"],
+        curry: ["1 serving", "1 bowl", "200g", "300g"],
+        friedfood: ["1 piece", "2 pieces", "3 pieces", "100g"],
+        chicken: ["1 piece", "2 pieces", "half", "1 serving"],
+        taco: ["1 taco", "2 tacos", "3 tacos", "1 serving"],
+        wrap: ["1 wrap", "half", "1 serving", "200g"],
+        pancake: ["1 pancake", "2 pancakes", "3 pancakes", "1 serving"],
+        waffle: ["1 waffle", "half", "1 serving", "150g"],
+        donut: ["1 donut", "half", "2 donuts", "100g"],
+        croissant: ["1 croissant", "half", "2 croissants", "80g"],
+        bagel: ["1 bagel", "half", "2 bagels", "100g"],
+        muffin: ["1 muffin", "half", "2 muffins", "100g"],
+        pie: ["1 slice", "2 slices", "1/6", "150g"],
+        pudding: ["1 cup", "1 container", "100g", "150g"],
+        jelly: ["1 cup", "2 cups", "100g", "1 serving"],
+        cereal: ["1 bowl", "1 cup", "40g", "60g"],
+        oatmeal: ["1 bowl", "1 cup", "40g", "60g"],
+        granola: ["handful", "50g", "100g", "1 cup"],
+        smoothie: ["1 glass", "1 cup", "300ml", "500ml"],
+        milkshake: ["1 glass", "1 cup", "300ml", "500ml"],
+        latte: ["1 cup", "tall", "grande", "venti"],
+        wine: ["1 glass", "half glass", "150ml", "1 bottle"],
+        beer: ["1 can", "1 glass", "500ml", "1 bottle"],
+        soju: ["1 shot", "half bottle", "1 bottle", "small glass"],
+        cocktail: ["1 glass", "half glass", "200ml", "300ml"],
         default: ["1 piece", "1 serving", "100g", "1 plate"],
     },
     zh: {
         rice: ["一碗", "半碗", "100g", "150g"],
-        soup: ["一碗", "一杯", "200ml", "300ml"],
+        soup: ["一碗", "一杯", "200ml", "一份"],
         drink: ["一杯", "200ml", "350ml", "500ml"],
         meat: ["100g", "150g", "200g", "一份"],
         bread: ["一个", "一片", "两片", "100g"],
         noodle: ["一份", "一碗", "150g", "200g"],
         fruit: ["一个", "半个", "100g", "一把"],
         salad: ["一盘", "一份", "100g", "150g"],
-        egg: ["1个", "2个", "3个", "100g"],
+        egg: ["1个", "2个", "3个", "煎蛋1个"],
         sidedish: ["少许", "适量", "一筷子", "50g"],
+        cake: ["一块", "两块", "1/8个", "一片"],
+        pizza: ["一块", "两块", "半个", "一个"],
+        sandwich: ["一个", "半个", "一份", "150g"],
+        burger: ["一个", "套餐", "单点", "200g"],
+        snack: ["一包", "半包", "50g", "100g"],
+        icecream: ["一个", "一球", "两球", "一杯"],
+        sushi: ["一个", "两个", "一盘", "一份"],
+        dumpling: ["一个", "3个", "5个", "一份"],
+        cookie: ["一块", "两块", "三块", "50g"],
+        chocolate: ["一块", "一小块", "半块", "30g"],
+        yogurt: ["一杯", "一盒", "100g", "200g"],
+        cheese: ["一片", "两片", "30g", "50g"],
+        fish: ["一块", "半条", "100g", "一份"],
+        seafood: ["100g", "150g", "一份", "一盘"],
+        tofu: ["半块", "1/4块", "100g", "150g"],
+        vegetable: ["一把", "一盘", "100g", "50g"],
+        nut: ["一把", "10颗", "20颗", "30g"],
+        ricecake: ["一个", "两个", "三个", "100g"],
+        porridge: ["一碗", "半碗", "200g", "300g"],
+        curry: ["一份", "一碗", "200g", "300g"],
+        friedfood: ["一个", "两个", "三个", "100g"],
+        chicken: ["一块", "两块", "半只", "一份"],
+        taco: ["一个", "两个", "三个", "一份"],
+        wrap: ["一个", "半个", "一份", "200g"],
+        pancake: ["一张", "两张", "三张", "一份"],
+        waffle: ["一个", "半个", "一份", "150g"],
+        donut: ["一个", "半个", "两个", "100g"],
+        croissant: ["一个", "半个", "两个", "80g"],
+        bagel: ["一个", "半个", "两个", "100g"],
+        muffin: ["一个", "半个", "两个", "100g"],
+        pie: ["一块", "两块", "1/6个", "150g"],
+        pudding: ["一杯", "一盒", "100g", "150g"],
+        jelly: ["一杯", "两杯", "100g", "一份"],
+        cereal: ["一碗", "一杯", "40g", "60g"],
+        oatmeal: ["一碗", "一杯", "40g", "60g"],
+        granola: ["一把", "50g", "100g", "一杯"],
+        smoothie: ["一杯", "一份", "300ml", "500ml"],
+        milkshake: ["一杯", "一份", "300ml", "500ml"],
+        latte: ["一杯", "中杯", "大杯", "超大杯"],
+        wine: ["一杯", "半杯", "150ml", "一瓶"],
+        beer: ["一罐", "一杯", "500ml", "一瓶"],
+        soju: ["一杯", "半瓶", "一瓶", "小杯"],
+        cocktail: ["一杯", "半杯", "200ml", "300ml"],
         default: ["一个", "一份", "100g", "一盘"],
     },
     fr: {
         rice: ["1 bol", "1/2 bol", "100g", "150g"],
-        soup: ["1 bol", "1 tasse", "200ml", "300ml"],
+        soup: ["1 bol", "1 tasse", "200ml", "1 portion"],
         drink: ["1 verre", "200ml", "350ml", "500ml"],
         meat: ["100g", "150g", "200g", "1 portion"],
         bread: ["1 tranche", "2 tranches", "1 pièce", "100g"],
         noodle: ["1 portion", "1 assiette", "150g", "200g"],
         fruit: ["1 pièce", "1/2", "100g", "1 poignée"],
         salad: ["1 assiette", "1 bol", "100g", "150g"],
-        egg: ["1 œuf", "2 œufs", "3 œufs", "100g"],
+        egg: ["1 œuf", "2 œufs", "3 œufs", "œuf au plat"],
         sidedish: ["un peu", "modéré", "1 c.à.s", "50g"],
+        cake: ["1 part", "2 parts", "1/8", "1 tranche"],
+        pizza: ["1 part", "2 parts", "1/2", "entière"],
+        sandwich: ["1 entier", "1/2", "1 portion", "150g"],
+        burger: ["1 burger", "menu", "simple", "200g"],
+        snack: ["1 sachet", "1/2 sachet", "50g", "100g"],
+        icecream: ["1 cornet", "1 boule", "2 boules", "1 coupe"],
+        sushi: ["1 pièce", "2 pièces", "1 assiette", "1 portion"],
+        dumpling: ["1 pièce", "3 pièces", "5 pièces", "1 portion"],
+        cookie: ["1 cookie", "2 cookies", "3 cookies", "50g"],
+        chocolate: ["1 pièce", "1 carré", "1/2", "30g"],
+        yogurt: ["1 pot", "1 tasse", "100g", "200g"],
+        cheese: ["1 tranche", "2 tranches", "30g", "50g"],
+        fish: ["1 filet", "1/2", "100g", "1 portion"],
+        seafood: ["100g", "150g", "1 portion", "1 assiette"],
+        tofu: ["1/2 bloc", "1/4 bloc", "100g", "150g"],
+        vegetable: ["1 poignée", "1 assiette", "100g", "50g"],
+        nut: ["1 poignée", "10 pcs", "20 pcs", "30g"],
+        ricecake: ["1 pièce", "2 pièces", "3 pièces", "100g"],
+        porridge: ["1 bol", "1/2 bol", "200g", "300g"],
+        curry: ["1 portion", "1 bol", "200g", "300g"],
+        friedfood: ["1 pièce", "2 pièces", "3 pièces", "100g"],
+        chicken: ["1 morceau", "2 morceaux", "1/2", "1 portion"],
+        taco: ["1 taco", "2 tacos", "3 tacos", "1 portion"],
+        wrap: ["1 wrap", "1/2", "1 portion", "200g"],
+        pancake: ["1 crêpe", "2 crêpes", "3 crêpes", "1 portion"],
+        waffle: ["1 gaufre", "1/2", "1 portion", "150g"],
+        donut: ["1 donut", "1/2", "2 donuts", "100g"],
+        croissant: ["1 croissant", "1/2", "2 croissants", "80g"],
+        bagel: ["1 bagel", "1/2", "2 bagels", "100g"],
+        muffin: ["1 muffin", "1/2", "2 muffins", "100g"],
+        pie: ["1 part", "2 parts", "1/6", "150g"],
+        pudding: ["1 pot", "1 tasse", "100g", "150g"],
+        jelly: ["1 pot", "2 pots", "100g", "1 portion"],
+        cereal: ["1 bol", "1 tasse", "40g", "60g"],
+        oatmeal: ["1 bol", "1 tasse", "40g", "60g"],
+        granola: ["1 poignée", "50g", "100g", "1 tasse"],
+        smoothie: ["1 verre", "1 tasse", "300ml", "500ml"],
+        milkshake: ["1 verre", "1 tasse", "300ml", "500ml"],
+        latte: ["1 tasse", "petit", "moyen", "grand"],
+        wine: ["1 verre", "1/2 verre", "150ml", "1 bouteille"],
+        beer: ["1 canette", "1 verre", "500ml", "1 bouteille"],
+        soju: ["1 verre", "1/2 bout.", "1 bouteille", "petit verre"],
+        cocktail: ["1 verre", "1/2 verre", "200ml", "300ml"],
         default: ["1 pièce", "1 portion", "100g", "1 assiette"],
     },
     de: {
         rice: ["1 Schale", "1/2 Schale", "100g", "150g"],
-        soup: ["1 Schale", "1 Tasse", "200ml", "300ml"],
+        soup: ["1 Schale", "1 Tasse", "200ml", "1 Portion"],
         drink: ["1 Glas", "200ml", "350ml", "500ml"],
         meat: ["100g", "150g", "200g", "1 Portion"],
         bread: ["1 Scheibe", "2 Scheiben", "1 Stück", "100g"],
         noodle: ["1 Portion", "1 Teller", "150g", "200g"],
         fruit: ["1 Stück", "1/2", "100g", "1 Handvoll"],
         salad: ["1 Teller", "1 Schale", "100g", "150g"],
-        egg: ["1 Ei", "2 Eier", "3 Eier", "100g"],
+        egg: ["1 Ei", "2 Eier", "3 Eier", "Spiegelei"],
         sidedish: ["wenig", "etwas", "1 EL", "50g"],
+        cake: ["1 Stück", "2 Stücke", "1/8", "1 Scheibe"],
+        pizza: ["1 Stück", "2 Stücke", "1/2", "ganze"],
+        sandwich: ["1 Stück", "1/2", "1 Portion", "150g"],
+        burger: ["1 Burger", "Menü", "einzeln", "200g"],
+        snack: ["1 Tüte", "1/2 Tüte", "50g", "100g"],
+        icecream: ["1 Kugel", "2 Kugeln", "1 Becher", "1 Waffel"],
+        sushi: ["1 Stück", "2 Stück", "1 Teller", "1 Portion"],
+        dumpling: ["1 Stück", "3 Stück", "5 Stück", "1 Portion"],
+        cookie: ["1 Keks", "2 Kekse", "3 Kekse", "50g"],
+        chocolate: ["1 Stück", "1 Riegel", "1/2", "30g"],
+        yogurt: ["1 Becher", "1 Tasse", "100g", "200g"],
+        cheese: ["1 Scheibe", "2 Scheiben", "30g", "50g"],
+        fish: ["1 Filet", "1/2", "100g", "1 Portion"],
+        seafood: ["100g", "150g", "1 Portion", "1 Teller"],
+        tofu: ["1/2 Block", "1/4 Block", "100g", "150g"],
+        vegetable: ["1 Handvoll", "1 Teller", "100g", "50g"],
+        nut: ["1 Handvoll", "10 Stk", "20 Stk", "30g"],
+        ricecake: ["1 Stück", "2 Stück", "3 Stück", "100g"],
+        porridge: ["1 Schale", "1/2 Schale", "200g", "300g"],
+        curry: ["1 Portion", "1 Teller", "200g", "300g"],
+        friedfood: ["1 Stück", "2 Stück", "3 Stück", "100g"],
+        chicken: ["1 Stück", "2 Stück", "1/2", "1 Portion"],
+        taco: ["1 Taco", "2 Tacos", "3 Tacos", "1 Portion"],
+        wrap: ["1 Wrap", "1/2", "1 Portion", "200g"],
+        pancake: ["1 Pfannkuchen", "2 Pfannkuchen", "3 Pfannkuchen", "1 Portion"],
+        waffle: ["1 Waffel", "1/2", "1 Portion", "150g"],
+        donut: ["1 Donut", "1/2", "2 Donuts", "100g"],
+        croissant: ["1 Croissant", "1/2", "2 Croissants", "80g"],
+        bagel: ["1 Bagel", "1/2", "2 Bagels", "100g"],
+        muffin: ["1 Muffin", "1/2", "2 Muffins", "100g"],
+        pie: ["1 Stück", "2 Stücke", "1/6", "150g"],
+        pudding: ["1 Becher", "1 Tasse", "100g", "150g"],
+        jelly: ["1 Becher", "2 Becher", "100g", "1 Portion"],
+        cereal: ["1 Schale", "1 Tasse", "40g", "60g"],
+        oatmeal: ["1 Schale", "1 Tasse", "40g", "60g"],
+        granola: ["1 Handvoll", "50g", "100g", "1 Tasse"],
+        smoothie: ["1 Glas", "1 Tasse", "300ml", "500ml"],
+        milkshake: ["1 Glas", "1 Tasse", "300ml", "500ml"],
+        latte: ["1 Tasse", "klein", "mittel", "groß"],
+        wine: ["1 Glas", "1/2 Glas", "150ml", "1 Flasche"],
+        beer: ["1 Dose", "1 Glas", "500ml", "1 Flasche"],
+        soju: ["1 Glas", "1/2 Fl.", "1 Flasche", "Schnapsglas"],
+        cocktail: ["1 Glas", "1/2 Glas", "200ml", "300ml"],
         default: ["1 Stück", "1 Portion", "100g", "1 Teller"],
     },
 }
 
-// Food category detection keywords
+// Food category detection keywords (comprehensive multilingual database)
 const FOOD_CATEGORIES: Record<string, string[]> = {
-    rice: ["밥", "rice", "ご飯", "ごはん", "饭", "米饭", "riz", "reis"],
-    soup: ["국", "soup", "stew", "찌개", "汁", "スープ", "汤", "soupe", "suppe", "탕"],
-    drink: ["juice", "주스", "커피", "coffee", "tea", "차", "우유", "milk", "ジュース", "コーヒー", "牛奶", "咖啡", "jus", "café", "saft", "kaffee", "물", "water", "콜라", "cola", "사이다"],
-    meat: ["고기", "meat", "beef", "pork", "chicken", "소고기", "돼지", "닭", "肉", "鷄", "牛", "豚", "鶏", "肉", "牛肉", "viande", "poulet", "fleisch", "huhn", "삼겹살", "갈비"],
-    bread: ["빵", "bread", "toast", "パン", "トースト", "面包", "pain", "brot"],
-    noodle: ["면", "noodle", "pasta", "라면", "うどん", "ラーメン", "面", "麺", "pâtes", "nudeln", "국수", "스파게티", "spaghetti"],
-    fruit: ["사과", "apple", "banana", "바나나", "orange", "오렌지", "りんご", "バナナ", "苹果", "香蕉", "pomme", "banane", "apfel", "과일", "fruit", "포도", "grape", "딸기", "strawberry"],
-    salad: ["샐러드", "salad", "サラダ", "沙拉", "salade", "salat"],
-    egg: ["계란", "달걀", "egg", "卵", "たまご", "鸡蛋", "蛋", "œuf", "ei", "eier"],
-    sidedish: ["볶음", "나물", "무침", "조림", "김치", "젓갈", "장아찌", "전", "튀김", "멸치", "콩자반", "pickled", "kimchi", "漬物", "おかず", "小菜", "泡菜", "banchan"],
+    // Grains & Rice
+    rice: ["밥", "rice", "ご飯", "ごはん", "饭", "米饭", "riz", "reis", "공기밥", "볶음밥", "fried rice", "炒飯", "チャーハン", "비빔밥", "덮밥"],
+    // Soups & Stews
+    soup: ["국", "soup", "stew", "찌개", "汁", "スープ", "汤", "soupe", "suppe", "탕", "전골", "곰탕", "설렁탕", "미소시루", "味噌汁", "pot-au-feu"],
+    // Beverages
+    drink: ["juice", "주스", "커피", "coffee", "tea", "차", "우유", "milk", "ジュース", "コーヒー", "牛奶", "咖啡", "jus", "café", "saft", "kaffee", "물", "water", "콜라", "cola", "사이다", "sprite", "에이드", "ade", "음료"],
+    // Meat dishes
+    meat: ["고기", "meat", "beef", "pork", "소고기", "돼지", "肉", "牛", "豚", "牛肉", "viande", "fleisch", "삼겹살", "갈비", "불고기", "bulgogi", "스테이크", "steak", "ステーキ", "로스", "안심", "등심"],
+    // Bread & Bakery
+    bread: ["빵", "bread", "toast", "パン", "トースト", "面包", "pain", "brot", "식빵", "바게트", "baguette", "모닝빵", "롤빵"],
+    // Noodles & Pasta
+    noodle: ["면", "noodle", "pasta", "라면", "うどん", "ラーメン", "面", "麺", "pâtes", "nudeln", "국수", "스파게티", "spaghetti", "짜장면", "짬뽕", "칼국수", "냉면", "소바", "蕎麦", "pho", "쌀국수"],
+    // Fruits
+    fruit: ["사과", "apple", "banana", "바나나", "orange", "오렌지", "りんご", "バナナ", "苹果", "香蕉", "pomme", "banane", "apfel", "과일", "fruit", "포도", "grape", "딸기", "strawberry", "수박", "watermelon", "참외", "melon", "복숭아", "peach", "배", "pear", "귤", "tangerine", "키위", "kiwi", "망고", "mango", "파인애플", "pineapple", "블루베리", "blueberry", "체리", "cherry"],
+    // Salad & Vegetables
+    salad: ["샐러드", "salad", "サラダ", "沙拉", "salade", "salat", "야채샐러드", "과일샐러드"],
+    vegetable: ["야채", "채소", "vegetable", "野菜", "蔬菜", "légume", "gemüse", "브로콜리", "broccoli", "당근", "carrot", "시금치", "spinach", "양배추", "cabbage", "오이", "cucumber", "토마토", "tomato", "파프리카", "pepper", "양파", "onion"],
+    // Eggs
+    egg: ["계란", "달걀", "egg", "卵", "たまご", "鸡蛋", "蛋", "œuf", "ei", "eier", "계란후라이", "스크램블", "scramble", "오믈렛", "omelette"],
+    // Korean side dishes
+    sidedish: ["볶음", "나물", "무침", "조림", "김치", "젓갈", "장아찌", "전", "멸치", "콩자반", "pickled", "kimchi", "漬物", "おかず", "小菜", "泡菜", "banchan", "깍두기", "반찬"],
+    // Cakes & Desserts
+    cake: ["케이크", "cake", "ケーキ", "蛋糕", "gâteau", "kuchen", "치즈케이크", "cheesecake", "티라미수", "tiramisu", "롤케이크", "roll cake", "생크림케이크", "무스케이크", "mousse"],
+    // Pizza
+    pizza: ["피자", "pizza", "ピザ", "披萨", "피자빵"],
+    // Sandwiches
+    sandwich: ["샌드위치", "sandwich", "サンドイッチ", "三明治", "클럽샌드위치", "에그샌드위치", "BLT", "토스트", "핫도그", "hotdog", "hot dog"],
+    // Burgers
+    burger: ["버거", "burger", "햄버거", "hamburger", "ハンバーガー", "汉堡", "치즈버거", "cheeseburger", "불고기버거", "새우버거"],
+    // Snacks & Chips
+    snack: ["과자", "snack", "chip", "chips", "칩", "お菓子", "零食", "프링글스", "pringles", "나쵸", "nacho", "팝콘", "popcorn", "크래커", "cracker", "비스킷", "biscuit"],
+    // Ice cream
+    icecream: ["아이스크림", "ice cream", "icecream", "アイス", "冰淇淋", "glace", "eis", "젤라또", "gelato", "소프트아이스크림", "soft serve", "빙수", "bingsu", "팥빙수", "sorbet", "셔벗"],
+    // Sushi & Japanese
+    sushi: ["초밥", "스시", "sushi", "寿司", "すし", "롤", "roll", "연어초밥", "참치초밥", "사시미", "sashimi", "회", "刺身"],
+    // Dumplings
+    dumpling: ["만두", "교자", "dumpling", "餃子", "ぎょうざ", "饺子", "군만두", "찐만두", "물만두", "dim sum", "딤섬", "샤오롱바오", "소룡포"],
+    // Cookies
+    cookie: ["쿠키", "cookie", "クッキー", "饼干", "biscuit", "마카롱", "macaron", "마들렌", "madeleine"],
+    // Chocolate & Candy
+    chocolate: ["초콜릿", "chocolate", "チョコ", "巧克力", "chocolat", "schokolade", "사탕", "candy", "캔디", "젤리", "gummy", "캐러멜", "caramel"],
+    // Yogurt
+    yogurt: ["요거트", "요구르트", "yogurt", "ヨーグルト", "酸奶", "yaourt", "joghurt", "그릭요거트", "greek yogurt"],
+    // Cheese
+    cheese: ["치즈", "cheese", "チーズ", "奶酪", "fromage", "käse", "모짜렐라", "mozzarella", "체다", "cheddar", "크림치즈", "cream cheese"],
+    // Fish
+    fish: ["생선", "fish", "魚", "さかな", "鱼", "poisson", "fisch", "연어", "salmon", "참치", "tuna", "고등어", "mackerel", "광어", "우럭", "조기"],
+    // Seafood
+    seafood: ["해산물", "seafood", "海鮮", "シーフード", "海鲜", "fruits de mer", "meeresfrüchte", "새우", "shrimp", "오징어", "squid", "문어", "octopus", "조개", "clam", "굴", "oyster", "게", "crab", "랍스터", "lobster"],
+    // Tofu
+    tofu: ["두부", "tofu", "豆腐", "とうふ", "순두부", "soft tofu", "연두부", "두부조림", "마파두부"],
+    // Nuts
+    nut: ["견과류", "nut", "nuts", "ナッツ", "坚果", "noix", "nüsse", "아몬드", "almond", "호두", "walnut", "땅콩", "peanut", "캐슈넛", "cashew", "피스타치오", "pistachio", "마카다미아", "macadamia"],
+    // Rice cakes
+    ricecake: ["떡", "rice cake", "餅", "もち", "年糕", "가래떡", "인절미", "송편", "떡볶이", "tteokbokki"],
+    // Porridge
+    porridge: ["죽", "porridge", "お粥", "粥", "bouillie", "brei", "전복죽", "호박죽", "팥죽", "오트밀", "oatmeal"],
+    // Curry
+    curry: ["카레", "curry", "カレー", "咖喱", "커리", "일본카레", "인도카레", "태국카레", "그린커리", "레드커리"],
+    // Fried food
+    friedfood: ["튀김", "fried", "fry", "揚げ物", "油炸", "friture", "frittiert", "돈까스", "돈카츠", "tonkatsu", "가츠동", "텐푸라", "tempura", "고로케", "croquette", "치킨까스"],
+    // Chicken
+    chicken: ["치킨", "chicken", "チキン", "鸡肉", "poulet", "hähnchen", "후라이드", "fried chicken", "양념치킨", "닭강정", "닭꼬치", "치킨너겟", "nugget", "윙", "wing"],
+    // Mexican
+    taco: ["타코", "taco", "タコス", "墨西哥卷", "부리또", "burrito", "퀘사디아", "quesadilla", "나쵸", "엔칠라다", "enchilada"],
+    // Wraps
+    wrap: ["랩", "wrap", "ラップ", "卷饼", "또띠아", "tortilla", "월남쌈", "spring roll", "스프링롤"],
+    // Pancakes
+    pancake: ["팬케이크", "pancake", "パンケーキ", "煎饼", "crêpe", "pfannkuchen", "핫케이크", "hotcake", "크레페", "crepe", "전병"],
+    // Waffles
+    waffle: ["와플", "waffle", "ワッフル", "华夫饼", "gaufre", "waffel", "벨기에와플", "크로플", "croffle"],
+    // Donuts
+    donut: ["도넛", "도너츠", "donut", "doughnut", "ドーナツ", "甜甜圈", "beignet", "churro", "츄러스"],
+    // Croissants
+    croissant: ["크루아상", "croissant", "クロワッサン", "可颂", "hörnchen", "페이스트리", "pastry", "파이", "빵"],
+    // Bagels
+    bagel: ["베이글", "bagel", "ベーグル", "贝果", "플레인베이글", "크림치즈베이글"],
+    // Muffins
+    muffin: ["머핀", "muffin", "マフィン", "玛芬", "블루베리머핀", "초코머핀", "컵케이크", "cupcake"],
+    // Pies
+    pie: ["파이", "pie", "パイ", "派", "tarte", "애플파이", "apple pie", "호박파이", "pumpkin pie", "치즈타르트", "에그타르트", "egg tart"],
+    // Pudding
+    pudding: ["푸딩", "pudding", "プリン", "布丁", "flan", "커스터드", "custard", "판나코타", "panna cotta"],
+    // Jelly
+    jelly: ["젤리", "jelly", "ゼリー", "果冻", "gelée", "wackelpudding", "곤약젤리", "konjac"],
+    // Cereal
+    cereal: ["시리얼", "cereal", "シリアル", "麦片", "céréales", "müsli", "콘플레이크", "cornflakes", "그래놀라", "granola", "오트밀"],
+    // Smoothies
+    smoothie: ["스무디", "smoothie", "スムージー", "冰沙", "아사이볼", "acai bowl", "프로틴쉐이크", "protein shake"],
+    // Coffee drinks
+    latte: ["라떼", "latte", "ラテ", "拿铁", "카페라떼", "cafe latte", "바닐라라떼", "카라멜마끼아또", "caramel macchiato", "아메리카노", "americano", "에스프레소", "espresso", "카푸치노", "cappuccino", "모카", "mocha"],
+    // Alcohol
+    wine: ["와인", "wine", "ワイン", "葡萄酒", "vin", "wein", "레드와인", "화이트와인", "로제", "샴페인", "champagne", "스파클링"],
+    beer: ["맥주", "beer", "ビール", "啤酒", "bière", "bier", "생맥주", "draft", "에일", "ale", "라거", "lager", "IPA"],
+    soju: ["소주", "soju", "焼酎", "烧酒", "sake", "사케", "청주", "막걸리", "makgeolli", "동동주", "백세주"],
+    cocktail: ["칵테일", "cocktail", "カクテル", "鸡尾酒", "하이볼", "highball", "모히또", "mojito", "마가리타", "margarita", "상그리아", "sangria"],
 }
 
 const getFoodCategory = (foodName: string): string => {
@@ -1929,22 +2273,27 @@ export default function MealStamp(props: any) {
 
     // Keyboard height detection for mobile
     useEffect(() => {
-        if (typeof window === "undefined" || !window.visualViewport) return
-        const viewport = window.visualViewport
-        let initialHeight = viewport.height
+        if (typeof window === "undefined") return
 
         const handleResize = () => {
-            // Use initial viewport height as reference for keyboard detection
-            if (viewport.height < initialHeight - 50) {
-                setKeyboardHeight(initialHeight - viewport.height)
-            } else {
-                setKeyboardHeight(0)
-                initialHeight = viewport.height // Update reference when keyboard is closed
+            if (window.visualViewport) {
+                const viewportHeight = window.visualViewport.height
+                const windowHeight = window.innerHeight
+                const diff = windowHeight - viewportHeight
+                setKeyboardHeight(diff > 100 ? diff : 0)
             }
         }
-        viewport.addEventListener("resize", handleResize)
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", handleResize)
+            window.visualViewport.addEventListener("scroll", handleResize)
+        }
+
         return () => {
-            viewport.removeEventListener("resize", handleResize)
+            if (window.visualViewport) {
+                window.visualViewport.removeEventListener("resize", handleResize)
+                window.visualViewport.removeEventListener("scroll", handleResize)
+            }
         }
     }, [])
 
@@ -3491,24 +3840,22 @@ export default function MealStamp(props: any) {
                         flex: 1,
                         display: "flex",
                         flexDirection: "column",
-                        overflow: "hidden",
+                        overflowY: "auto",
+                        padding: `24px ${DS.content.paddingX}px`,
                     }}
                 >
-                    {/* Card Preview Area - Fixed Height */}
+                    {/* Card Preview */}
                     <div
                         style={{
-                            flex: 1,
                             display: "flex",
-                            alignItems: "center",
                             justifyContent: "center",
-                            padding: `16px ${DS.content.paddingX}px`,
-                            minHeight: 0,
+                            marginBottom: 24,
                         }}
                     >
                         <div
                             style={{
                                 width: "100%",
-                                maxWidth: 220,
+                                maxWidth: 200,
                                 boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
                                 borderRadius: DS.radius.xl,
                                 overflow: "hidden",
@@ -3539,16 +3886,13 @@ export default function MealStamp(props: any) {
                         </div>
                     </div>
 
-                    {/* Options Toolbar - Fixed Position */}
+                    {/* Options */}
                     <div
                         style={{
-                            padding: `16px ${DS.content.paddingX}px`,
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
                             gap: 12,
-                            background: DS.colors.gray[50],
-                            borderTop: `1px solid ${DS.colors.gray[100]}`,
                         }}
                     >
                         {/* Card Type Toggle - Camera Style */}
@@ -3658,38 +4002,33 @@ export default function MealStamp(props: any) {
                                 )
                             })}
                         </div>
-                    </div>
-                </div>
 
-                {/* Bottom Buttons */}
-                <div
-                    style={{
-                        padding: `16px ${DS.content.paddingX}px`,
-                        paddingBottom: "max(16px, env(safe-area-inset-bottom))",
-                    }}
-                >
-                    <div style={{ display: "flex", gap: 12 }}>
-                        <Button
-                            variant="secondary"
-                            onClick={handleSave}
-                            disabled={isSaving}
-                            style={{ flex: 1 }}
-                        >
-                            {isProFeature && !isPro && !sessionPaid && (
-                                <Icon.Sparkle size={12} />
-                            )}
-                            {isSaving ? "..." : t("save")}
-                        </Button>
-                        <Button
-                            onClick={handleShare}
-                            disabled={isSaving}
-                            style={{ flex: 1 }}
-                        >
-                            {isProFeature && !isPro && !sessionPaid && (
-                                <Icon.Sparkle size={12} />
-                            )}
-                            {isSaving ? "..." : t("share")}
-                        </Button>
+                        {/* Bottom Buttons */}
+                        <div style={{ width: "100%", marginTop: 24 }}>
+                            <div style={{ display: "flex", gap: 12 }}>
+                                <Button
+                                    variant="secondary"
+                                    onClick={handleSave}
+                                    disabled={isSaving}
+                                    style={{ flex: 1 }}
+                                >
+                                    {isProFeature && !isPro && !sessionPaid && (
+                                        <Icon.Sparkle size={12} />
+                                    )}
+                                    {isSaving ? "..." : t("save")}
+                                </Button>
+                                <Button
+                                    onClick={handleShare}
+                                    disabled={isSaving}
+                                    style={{ flex: 1 }}
+                                >
+                                    {isProFeature && !isPro && !sessionPaid && (
+                                        <Icon.Sparkle size={12} />
+                                    )}
+                                    {isSaving ? "..." : t("share")}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
