@@ -150,10 +150,23 @@ if (typeof document !== "undefined") {
         const style = document.createElement("style")
         style.id = "ms-global-styles"
         style.textContent = `
-            button { -webkit-tap-highlight-color: transparent; }
+            * { -webkit-tap-highlight-color: transparent; }
+            button { transition: all 0.15s ease; }
             button:active:not(:disabled) { transform: scale(0.97); }
             button:hover:not(:disabled) { filter: brightness(0.95); }
-            input:focus { outline: none; box-shadow: 0 0 0 2px rgba(0,0,0,0.1); }
+            input {
+                transition: all 0.15s ease;
+                -webkit-appearance: none;
+            }
+            input:focus {
+                outline: none;
+                background: #f8f8f8 !important;
+            }
+            input::placeholder {
+                color: #bbb;
+            }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         `
         document.head.appendChild(style)
     }
@@ -1592,9 +1605,10 @@ const SimpleCard = ({
                     bottom: -1,
                     left: -1,
                     right: -1,
-                    height: "52%",
-                    background:
-                        "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
+                    height: isNeon ? "60%" : "52%",
+                    background: isNeon
+                        ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(138,43,226,0.3) 40%, rgba(0,255,255,0.15) 70%, transparent 100%)"
+                        : "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
                     pointerEvents: "none",
                 }}
             />
@@ -1604,7 +1618,7 @@ const SimpleCard = ({
                     bottom: 20,
                     left: 20,
                     right: 20,
-                    color: "#fff",
+                    color: isNeon ? "#00ffff" : "#fff",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "flex-end",
@@ -1618,6 +1632,7 @@ const SimpleCard = ({
                             fontWeight: 700,
                             letterSpacing: isSpecialTheme ? 1 : -1,
                             lineHeight: 1,
+                            textShadow: isNeon ? "0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #8a2be2" : undefined,
                             ...glowStyle,
                         }}
                     >
@@ -1714,9 +1729,10 @@ const DetailedCard = ({
                     bottom: -1,
                     left: -1,
                     right: -1,
-                    height: "72%",
-                    background:
-                        "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
+                    height: isNeon ? "78%" : "72%",
+                    background: isNeon
+                        ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(138,43,226,0.35) 50%, rgba(0,255,255,0.2) 75%, transparent 100%)"
+                        : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
                     pointerEvents: "none",
                 }}
             />
@@ -1726,7 +1742,7 @@ const DetailedCard = ({
                     bottom: 16,
                     left: 16,
                     right: 16,
-                    color: "#fff",
+                    color: isNeon ? "#00ffff" : "#fff",
                 }}
             >
                 <div style={{ marginBottom: 12 }}>
@@ -1740,17 +1756,18 @@ const DetailedCard = ({
                                 fontSize: 13,
                                 borderBottom:
                                     i < displayFoods.length - 1
-                                        ? "1px solid rgba(255,255,255,0.1)"
+                                        ? `1px solid ${isNeon ? "rgba(0,255,255,0.15)" : "rgba(255,255,255,0.1)"}`
                                         : "none",
                             }}
                         >
-                            <span style={{ opacity: 0.85 }}>{food.name}</span>
+                            <span style={{ opacity: isNeon ? 0.9 : 0.85 }}>{food.name}</span>
                             <span
                                 style={{
                                     fontFamily: isSpecialTheme
                                         ? fontStyle
                                         : "inherit",
                                     fontWeight: 600,
+                                    textShadow: isNeon ? "0 0 8px #00ffff" : undefined,
                                 }}
                             >
                                 {food.calories}
@@ -1776,7 +1793,7 @@ const DetailedCard = ({
                         justifyContent: "space-between",
                         alignItems: "flex-end",
                         paddingTop: 10,
-                        borderTop: "1px solid rgba(255,255,255,0.15)",
+                        borderTop: `1px solid ${isNeon ? "rgba(0,255,255,0.2)" : "rgba(255,255,255,0.15)"}`,
                     }}
                 >
                     <div>
@@ -1787,6 +1804,7 @@ const DetailedCard = ({
                                 fontWeight: 700,
                                 letterSpacing: isSpecialTheme ? 1 : -1,
                                 lineHeight: 1,
+                                textShadow: isNeon ? "0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #8a2be2" : undefined,
                                 ...glowStyle,
                             }}
                         >
@@ -3054,9 +3072,14 @@ export default function MealStamp(props: any) {
                             key={i}
                             style={{
                                 background: DS.colors.white,
-                                borderRadius: DS.radius.sm,
-                                padding: "10px 12px",
-                                marginBottom: 8,
+                                borderRadius: DS.radius.md,
+                                padding: "12px 14px",
+                                marginBottom: 10,
+                                boxShadow: focusedFoodIndex === i
+                                    ? "0 2px 12px rgba(0,0,0,0.1), 0 0 0 2px rgba(0,0,0,0.05)"
+                                    : "0 1px 3px rgba(0,0,0,0.04)",
+                                border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[100]}`,
+                                transition: "all 0.2s ease",
                             }}
                         >
                             <div
@@ -3274,38 +3297,40 @@ export default function MealStamp(props: any) {
                                     </span>
                                 </div>
                             </div>
-                            {/* Amount suggestions */}
-                            {focusedFoodIndex === i && food.name && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        gap: 6,
-                                        marginTop: 8,
-                                        animation: "fadeIn 0.15s ease-out",
-                                    }}
-                                >
-                                    {getAmountSuggestions(food.name, lang).map((suggestion, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => handleFoodChange(i, "amount", suggestion)}
-                                            style={{
-                                                padding: "6px 12px",
-                                                fontSize: DS.fontSize.xs,
-                                                fontWeight: 500,
-                                                color: DS.colors.gray[700],
-                                                background: DS.colors.gray[100],
-                                                border: "none",
-                                                borderRadius: DS.radius.full,
-                                                cursor: "pointer",
-                                                transition: DS.transition.fast,
-                                            }}
-                                        >
-                                            {suggestion}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                            {/* Amount suggestions - always render, animate visibility */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexWrap: "wrap",
+                                    gap: 6,
+                                    marginTop: focusedFoodIndex === i && food.name ? 10 : 0,
+                                    maxHeight: focusedFoodIndex === i && food.name ? 80 : 0,
+                                    opacity: focusedFoodIndex === i && food.name ? 1 : 0,
+                                    overflow: "hidden",
+                                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                                }}
+                            >
+                                {getAmountSuggestions(food.name || "", lang).map((suggestion, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleFoodChange(i, "amount", suggestion)}
+                                        style={{
+                                            padding: "7px 14px",
+                                            fontSize: DS.fontSize.xs,
+                                            fontWeight: 600,
+                                            color: food.amount === suggestion ? DS.colors.white : DS.colors.gray[600],
+                                            background: food.amount === suggestion ? DS.colors.black : DS.colors.gray[100],
+                                            border: "none",
+                                            borderRadius: DS.radius.full,
+                                            cursor: "pointer",
+                                            transition: DS.transition.fast,
+                                            whiteSpace: "nowrap",
+                                        }}
+                                    >
+                                        {suggestion}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -3316,12 +3341,13 @@ export default function MealStamp(props: any) {
                         bottom: keyboardHeight,
                         left: 0,
                         right: 0,
-                        padding: `10px ${DS.content.paddingX}px`,
-                        paddingBottom: keyboardHeight > 0 ? 10 : "max(14px, env(safe-area-inset-bottom))",
-                        background: DS.colors.gray[50],
+                        padding: `12px ${DS.content.paddingX}px`,
+                        paddingBottom: keyboardHeight > 0 ? 14 : "max(16px, env(safe-area-inset-bottom))",
+                        background: keyboardHeight > 0 ? DS.colors.white : DS.colors.gray[50],
+                        borderTop: keyboardHeight > 0 ? `1px solid ${DS.colors.gray[200]}` : "none",
                         zIndex: 100,
-                        transition: "bottom 0.15s ease-out, padding-bottom 0.15s ease-out",
-                        boxShadow: keyboardHeight > 0 ? "0 -2px 10px rgba(0,0,0,0.05)" : "none",
+                        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                        boxShadow: keyboardHeight > 0 ? "0 -4px 20px rgba(0,0,0,0.08)" : "none",
                     }}
                 >
                     <button
@@ -3458,7 +3484,7 @@ export default function MealStamp(props: any) {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        paddingTop: 16,
+                        paddingTop: 10,
                     }}
                 >
                     <div
@@ -3467,7 +3493,7 @@ export default function MealStamp(props: any) {
                             background: DS.colors.gray[200],
                             borderRadius: DS.radius.sm,
                             padding: 3,
-                            marginBottom: 20,
+                            marginBottom: 12,
                             width: "100%",
                             maxWidth: 240,
                         }}
@@ -3517,7 +3543,7 @@ export default function MealStamp(props: any) {
                         ))}
                     </div>
 
-                    <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+                    <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
                         {[
                             {
                                 key: CARD_THEMES.DEFAULT,
