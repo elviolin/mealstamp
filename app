@@ -2417,6 +2417,25 @@ const HealthCard = ({
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
     const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
 
+    // Macro labels by language
+    const macroLabels = {
+        ko: { carbs: "탄", protein: "단", fat: "지", fiber: "섬" },
+        en: { carbs: "C", protein: "P", fat: "F", fiber: "F" },
+        ja: { carbs: "炭", protein: "蛋", fat: "脂", fiber: "繊" },
+        zh: { carbs: "碳", protein: "蛋", fat: "脂", fiber: "纤" },
+        fr: { carbs: "G", protein: "P", fat: "L", fiber: "F" },
+        de: { carbs: "K", protein: "E", fat: "F", fiber: "B" },
+    }[lang] || { carbs: "C", protein: "P", fat: "F", fiber: "F" }
+
+    const macroFullLabels = {
+        ko: { carbs: "탄수화물", protein: "단백질", fat: "지방", fiber: "식이섬유" },
+        en: { carbs: "Carbs", protein: "Protein", fat: "Fat", fiber: "Fiber" },
+        ja: { carbs: "炭水化物", protein: "タンパク質", fat: "脂質", fiber: "食物繊維" },
+        zh: { carbs: "碳水", protein: "蛋白质", fat: "脂肪", fiber: "纤维" },
+        fr: { carbs: "Glucides", protein: "Protéines", fat: "Lipides", fiber: "Fibres" },
+        de: { carbs: "Kohlenh.", protein: "Eiweiß", fat: "Fett", fiber: "Ballast." },
+    }[lang] || { carbs: "Carbs", protein: "Protein", fat: "Fat", fiber: "Fiber" }
+
     return (
         <div
             ref={cardRef}
@@ -2482,11 +2501,11 @@ const HealthCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
-                            <div style={{ display: "flex", gap: 5, fontSize: 9, alignItems: "center" }}>
-                                <span style={{ opacity: 0.55 }}>탄수화물 {food.carbs || 0}</span>
-                                <span style={{ opacity: 0.55 }}>단백질 {food.protein || 0}</span>
-                                <span style={{ opacity: 0.55 }}>지방 {food.fat || 0}</span>
-                                <span style={{ opacity: 0.55 }}>식이섬유 {food.fiber || 0}</span>
+                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
+                                <span style={{ opacity: 0.55 }}>{macroLabels.carbs}{food.carbs || 0}</span>
+                                <span style={{ opacity: 0.55 }}>{macroLabels.protein}{food.protein || 0}</span>
+                                <span style={{ opacity: 0.55 }}>{macroLabels.fat}{food.fat || 0}</span>
+                                <span style={{ opacity: 0.55 }}>{macroLabels.fiber}{food.fiber || 0}</span>
                                 <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2 }}>{food.calories || 0}kcal</span>
                             </div>
                         </div>
@@ -2569,22 +2588,22 @@ const HealthCard = ({
                 >
                     <div style={{ textAlign: "center", flex: 1 }}>
                         <div style={{ fontSize: 14, fontWeight: 700 }}>{totalCarbs}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>탄수화물</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.carbs}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
                         <div style={{ fontSize: 14, fontWeight: 700 }}>{totalProtein}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>단백질</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.protein}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
                         <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFat}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>지방</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fat}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
                         <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFiber}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>식이섬유</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
                     </div>
                 </div>
             </div>
