@@ -609,6 +609,113 @@ const i18n: Record<string, Record<string, string>> = {
 }
 
 // ============================================
+// Amount Suggestions by Food Category (6 languages)
+// ============================================
+const AMOUNT_SUGGESTIONS: Record<string, Record<string, string[]>> = {
+    ko: {
+        rice: ["한공기", "반공기", "100g", "150g"],
+        soup: ["1그릇", "한그릇", "200ml", "300ml"],
+        drink: ["1잔", "한잔", "200ml", "500ml"],
+        meat: ["100g", "150g", "200g", "1인분"],
+        bread: ["1개", "한조각", "2조각", "100g"],
+        noodle: ["1인분", "한그릇", "150g", "200g"],
+        fruit: ["1개", "반개", "100g", "한줌"],
+        salad: ["1접시", "한그릇", "100g", "150g"],
+        egg: ["1개", "2개", "3개", "100g"],
+        default: ["1개", "1인분", "100g", "한접시"],
+    },
+    ja: {
+        rice: ["1杯", "半分", "100g", "150g"],
+        soup: ["1杯", "1碗", "200ml", "300ml"],
+        drink: ["1杯", "200ml", "350ml", "500ml"],
+        meat: ["100g", "150g", "200g", "1人前"],
+        bread: ["1個", "1枚", "2枚", "100g"],
+        noodle: ["1人前", "1杯", "150g", "200g"],
+        fruit: ["1個", "半分", "100g", "1カップ"],
+        salad: ["1皿", "1人前", "100g", "150g"],
+        egg: ["1個", "2個", "3個", "100g"],
+        default: ["1個", "1人前", "100g", "1皿"],
+    },
+    en: {
+        rice: ["1 bowl", "1/2 bowl", "100g", "1 cup"],
+        soup: ["1 bowl", "1 cup", "200ml", "300ml"],
+        drink: ["1 glass", "1 cup", "200ml", "500ml"],
+        meat: ["100g", "150g", "200g", "1 serving"],
+        bread: ["1 slice", "2 slices", "1 piece", "100g"],
+        noodle: ["1 serving", "1 bowl", "150g", "200g"],
+        fruit: ["1 piece", "1/2", "100g", "1 cup"],
+        salad: ["1 plate", "1 bowl", "100g", "150g"],
+        egg: ["1 egg", "2 eggs", "3 eggs", "100g"],
+        default: ["1 piece", "1 serving", "100g", "1 plate"],
+    },
+    zh: {
+        rice: ["一碗", "半碗", "100g", "150g"],
+        soup: ["一碗", "一杯", "200ml", "300ml"],
+        drink: ["一杯", "200ml", "350ml", "500ml"],
+        meat: ["100g", "150g", "200g", "一份"],
+        bread: ["一个", "一片", "两片", "100g"],
+        noodle: ["一份", "一碗", "150g", "200g"],
+        fruit: ["一个", "半个", "100g", "一把"],
+        salad: ["一盘", "一份", "100g", "150g"],
+        egg: ["1个", "2个", "3个", "100g"],
+        default: ["一个", "一份", "100g", "一盘"],
+    },
+    fr: {
+        rice: ["1 bol", "1/2 bol", "100g", "150g"],
+        soup: ["1 bol", "1 tasse", "200ml", "300ml"],
+        drink: ["1 verre", "200ml", "350ml", "500ml"],
+        meat: ["100g", "150g", "200g", "1 portion"],
+        bread: ["1 tranche", "2 tranches", "1 pièce", "100g"],
+        noodle: ["1 portion", "1 assiette", "150g", "200g"],
+        fruit: ["1 pièce", "1/2", "100g", "1 poignée"],
+        salad: ["1 assiette", "1 bol", "100g", "150g"],
+        egg: ["1 œuf", "2 œufs", "3 œufs", "100g"],
+        default: ["1 pièce", "1 portion", "100g", "1 assiette"],
+    },
+    de: {
+        rice: ["1 Schale", "1/2 Schale", "100g", "150g"],
+        soup: ["1 Schale", "1 Tasse", "200ml", "300ml"],
+        drink: ["1 Glas", "200ml", "350ml", "500ml"],
+        meat: ["100g", "150g", "200g", "1 Portion"],
+        bread: ["1 Scheibe", "2 Scheiben", "1 Stück", "100g"],
+        noodle: ["1 Portion", "1 Teller", "150g", "200g"],
+        fruit: ["1 Stück", "1/2", "100g", "1 Handvoll"],
+        salad: ["1 Teller", "1 Schale", "100g", "150g"],
+        egg: ["1 Ei", "2 Eier", "3 Eier", "100g"],
+        default: ["1 Stück", "1 Portion", "100g", "1 Teller"],
+    },
+}
+
+// Food category detection keywords
+const FOOD_CATEGORIES: Record<string, string[]> = {
+    rice: ["밥", "rice", "ご飯", "ごはん", "饭", "米饭", "riz", "reis"],
+    soup: ["국", "soup", "stew", "찌개", "汁", "スープ", "汤", "soupe", "suppe", "탕"],
+    drink: ["juice", "주스", "커피", "coffee", "tea", "차", "우유", "milk", "ジュース", "コーヒー", "牛奶", "咖啡", "jus", "café", "saft", "kaffee", "물", "water", "콜라", "cola", "사이다"],
+    meat: ["고기", "meat", "beef", "pork", "chicken", "소고기", "돼지", "닭", "肉", "鷄", "牛", "豚", "鶏", "肉", "牛肉", "viande", "poulet", "fleisch", "huhn", "삼겹살", "갈비"],
+    bread: ["빵", "bread", "toast", "パン", "トースト", "面包", "pain", "brot"],
+    noodle: ["면", "noodle", "pasta", "라면", "うどん", "ラーメン", "面", "麺", "pâtes", "nudeln", "국수", "스파게티", "spaghetti"],
+    fruit: ["사과", "apple", "banana", "바나나", "orange", "오렌지", "りんご", "バナナ", "苹果", "香蕉", "pomme", "banane", "apfel", "과일", "fruit", "포도", "grape", "딸기", "strawberry"],
+    salad: ["샐러드", "salad", "サラダ", "沙拉", "salade", "salat"],
+    egg: ["계란", "달걀", "egg", "卵", "たまご", "鸡蛋", "蛋", "œuf", "ei", "eier"],
+}
+
+const getFoodCategory = (foodName: string): string => {
+    const lower = foodName.toLowerCase()
+    for (const [category, keywords] of Object.entries(FOOD_CATEGORIES)) {
+        if (keywords.some(keyword => lower.includes(keyword.toLowerCase()))) {
+            return category
+        }
+    }
+    return "default"
+}
+
+const getAmountSuggestions = (foodName: string, lang: string): string[] => {
+    const category = getFoodCategory(foodName)
+    const langSuggestions = AMOUNT_SUGGESTIONS[lang] || AMOUNT_SUGGESTIONS.en
+    return langSuggestions[category] || langSuggestions.default
+}
+
+// ============================================
 // Utility Functions
 // ============================================
 const formatTimestamp = (
@@ -1762,6 +1869,8 @@ export default function MealStamp(props: any) {
     const [proCodeInput, setProCodeInput] = useState("")
     const [proCodeError, setProCodeError] = useState("")
     const [savingType, setSavingType] = useState<"save" | "share" | null>(null)
+    const [keyboardHeight, setKeyboardHeight] = useState(0)
+    const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -1770,6 +1879,7 @@ export default function MealStamp(props: any) {
     const simpleCardRef = useRef<HTMLDivElement>(null)
     const detailedCardRef = useRef<HTMLDivElement>(null)
     const streamRef = useRef<MediaStream | null>(null)
+    const foodInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
     useEffect(() => {
         const k = localStorage.getItem(STORAGE.apiKey)
@@ -1789,6 +1899,22 @@ export default function MealStamp(props: any) {
             setScreen(SCREENS.CAMERA)
         } else {
             setLang(detectSystemLanguage())
+        }
+    }, [])
+
+    // Keyboard height detection for mobile
+    useEffect(() => {
+        if (typeof window === "undefined" || !window.visualViewport) return
+        const viewport = window.visualViewport
+        const handleResize = () => {
+            const height = window.innerHeight - viewport.height
+            setKeyboardHeight(height > 50 ? height : 0)
+        }
+        viewport.addEventListener("resize", handleResize)
+        viewport.addEventListener("scroll", handleResize)
+        return () => {
+            viewport.removeEventListener("resize", handleResize)
+            viewport.removeEventListener("scroll", handleResize)
         }
     }, [])
 
@@ -2919,7 +3045,8 @@ export default function MealStamp(props: any) {
                         overflowX: "hidden",
                         WebkitOverflowScrolling: "touch",
                         padding: `0 ${DS.content.paddingX - 4}px`,
-                        paddingBottom: 130,
+                        paddingBottom: 130 + keyboardHeight,
+                        transition: "padding-bottom 0.15s ease-out",
                     }}
                 >
                     {foods.map((food, i) => (
@@ -2942,6 +3069,7 @@ export default function MealStamp(props: any) {
                             >
                                 <div style={{ flex: 1, position: "relative" }}>
                                     <input
+                                        ref={(el) => (foodInputRefs.current[i] = el)}
                                         type="text"
                                         value={food.name}
                                         onChange={(e) =>
@@ -2951,6 +3079,8 @@ export default function MealStamp(props: any) {
                                                 e.target.value
                                             )
                                         }
+                                        onFocus={() => setFocusedFoodIndex(i)}
+                                        onBlur={() => setTimeout(() => setFocusedFoodIndex(null), 150)}
                                         placeholder={t("foodName")}
                                         style={{
                                             ...input,
@@ -3053,6 +3183,8 @@ export default function MealStamp(props: any) {
                                                 e.target.value
                                             )
                                         }
+                                        onFocus={() => setFocusedFoodIndex(i)}
+                                        onBlur={() => setTimeout(() => setFocusedFoodIndex(null), 150)}
                                         placeholder={t("amount")}
                                         style={{
                                             ...input,
@@ -3142,6 +3274,38 @@ export default function MealStamp(props: any) {
                                     </span>
                                 </div>
                             </div>
+                            {/* Amount suggestions */}
+                            {focusedFoodIndex === i && food.name && (
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexWrap: "wrap",
+                                        gap: 6,
+                                        marginTop: 8,
+                                        animation: "fadeIn 0.15s ease-out",
+                                    }}
+                                >
+                                    {getAmountSuggestions(food.name, lang).map((suggestion, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleFoodChange(i, "amount", suggestion)}
+                                            style={{
+                                                padding: "6px 12px",
+                                                fontSize: DS.fontSize.xs,
+                                                fontWeight: 500,
+                                                color: DS.colors.gray[700],
+                                                background: DS.colors.gray[100],
+                                                border: "none",
+                                                borderRadius: DS.radius.full,
+                                                cursor: "pointer",
+                                                transition: DS.transition.fast,
+                                            }}
+                                        >
+                                            {suggestion}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -3149,22 +3313,28 @@ export default function MealStamp(props: any) {
                 <div
                     style={{
                         position: "absolute",
-                        bottom: 0,
+                        bottom: keyboardHeight,
                         left: 0,
                         right: 0,
                         padding: `10px ${DS.content.paddingX}px`,
-                        paddingBottom: "max(14px, env(safe-area-inset-bottom))",
+                        paddingBottom: keyboardHeight > 0 ? 10 : "max(14px, env(safe-area-inset-bottom))",
                         background: DS.colors.gray[50],
                         zIndex: 100,
+                        transition: "bottom 0.15s ease-out, padding-bottom 0.15s ease-out",
+                        boxShadow: keyboardHeight > 0 ? "0 -2px 10px rgba(0,0,0,0.05)" : "none",
                     }}
                 >
                     <button
-                        onClick={() =>
+                        onClick={() => {
                             setFoods([
                                 { name: "", amount: "", calories: "" },
                                 ...foods,
                             ])
-                        }
+                            // Auto focus on new food input
+                            setTimeout(() => {
+                                foodInputRefs.current[0]?.focus()
+                            }, 50)
+                        }}
                         style={{
                             width: "100%",
                             padding: 11,
