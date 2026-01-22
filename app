@@ -2317,7 +2317,7 @@ const DetailedCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.85 }}>{food.name}</span>
-                            <span style={{ fontWeight: 600, fontFamily: isSpecialTheme ? fontStyle : "inherit" }}>
+                            <span style={{ fontWeight: 600 }}>
                                 {food.calories} <span style={{ fontWeight: 400, fontSize: foodFontSize * 0.85, opacity: 0.7 }}>kcal</span>
                             </span>
                         </div>
@@ -2511,12 +2511,12 @@ const HealthCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
-                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center", fontFamily: fontStyle }}>
+                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.carbs}{food.carbs || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.protein}{food.protein || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fat}{food.fat || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fiber}{food.fiber || 0}</span>
-                                <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2, ...glowStyle }}>{food.calories || 0}kcal</span>
+                                <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2 }}>{food.calories || 0}kcal</span>
                             </div>
                         </div>
                     ))}
