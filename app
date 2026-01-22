@@ -1605,10 +1605,9 @@ const SimpleCard = ({
                     bottom: -1,
                     left: -1,
                     right: -1,
-                    height: isNeon ? "60%" : "52%",
-                    background: isNeon
-                        ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(138,43,226,0.3) 40%, rgba(0,255,255,0.15) 70%, transparent 100%)"
-                        : "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
+                    height: "52%",
+                    background:
+                        "linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)",
                     pointerEvents: "none",
                 }}
             />
@@ -1618,7 +1617,7 @@ const SimpleCard = ({
                     bottom: 20,
                     left: 20,
                     right: 20,
-                    color: isNeon ? "#00ffff" : "#fff",
+                    color: "#fff",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "flex-end",
@@ -1632,7 +1631,6 @@ const SimpleCard = ({
                             fontWeight: 700,
                             letterSpacing: isSpecialTheme ? 1 : -1,
                             lineHeight: 1,
-                            textShadow: isNeon ? "0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #8a2be2" : undefined,
                             ...glowStyle,
                         }}
                     >
@@ -1642,7 +1640,7 @@ const SimpleCard = ({
                         style={{
                             fontFamily: isSpecialTheme ? fontStyle : "inherit",
                             fontSize: subFontSize,
-                            opacity: isNeon ? 0.9 : 0.6,
+                            opacity: 0.6,
                             marginTop: 4,
                         }}
                     >
@@ -1666,7 +1664,7 @@ const SimpleCard = ({
                         style={{
                             fontFamily: isSpecialTheme ? fontStyle : "inherit",
                             fontSize: subFontSize,
-                            opacity: isNeon ? 0.9 : 0.6,
+                            opacity: 0.6,
                             marginTop: 4,
                         }}
                     >
@@ -1729,10 +1727,9 @@ const DetailedCard = ({
                     bottom: -1,
                     left: -1,
                     right: -1,
-                    height: isNeon ? "78%" : "72%",
-                    background: isNeon
-                        ? "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(138,43,226,0.35) 50%, rgba(0,255,255,0.2) 75%, transparent 100%)"
-                        : "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
+                    height: "72%",
+                    background:
+                        "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
                     pointerEvents: "none",
                 }}
             />
@@ -1742,7 +1739,7 @@ const DetailedCard = ({
                     bottom: 16,
                     left: 16,
                     right: 16,
-                    color: isNeon ? "#00ffff" : "#fff",
+                    color: "#fff",
                 }}
             >
                 <div style={{ marginBottom: 12 }}>
@@ -1756,18 +1753,17 @@ const DetailedCard = ({
                                 fontSize: 13,
                                 borderBottom:
                                     i < displayFoods.length - 1
-                                        ? `1px solid ${isNeon ? "rgba(0,255,255,0.15)" : "rgba(255,255,255,0.1)"}`
+                                        ? "1px solid rgba(255,255,255,0.1)"
                                         : "none",
                             }}
                         >
-                            <span style={{ opacity: isNeon ? 0.9 : 0.85 }}>{food.name}</span>
+                            <span style={{ opacity: 0.85 }}>{food.name}</span>
                             <span
                                 style={{
                                     fontFamily: isSpecialTheme
                                         ? fontStyle
                                         : "inherit",
                                     fontWeight: 600,
-                                    textShadow: isNeon ? "0 0 8px #00ffff" : undefined,
                                 }}
                             >
                                 {food.calories}
@@ -1793,7 +1789,7 @@ const DetailedCard = ({
                         justifyContent: "space-between",
                         alignItems: "flex-end",
                         paddingTop: 10,
-                        borderTop: `1px solid ${isNeon ? "rgba(0,255,255,0.2)" : "rgba(255,255,255,0.15)"}`,
+                        borderTop: "1px solid rgba(255,255,255,0.15)",
                     }}
                 >
                     <div>
@@ -1804,7 +1800,6 @@ const DetailedCard = ({
                                 fontWeight: 700,
                                 letterSpacing: isSpecialTheme ? 1 : -1,
                                 lineHeight: 1,
-                                textShadow: isNeon ? "0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #8a2be2" : undefined,
                                 ...glowStyle,
                             }}
                         >
@@ -1816,7 +1811,7 @@ const DetailedCard = ({
                                     ? fontStyle
                                     : "inherit",
                                 fontSize: subFontSize,
-                                opacity: isNeon ? 0.9 : 0.5,
+                                opacity: 0.5,
                                 marginTop: 3,
                             }}
                         >
@@ -1842,7 +1837,7 @@ const DetailedCard = ({
                                     ? fontStyle
                                     : "inherit",
                                 fontSize: subFontSize,
-                                opacity: isNeon ? 0.9 : 0.5,
+                                opacity: 0.5,
                                 marginTop: 3,
                             }}
                         >
@@ -3062,7 +3057,7 @@ export default function MealStamp(props: any) {
                         overflowY: "auto",
                         overflowX: "hidden",
                         WebkitOverflowScrolling: "touch",
-                        padding: `0 ${DS.content.paddingX - 4}px`,
+                        padding: `0 ${DS.content.paddingX}px`,
                         paddingBottom: 130 + keyboardHeight,
                         transition: "padding-bottom 0.15s ease-out",
                     }}
@@ -3072,14 +3067,11 @@ export default function MealStamp(props: any) {
                             key={i}
                             style={{
                                 background: DS.colors.white,
-                                borderRadius: DS.radius.md,
+                                borderRadius: DS.radius.sm,
                                 padding: "12px 14px",
                                 marginBottom: 10,
-                                boxShadow: focusedFoodIndex === i
-                                    ? "0 2px 12px rgba(0,0,0,0.1), 0 0 0 2px rgba(0,0,0,0.05)"
-                                    : "0 1px 3px rgba(0,0,0,0.04)",
-                                border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[100]}`,
-                                transition: "all 0.2s ease",
+                                border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
+                                transition: "border-color 0.15s ease",
                             }}
                         >
                             <div
