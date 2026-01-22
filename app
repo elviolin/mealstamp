@@ -2235,7 +2235,9 @@ const DetailedCard = ({
 }: CardProps) => {
     const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
     const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
-    const displayFoods = foods.slice(0, 5)
+    const isPortrait = aspectRatio.height > aspectRatio.width
+    const maxFoods = isPortrait ? 7 : 4
+    const displayFoods = foods.slice(0, maxFoods)
     const mainFontSize = isDigital ? 30 : isNeon ? 24 : 26
     const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
@@ -2316,7 +2318,7 @@ const DetailedCard = ({
                             </span>
                         </div>
                     ))}
-                    {foods.length > 5 && (
+                    {foods.length > maxFoods && (
                         <div
                             style={{
                                 fontSize: 11,
@@ -2325,7 +2327,7 @@ const DetailedCard = ({
                                 marginTop: 4,
                             }}
                         >
-                            +{foods.length - 5}
+                            +{foods.length - maxFoods}
                         </div>
                     )}
                 </div>
@@ -2412,7 +2414,9 @@ const HealthCard = ({
 }: CardProps) => {
     const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
     const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
-    const displayFoods = foods.slice(0, 4)
+    const isPortrait = aspectRatio.height > aspectRatio.width
+    const maxFoods = isPortrait ? 6 : 3
+    const displayFoods = foods.slice(0, maxFoods)
     const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
     const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
@@ -2510,9 +2514,9 @@ const HealthCard = ({
                             </div>
                         </div>
                     ))}
-                    {foods.length > 4 && (
+                    {foods.length > maxFoods && (
                         <div style={{ fontSize: 10, opacity: 0.4, textAlign: "center", marginTop: 2 }}>
-                            +{foods.length - 4}
+                            +{foods.length - maxFoods}
                         </div>
                     )}
                 </div>
@@ -3110,6 +3114,7 @@ export default function MealStamp(props: any) {
                             calories: String(n?.calories || n || 0),
                             carbs: String(n?.carbs || 0),
                             protein: String(n?.protein || 0),
+                            fat: String(n?.fat || 0),
                             fiber: String(n?.fiber || 0),
                         }
                     }
@@ -4325,7 +4330,7 @@ export default function MealStamp(props: any) {
 
     // COMPLETE SCREEN
     if (screen === SCREENS.COMPLETE) {
-        const hasMacrosData = totalCarbs > 0 || totalProtein > 0 || totalFat > 0 || totalFiber > 0
+        const hasMacrosData = foods.some(f => f.carbs !== undefined || f.protein !== undefined || f.fat !== undefined || f.fiber !== undefined)
         const isProFeature =
             selectedCardType === CARD_TYPES.DETAILED ||
             selectedCardType === CARD_TYPES.HEALTH ||
