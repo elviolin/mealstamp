@@ -4075,200 +4075,247 @@ export default function MealStamp(props: any) {
                     }
                 />
 
+                {/* Card Preview Area with gradient background */}
                 <div
                     style={{
                         flex: 1,
                         display: "flex",
-                        flexDirection: "column",
-                        padding: `20px ${DS.content.paddingX}px`,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "linear-gradient(180deg, #f8f9fa 0%, #fff 100%)",
+                        position: "relative",
+                        overflow: "hidden",
                     }}
                 >
-                    {/* Card Preview - Fixed height container */}
+                    {/* Subtle decorative circles */}
+                    <div style={{
+                        position: "absolute",
+                        width: 300,
+                        height: 300,
+                        borderRadius: "50%",
+                        background: "radial-gradient(circle, rgba(0,0,0,0.02) 0%, transparent 70%)",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        pointerEvents: "none",
+                    }} />
+
                     <div
                         style={{
-                            flex: 1,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            minHeight: 280,
-                            maxHeight: 340,
+                            maxWidth: 170,
+                            borderRadius: DS.radius.lg,
+                            overflow: "hidden",
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08)",
+                            transform: "translateY(-10px)",
                         }}
                     >
-                        <div
-                            style={{
-                                maxWidth: 180,
-                                boxShadow: "0 16px 48px rgba(0,0,0,0.15)",
-                                borderRadius: DS.radius.lg,
-                                overflow: "hidden",
-                            }}
-                        >
-                            {selectedCardType === CARD_TYPES.SIMPLE ? (
-                                <SimpleCard
-                                    capturedImage={capturedImage}
-                                    timestamp={timestamp}
-                                    totalCalories={totalCalories}
-                                    cardRef={simpleCardRef}
-                                    lang={lang}
-                                    theme={selectedTheme}
-                                    aspectRatio={selectedAspectRatio}
-                                />
-                            ) : (
-                                <DetailedCard
-                                    capturedImage={capturedImage}
-                                    timestamp={timestamp}
-                                    totalCalories={totalCalories}
-                                    foods={foods}
-                                    cardRef={detailedCardRef}
-                                    lang={lang}
-                                    theme={selectedTheme}
-                                    aspectRatio={selectedAspectRatio}
-                                />
-                            )}
-                        </div>
+                        {selectedCardType === CARD_TYPES.SIMPLE ? (
+                            <SimpleCard
+                                capturedImage={capturedImage}
+                                timestamp={timestamp}
+                                totalCalories={totalCalories}
+                                cardRef={simpleCardRef}
+                                lang={lang}
+                                theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
+                            />
+                        ) : (
+                            <DetailedCard
+                                capturedImage={capturedImage}
+                                timestamp={timestamp}
+                                totalCalories={totalCalories}
+                                foods={foods}
+                                cardRef={detailedCardRef}
+                                lang={lang}
+                                theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
+                            />
+                        )}
                     </div>
+                </div>
 
-                    {/* Options - Fixed at bottom */}
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            gap: 16,
-                            paddingTop: 20,
-                        }}
-                    >
-                        {/* Card Type Toggle - Subtle style */}
-                        <div
-                            style={{
-                                display: "flex",
-                                background: DS.colors.gray[100],
-                                borderRadius: DS.radius.full,
-                                padding: 3,
-                            }}
-                        >
-                            {[
-                                { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
-                                { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
-                            ].map((item) => {
-                                const active = selectedCardType === item.key
-                                return (
-                                    <button
-                                        key={item.key}
-                                        onClick={() => setSelectedCardType(item.key as any)}
-                                        style={{
-                                            border: "none",
-                                            cursor: "pointer",
-                                            borderRadius: DS.radius.full,
-                                            padding: "8px 20px",
-                                            fontSize: DS.fontSize.sm,
-                                            fontWeight: 600,
-                                            background: active ? DS.colors.white : "transparent",
-                                            color: active ? DS.colors.black : DS.colors.gray[400],
-                                            boxShadow: active ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "center",
-                                            gap: 4,
-                                            transition: "all 0.15s ease",
-                                        }}
-                                    >
-                                        {item.isPro && <Icon.Sparkle size={10} />}
-                                        {t(item.labelKey)}
-                                    </button>
-                                )
-                            })}
+                {/* Bottom Control Panel */}
+                <div
+                    style={{
+                        background: DS.colors.white,
+                        borderTop: `1px solid ${DS.colors.gray[100]}`,
+                        padding: `20px ${DS.content.paddingX}px`,
+                        paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
+                    }}
+                >
+                    {/* All options in compact layout */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+                        {/* Row 1: Card Type & Theme in one row */}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                            {/* Simple/Detailed Toggle */}
+                            <div
+                                style={{
+                                    display: "flex",
+                                    background: DS.colors.gray[100],
+                                    borderRadius: DS.radius.full,
+                                    padding: 2,
+                                }}
+                            >
+                                {[
+                                    { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
+                                    { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
+                                ].map((item) => {
+                                    const active = selectedCardType === item.key
+                                    return (
+                                        <button
+                                            key={item.key}
+                                            onClick={() => setSelectedCardType(item.key as any)}
+                                            style={{
+                                                border: "none",
+                                                cursor: "pointer",
+                                                borderRadius: DS.radius.full,
+                                                padding: "7px 14px",
+                                                fontSize: 12,
+                                                fontWeight: 600,
+                                                background: active ? DS.colors.white : "transparent",
+                                                color: active ? DS.colors.black : DS.colors.gray[400],
+                                                boxShadow: active ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 3,
+                                                transition: "all 0.15s ease",
+                                            }}
+                                        >
+                                            {item.isPro && <Icon.Sparkle size={9} />}
+                                            {t(item.labelKey)}
+                                        </button>
+                                    )
+                                })}
+                            </div>
+
+                            <div style={{ width: 1, height: 20, background: DS.colors.gray[200] }} />
+
+                            {/* Theme Pills */}
+                            <div style={{ display: "flex", gap: 4 }}>
+                                {[
+                                    { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
+                                    { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
+                                    { key: CARD_THEMES.NEON, label: t("themeNeon") },
+                                ].map((item) => {
+                                    const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
+                                    const active = selectedTheme === item.key
+                                    return (
+                                        <button
+                                            key={item.key}
+                                            onClick={() => {
+                                                setSelectedTheme(item.key)
+                                                localStorage.setItem(STORAGE.theme, item.key)
+                                            }}
+                                            style={{
+                                                padding: "6px 10px",
+                                                fontSize: 11,
+                                                fontWeight: 600,
+                                                color: active ? DS.colors.black : DS.colors.gray[400],
+                                                background: active ? DS.colors.gray[100] : "transparent",
+                                                border: "none",
+                                                borderRadius: DS.radius.full,
+                                                cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 2,
+                                                transition: "all 0.15s ease",
+                                            }}
+                                        >
+                                            {isProTheme && <Icon.Sparkle size={8} />}
+                                            {item.label}
+                                        </button>
+                                    )
+                                })}
+                            </div>
                         </div>
 
-                        {/* Theme & Ratio - Compact pills */}
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
-                            {/* Theme Selector */}
-                            {[
-                                { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
-                                { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
-                                { key: CARD_THEMES.NEON, label: t("themeNeon") },
-                            ].map((item) => {
-                                const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
-                                const active = selectedTheme === item.key
-                                return (
-                                    <button
-                                        key={item.key}
-                                        onClick={() => {
-                                            setSelectedTheme(item.key)
-                                            localStorage.setItem(STORAGE.theme, item.key)
-                                        }}
-                                        style={{
-                                            padding: "6px 12px",
-                                            fontSize: DS.fontSize.xs,
-                                            fontWeight: 500,
-                                            color: active ? DS.colors.gray[700] : DS.colors.gray[400],
-                                            background: active ? DS.colors.gray[100] : "transparent",
-                                            border: `1px solid ${active ? DS.colors.gray[200] : DS.colors.gray[150] || "#eee"}`,
-                                            borderRadius: DS.radius.full,
-                                            cursor: "pointer",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 3,
-                                            transition: "all 0.15s ease",
-                                        }}
-                                    >
-                                        {isProTheme && <Icon.Sparkle size={8} />}
-                                        {item.label}
-                                    </button>
-                                )
-                            })}
-                        </div>
-
-                        {/* Aspect Ratio - Separate row */}
-                        <div style={{ display: "flex", gap: 8 }}>
+                        {/* Row 2: Aspect Ratio */}
+                        <div style={{ display: "flex", justifyContent: "center", gap: 6 }}>
                             {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => {
                                 const active = selectedAspectRatio.key === ratio.key
+                                const iconStyle = {
+                                    width: ratio.key === "3:4" ? 12 : ratio.key === "1:1" ? 14 : 16,
+                                    height: ratio.key === "3:4" ? 16 : ratio.key === "1:1" ? 14 : 12,
+                                    border: `1.5px solid ${active ? DS.colors.black : DS.colors.gray[300]}`,
+                                    borderRadius: 2,
+                                    marginRight: 5,
+                                }
                                 return (
                                     <button
                                         key={ratio.key}
                                         onClick={() => setSelectedAspectRatio(ratio)}
                                         style={{
-                                            padding: "6px 14px",
-                                            fontSize: DS.fontSize.xs,
+                                            padding: "8px 16px",
+                                            fontSize: 12,
                                             fontWeight: 500,
-                                            color: active ? DS.colors.gray[700] : DS.colors.gray[400],
-                                            background: active ? DS.colors.gray[100] : "transparent",
-                                            border: `1px solid ${active ? DS.colors.gray[200] : DS.colors.gray[150] || "#eee"}`,
-                                            borderRadius: DS.radius.full,
+                                            color: active ? DS.colors.black : DS.colors.gray[400],
+                                            background: active ? DS.colors.gray[50] : "transparent",
+                                            border: `1.5px solid ${active ? DS.colors.gray[200] : "transparent"}`,
+                                            borderRadius: DS.radius.md,
                                             cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
                                             transition: "all 0.15s ease",
                                         }}
                                     >
+                                        <div style={iconStyle} />
                                         {ratio.key}
                                     </button>
                                 )
                             })}
                         </div>
 
-                        {/* Bottom Buttons */}
-                        <div style={{ width: "100%", marginTop: 8 }}>
-                            <div style={{ display: "flex", gap: 12 }}>
-                                <Button
-                                    variant="secondary"
-                                    onClick={handleSave}
-                                    disabled={isSaving}
-                                    style={{ flex: 1 }}
-                                >
-                                    {isProFeature && !isPro && !sessionPaid && (
-                                        <Icon.Sparkle size={12} />
-                                    )}
-                                    {isSaving ? "..." : t("save")}
-                                </Button>
-                                <Button
-                                    onClick={handleShare}
-                                    disabled={isSaving}
-                                    style={{ flex: 1 }}
-                                >
-                                    {isProFeature && !isPro && !sessionPaid && (
-                                        <Icon.Sparkle size={12} />
-                                    )}
-                                    {isSaving ? "..." : t("share")}
-                                </Button>
-                            </div>
+                        {/* Row 3: Action Buttons */}
+                        <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                style={{
+                                    flex: 1,
+                                    padding: "14px 0",
+                                    fontSize: 15,
+                                    fontWeight: 600,
+                                    color: DS.colors.gray[700],
+                                    background: DS.colors.gray[100],
+                                    border: "none",
+                                    borderRadius: DS.radius.md,
+                                    cursor: isSaving ? "not-allowed" : "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 6,
+                                    opacity: isSaving ? 0.6 : 1,
+                                    transition: "all 0.15s ease",
+                                }}
+                            >
+                                {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
+                                {isSaving ? "..." : t("save")}
+                            </button>
+                            <button
+                                onClick={handleShare}
+                                disabled={isSaving}
+                                style={{
+                                    flex: 1,
+                                    padding: "14px 0",
+                                    fontSize: 15,
+                                    fontWeight: 600,
+                                    color: DS.colors.white,
+                                    background: DS.colors.black,
+                                    border: "none",
+                                    borderRadius: DS.radius.md,
+                                    cursor: isSaving ? "not-allowed" : "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: 6,
+                                    opacity: isSaving ? 0.6 : 1,
+                                    transition: "all 0.15s ease",
+                                }}
+                            >
+                                {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
+                                {isSaving ? "..." : t("share")}
+                            </button>
                         </div>
                     </div>
                 </div>
