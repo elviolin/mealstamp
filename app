@@ -4102,11 +4102,10 @@ export default function MealStamp(props: any) {
 
                     <div
                         style={{
-                            maxWidth: 170,
+                            width: 170,
                             borderRadius: DS.radius.lg,
                             overflow: "hidden",
                             boxShadow: "0 20px 60px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08)",
-                            transform: "translateY(-10px)",
                         }}
                     >
                         {selectedCardType === CARD_TYPES.SIMPLE ? (
