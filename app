@@ -4019,6 +4019,75 @@ export default function MealStamp(props: any) {
             selectedCardType === CARD_TYPES.DETAILED ||
             (selectedCardType === CARD_TYPES.SIMPLE &&
                 selectedTheme !== CARD_THEMES.DEFAULT)
+
+        // AI Greeting messages
+        const getAiGreeting = () => {
+            const hour = new Date().getHours()
+            const greetings: Record<string, string[]> = {
+                ko: [
+                    "멋진 기록이에요! ✨",
+                    "오늘도 건강한 식사 완료!",
+                    "잘 드셨네요! 👍",
+                    "기록하는 습관, 정말 좋아요!",
+                    "완벽한 한 끼네요!",
+                ],
+                en: [
+                    "Great meal log! ✨",
+                    "Healthy eating, done!",
+                    "Well done! 👍",
+                    "Logging habits are the best!",
+                    "Perfect meal!",
+                ],
+                ja: [
+                    "素敵な記録ですね! ✨",
+                    "今日も健康的な食事!",
+                    "よく食べましたね! 👍",
+                    "記録する習慣、素晴らしい!",
+                    "完璧な一食!",
+                ],
+                zh: [
+                    "很棒的记录! ✨",
+                    "健康饮食完成!",
+                    "吃得很好! 👍",
+                    "记录的习惯真好!",
+                    "完美的一餐!",
+                ],
+                fr: [
+                    "Super enregistrement! ✨",
+                    "Repas sain terminé!",
+                    "Bien mangé! 👍",
+                    "Bonne habitude!",
+                    "Repas parfait!",
+                ],
+                de: [
+                    "Toller Eintrag! ✨",
+                    "Gesunde Mahlzeit!",
+                    "Gut gegessen! 👍",
+                    "Tolle Gewohnheit!",
+                    "Perfekte Mahlzeit!",
+                ],
+            }
+            const mealGreetings: Record<string, Record<string, string>> = {
+                ko: { morning: "좋은 아침이에요! 🌅", lunch: "점심 맛있게 드셨나요? 🍱", dinner: "저녁 식사 수고하셨어요! 🌙" },
+                en: { morning: "Good morning! 🌅", lunch: "Enjoyed your lunch? 🍱", dinner: "Great dinner! 🌙" },
+                ja: { morning: "おはようございます! 🌅", lunch: "ランチ美味しかった? 🍱", dinner: "お疲れ様! 🌙" },
+                zh: { morning: "早上好! 🌅", lunch: "午餐好吃吗? 🍱", dinner: "晚餐辛苦了! 🌙" },
+                fr: { morning: "Bonjour! 🌅", lunch: "Bon déjeuner? 🍱", dinner: "Bon dîner! 🌙" },
+                de: { morning: "Guten Morgen! 🌅", lunch: "Gutes Mittagessen? 🍱", dinner: "Gutes Abendessen! 🌙" },
+            }
+            const langGreetings = greetings[lang] || greetings.en
+            const langMealGreetings = mealGreetings[lang] || mealGreetings.en
+
+            // 30% chance for time-based greeting
+            if (Math.random() < 0.3) {
+                if (hour >= 6 && hour < 10) return langMealGreetings.morning
+                if (hour >= 11 && hour < 14) return langMealGreetings.lunch
+                if (hour >= 17 && hour < 21) return langMealGreetings.dinner
+            }
+            return langGreetings[Math.floor(Math.random() * langGreetings.length)]
+        }
+        const [aiGreeting] = useState(getAiGreeting)
+
         const handleSave = async () => {
             if (isProFeature && !isPro && !sessionPaid && aiCredits <= 0) {
                 setShowUpgrade(true)
@@ -4074,6 +4143,40 @@ export default function MealStamp(props: any) {
                         </IconButton>
                     }
                 />
+
+                {/* AI Greeting */}
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        padding: "12px 20px",
+                    }}
+                >
+                    <div
+                        style={{
+                            width: 28,
+                            height: 28,
+                            borderRadius: DS.radius.full,
+                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Icon.Sparkle size={14} color="#fff" />
+                    </div>
+                    <span
+                        style={{
+                            fontSize: 15,
+                            fontWeight: 500,
+                            color: DS.colors.gray[700],
+                        }}
+                    >
+                        {aiGreeting}
+                    </span>
+                </div>
 
                 {/* Card Preview Area */}
                 <div
