@@ -1069,6 +1069,184 @@ const FOOD_CATEGORIES: Record<string, string[]> = {
     cocktail: ["칵테일", "cocktail", "カクテル", "鸡尾酒", "하이볼", "highball", "모히또", "mojito", "마가리타", "margarita", "상그리아", "sangria"],
 }
 
+// Common food names for autocomplete (by language)
+const FOOD_NAMES: Record<string, string[]> = {
+    ko: [
+        // 밥/면류
+        "흰밥", "현미밥", "잡곡밥", "볶음밥", "비빔밥", "김밥", "덮밥", "카레라이스",
+        "라면", "짜장면", "짬뽕", "칼국수", "냉면", "비빔냉면", "쫄면", "잔치국수", "우동", "소바", "파스타", "스파게티", "까르보나라",
+        // 국/찌개
+        "된장찌개", "김치찌개", "순두부찌개", "부대찌개", "감자탕", "삼계탕", "설렁탕", "곰탕", "육개장", "미역국", "콩나물국", "떡국", "만둣국",
+        // 고기
+        "삼겹살", "목살", "갈비", "불고기", "제육볶음", "닭갈비", "닭볶음탕", "족발", "보쌈", "수육",
+        "스테이크", "소고기", "돼지고기", "닭고기", "오리고기", "양고기",
+        // 치킨/튀김
+        "후라이드치킨", "양념치킨", "간장치킨", "치킨너겟", "치킨텐더", "닭강정",
+        "돈까스", "치킨까스", "생선까스", "새우튀김", "오징어튀김", "고구마튀김", "김말이",
+        // 해산물
+        "생선구이", "고등어구이", "갈치구이", "삼치구이", "연어", "참치", "광어", "우럭",
+        "새우", "오징어", "문어", "조개", "홍합", "굴", "게", "랍스터",
+        "회", "초밥", "연어초밥", "참치초밥", "광어회",
+        // 반찬
+        "김치", "깍두기", "동치미", "열무김치", "파김치",
+        "멸치볶음", "어묵볶음", "감자볶음", "버섯볶음", "호박볶음",
+        "시금치나물", "콩나물", "숙주나물", "고사리나물", "도라지무침",
+        "계란말이", "계란후라이", "스크램블에그", "삶은계란",
+        "두부조림", "연두부", "순두부",
+        // 분식
+        "떡볶이", "순대", "튀김", "김밥", "라볶이", "쫄면",
+        "만두", "군만두", "찐만두", "물만두", "만두국",
+        // 빵/디저트
+        "식빵", "토스트", "크루아상", "베이글", "바게트", "모닝빵",
+        "케이크", "치즈케이크", "초코케이크", "딸기케이크", "티라미수", "롤케이크",
+        "도넛", "머핀", "스콘", "마카롱", "쿠키", "브라우니",
+        "와플", "팬케이크", "크레페", "호떡", "붕어빵", "타코야키",
+        "아이스크림", "젤라또", "빙수", "팥빙수",
+        // 과일
+        "사과", "배", "귤", "오렌지", "바나나", "포도", "수박", "참외", "멜론",
+        "딸기", "블루베리", "체리", "복숭아", "자두", "망고", "파인애플", "키위",
+        // 음료
+        "물", "탄산수", "콜라", "사이다", "주스", "오렌지주스", "사과주스",
+        "커피", "아메리카노", "라떼", "카푸치노", "모카", "에스프레소",
+        "녹차", "홍차", "우유", "두유", "요거트",
+        "맥주", "소주", "막걸리", "와인", "샴페인",
+        // 패스트푸드
+        "햄버거", "치즈버거", "불고기버거", "새우버거",
+        "피자", "페퍼로니피자", "치즈피자", "콤비네이션피자",
+        "샌드위치", "클럽샌드위치", "에그샌드위치", "BLT샌드위치",
+        "핫도그", "감자튀김", "어니언링", "치즈스틱",
+        // 샐러드/건강식
+        "샐러드", "시저샐러드", "과일샐러드", "닭가슴살샐러드",
+        "닭가슴살", "고구마", "단호박", "브로콜리", "아보카도",
+        "오트밀", "그래놀라", "시리얼", "프로틴쉐이크",
+    ],
+    en: [
+        // Rice/Noodles
+        "white rice", "brown rice", "fried rice", "bibimbap", "curry rice",
+        "ramen", "udon", "soba", "pasta", "spaghetti", "carbonara", "alfredo", "pho",
+        // Soups
+        "chicken soup", "tomato soup", "mushroom soup", "clam chowder", "miso soup",
+        // Meat
+        "steak", "beef", "pork", "chicken", "lamb", "turkey", "bacon", "ham", "sausage",
+        "grilled chicken", "roast beef", "pork chop", "lamb chop", "meatball",
+        // Fried
+        "fried chicken", "chicken nuggets", "chicken wings", "chicken tenders",
+        "fish and chips", "onion rings", "french fries", "mozzarella sticks",
+        // Seafood
+        "salmon", "tuna", "cod", "shrimp", "lobster", "crab", "oyster", "clam", "mussel",
+        "sushi", "sashimi", "fish fillet", "grilled fish",
+        // Fast food
+        "hamburger", "cheeseburger", "big mac", "whopper",
+        "pizza", "pepperoni pizza", "cheese pizza", "margherita",
+        "sandwich", "club sandwich", "BLT", "grilled cheese",
+        "hot dog", "taco", "burrito", "quesadilla", "nachos",
+        // Breakfast
+        "pancakes", "waffles", "french toast", "eggs benedict", "omelette",
+        "scrambled eggs", "fried egg", "boiled egg", "bacon and eggs",
+        "cereal", "oatmeal", "granola", "yogurt parfait",
+        // Bread/Pastry
+        "bread", "toast", "croissant", "bagel", "muffin", "donut", "scone",
+        // Dessert
+        "cake", "cheesecake", "chocolate cake", "carrot cake", "tiramisu",
+        "ice cream", "gelato", "sundae", "brownie", "cookie", "macaron",
+        "pie", "apple pie", "pumpkin pie", "pudding", "creme brulee",
+        // Fruits
+        "apple", "banana", "orange", "grape", "strawberry", "blueberry", "watermelon",
+        "mango", "pineapple", "peach", "cherry", "kiwi", "avocado",
+        // Vegetables/Salad
+        "salad", "caesar salad", "greek salad", "garden salad",
+        "broccoli", "spinach", "carrot", "tomato", "cucumber", "lettuce",
+        // Drinks
+        "water", "coffee", "latte", "cappuccino", "espresso", "americano",
+        "tea", "green tea", "milk", "juice", "orange juice", "smoothie",
+        "beer", "wine", "cocktail", "soda", "cola",
+    ],
+    ja: [
+        // ご飯/麺
+        "白米", "玄米", "炒飯", "チャーハン", "カレーライス", "牛丼", "親子丼", "カツ丼",
+        "ラーメン", "味噌ラーメン", "塩ラーメン", "醤油ラーメン", "うどん", "そば", "焼きそば", "パスタ",
+        // 汁物
+        "味噌汁", "豚汁", "けんちん汁", "お吸い物",
+        // 肉
+        "焼肉", "ステーキ", "牛肉", "豚肉", "鶏肉", "ハンバーグ", "生姜焼き", "唐揚げ",
+        "とんかつ", "チキンカツ", "コロッケ", "メンチカツ",
+        // 魚介
+        "刺身", "寿司", "マグロ", "サーモン", "エビ", "イカ", "タコ", "貝",
+        "焼き魚", "サバ", "サンマ", "アジ", "鮭",
+        // ファストフード
+        "ハンバーガー", "チーズバーガー", "ピザ", "サンドイッチ", "ホットドッグ",
+        // 朝食
+        "トースト", "パンケーキ", "ワッフル", "オムレツ", "目玉焼き", "スクランブルエッグ",
+        // パン/デザート
+        "パン", "クロワッサン", "ベーグル", "マフィン", "ドーナツ",
+        "ケーキ", "チーズケーキ", "ティラミス", "アイスクリーム", "プリン",
+        // 果物
+        "りんご", "バナナ", "オレンジ", "ぶどう", "いちご", "メロン", "スイカ",
+        // 飲み物
+        "水", "コーヒー", "紅茶", "緑茶", "牛乳", "ジュース", "ビール", "ワイン",
+    ],
+    zh: [
+        // 饭/面
+        "白饭", "炒饭", "盖饭", "咖喱饭", "炒面", "拉面", "担担面", "意大利面",
+        // 汤
+        "蛋花汤", "紫菜汤", "酸辣汤", "味噌汤",
+        // 肉
+        "牛肉", "猪肉", "鸡肉", "羊肉", "红烧肉", "糖醋排骨", "宫保鸡丁", "麻婆豆腐",
+        "炸鸡", "鸡块", "烤肉", "牛排",
+        // 海鲜
+        "鱼", "虾", "蟹", "鱿鱼", "三文鱼", "金枪鱼", "寿司", "刺身",
+        // 快餐
+        "汉堡", "披萨", "三明治", "热狗", "薯条",
+        // 早餐
+        "面包", "吐司", "煎蛋", "炒蛋", "煮蛋", "粥", "豆浆", "油条",
+        // 甜点
+        "蛋糕", "芝士蛋糕", "冰淇淋", "布丁", "饼干", "马卡龙",
+        // 水果
+        "苹果", "香蕉", "橙子", "葡萄", "草莓", "西瓜", "芒果",
+        // 饮料
+        "水", "咖啡", "茶", "牛奶", "果汁", "可乐", "啤酒", "葡萄酒",
+    ],
+    fr: [
+        // Plats
+        "riz", "pâtes", "pizza", "hamburger", "sandwich", "salade",
+        "steak", "poulet", "porc", "agneau", "poisson", "saumon", "thon",
+        "omelette", "crêpe", "quiche", "soupe", "potage",
+        // Petit-déjeuner
+        "croissant", "pain", "baguette", "toast", "œuf", "bacon",
+        // Desserts
+        "gâteau", "tarte", "crème brûlée", "mousse au chocolat", "macaron",
+        "glace", "sorbet", "profiterole", "éclair",
+        // Fruits
+        "pomme", "banane", "orange", "fraise", "raisin", "pêche",
+        // Boissons
+        "eau", "café", "thé", "lait", "jus", "vin", "bière", "champagne",
+    ],
+    de: [
+        // Hauptgerichte
+        "Reis", "Nudeln", "Pizza", "Hamburger", "Sandwich", "Salat",
+        "Steak", "Hähnchen", "Schweinefleisch", "Rindfleisch", "Fisch", "Lachs",
+        "Schnitzel", "Bratwurst", "Currywurst", "Döner",
+        // Frühstück
+        "Brot", "Brötchen", "Croissant", "Toast", "Ei", "Speck", "Müsli",
+        // Desserts
+        "Kuchen", "Torte", "Eis", "Pudding", "Keks", "Schokolade",
+        // Obst
+        "Apfel", "Banane", "Orange", "Erdbeere", "Traube", "Wassermelone",
+        // Getränke
+        "Wasser", "Kaffee", "Tee", "Milch", "Saft", "Bier", "Wein",
+    ],
+}
+
+// Get food name suggestions based on input
+const getFoodNameSuggestions = (input: string, lang: string, limit: number = 5): string[] => {
+    if (!input || input.length < 1) return []
+    const lower = input.toLowerCase()
+    const foods = FOOD_NAMES[lang] || FOOD_NAMES.en
+    return foods
+        .filter(food => food.toLowerCase().includes(lower))
+        .slice(0, limit)
+}
+
 const getFoodCategory = (foodName: string): string => {
     const lower = foodName.toLowerCase()
     for (const [category, keywords] of Object.entries(FOOD_CATEGORIES)) {
@@ -2240,6 +2418,7 @@ export default function MealStamp(props: any) {
     const [savingType, setSavingType] = useState<"save" | "share" | null>(null)
     const [keyboardHeight, setKeyboardHeight] = useState(0)
     const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
+    const [nameSuggestionsIndex, setNameSuggestionsIndex] = useState<number | null>(null)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -3460,8 +3639,14 @@ export default function MealStamp(props: any) {
                                                 e.target.value
                                             )
                                         }
-                                        onFocus={() => setFocusedFoodIndex(i)}
-                                        onBlur={() => setTimeout(() => setFocusedFoodIndex(null), 150)}
+                                        onFocus={() => {
+                                            setFocusedFoodIndex(i)
+                                            setNameSuggestionsIndex(i)
+                                        }}
+                                        onBlur={() => setTimeout(() => {
+                                            setFocusedFoodIndex(null)
+                                            setNameSuggestionsIndex(null)
+                                        }, 200)}
                                         placeholder={t("foodName")}
                                         style={{
                                             ...input,
@@ -3502,6 +3687,61 @@ export default function MealStamp(props: any) {
                                                 <path d="M18 6L6 18M6 6l12 12" />
                                             </svg>
                                         </button>
+                                    )}
+                                    {/* Food name autocomplete dropdown */}
+                                    {nameSuggestionsIndex === i && food.name.length >= 1 && (
+                                        (() => {
+                                            const suggestions = getFoodNameSuggestions(food.name, lang, 5)
+                                            if (suggestions.length === 0) return null
+                                            return (
+                                                <div
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: "100%",
+                                                        left: 0,
+                                                        right: 0,
+                                                        marginTop: 4,
+                                                        background: DS.colors.white,
+                                                        border: `1px solid ${DS.colors.gray[200]}`,
+                                                        borderRadius: DS.radius.sm,
+                                                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                                                        zIndex: 100,
+                                                        overflow: "hidden",
+                                                    }}
+                                                >
+                                                    {suggestions.map((suggestion, idx) => (
+                                                        <button
+                                                            key={idx}
+                                                            onMouseDown={(e) => {
+                                                                e.preventDefault()
+                                                                handleFoodChange(i, "name", suggestion)
+                                                                setNameSuggestionsIndex(null)
+                                                            }}
+                                                            style={{
+                                                                width: "100%",
+                                                                padding: "10px 12px",
+                                                                background: "transparent",
+                                                                border: "none",
+                                                                borderBottom: idx < suggestions.length - 1 ? `1px solid ${DS.colors.gray[100]}` : "none",
+                                                                cursor: "pointer",
+                                                                textAlign: "left",
+                                                                fontSize: 14,
+                                                                color: DS.colors.gray[700],
+                                                                transition: "background 0.1s",
+                                                            }}
+                                                            onMouseEnter={(e) => {
+                                                                e.currentTarget.style.background = DS.colors.gray[50]
+                                                            }}
+                                                            onMouseLeave={(e) => {
+                                                                e.currentTarget.style.background = "transparent"
+                                                            }}
+                                                        >
+                                                            {suggestion}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )
+                                        })()
                                     )}
                                 </div>
                                 <button
