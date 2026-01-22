@@ -93,8 +93,8 @@ const DS = {
     font: {
         body: "'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
         system: "-apple-system, BlinkMacSystemFont, 'SF Pro Rounded', system-ui, sans-serif",
-        digital: "'DS-Digital', monospace",
-        neon: "'Orbitron', sans-serif",
+        digital: "'DS-Digital-Latin', 'DS-Digital', 'Pretendard', system-ui, sans-serif",
+        neon: "'Orbitron-Latin', 'Orbitron', 'Pretendard', system-ui, sans-serif",
     },
     radius: { sm: 10, md: 14, lg: 18, xl: 22, full: 9999 },
     transition: {
@@ -155,6 +155,16 @@ if (typeof document !== "undefined") {
         const style = document.createElement("style")
         style.id = "ms-global-styles"
         style.textContent = `
+            @font-face {
+                font-family: 'Orbitron-Latin';
+                src: local('Orbitron');
+                unicode-range: U+0020-007F, U+2000-206F;
+            }
+            @font-face {
+                font-family: 'DS-Digital-Latin';
+                src: local('DS-Digital');
+                unicode-range: U+0020-007F, U+2000-206F;
+            }
             * { -webkit-tap-highlight-color: transparent; }
             button { transition: all 0.15s ease; }
             button:active:not(:disabled) { transform: scale(0.97); }
