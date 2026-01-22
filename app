@@ -48,6 +48,9 @@ interface CardProps {
     capturedImage: string | null
     timestamp: Date | null
     totalCalories: number
+    totalCarbs?: number
+    totalProtein?: number
+    totalFiber?: number
     cardRef: React.RefObject<HTMLDivElement>
     lang?: string
     theme?: string
@@ -2214,6 +2217,9 @@ const DetailedCard = ({
     capturedImage,
     timestamp,
     totalCalories,
+    totalCarbs = 0,
+    totalProtein = 0,
+    totalFiber = 0,
     foods = [],
     cardRef,
     lang = "ko",
@@ -2378,6 +2384,36 @@ const DetailedCard = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Macros Bar */}
+                {(totalCarbs > 0 || totalProtein > 0 || totalFiber > 0) && (
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: 16,
+                            marginTop: 10,
+                            padding: "8px 12px",
+                            background: "rgba(255,255,255,0.1)",
+                            borderRadius: 8,
+                        }}
+                    >
+                        <div style={{ textAlign: "center" }}>
+                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalCarbs}g</div>
+                            <div style={{ fontSize: 9, opacity: 0.6 }}>탄수화물</div>
+                        </div>
+                        <div style={{ width: 1, background: "rgba(255,255,255,0.2)" }} />
+                        <div style={{ textAlign: "center" }}>
+                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalProtein}g</div>
+                            <div style={{ fontSize: 9, opacity: 0.6 }}>단백질</div>
+                        </div>
+                        <div style={{ width: 1, background: "rgba(255,255,255,0.2)" }} />
+                        <div style={{ textAlign: "center" }}>
+                            <div style={{ fontSize: 14, fontWeight: 600 }}>{totalFiber}g</div>
+                            <div style={{ fontSize: 9, opacity: 0.6 }}>식이섬유</div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )
@@ -2820,11 +2856,11 @@ export default function MealStamp(props: any) {
                             {
                                 role: "system",
                                 content:
-                                    "Estimate calories for each food item. Return JSON array of integers only. Example: [320, 150]",
+                                    "Estimate nutrition for each food item. Return JSON array of objects with: calories (kcal), carbs (g), protein (g), fiber (g). Example: [{\"calories\":320,\"carbs\":45,\"protein\":12,\"fiber\":3},{\"calories\":150,\"carbs\":20,\"protein\":5,\"fiber\":1}]",
                             },
                             { role: "user", content: list },
                         ],
-                        max_tokens: 200,
+                        max_tokens: 500,
                         temperature: 0.2,
                     }),
                 }
@@ -2832,7 +2868,7 @@ export default function MealStamp(props: any) {
             clearTimeout(timeout)
             const data = await response.json()
             if (data.error) throw new Error(data.error.message)
-            const cals = JSON.parse(
+            const nutrition = JSON.parse(
                 (data.choices?.[0]?.message?.content || "[]")
                     .replace(/```json\n?|\n?```/g, "")
                     .trim()
@@ -2840,8 +2876,16 @@ export default function MealStamp(props: any) {
             let idx = 0
             setFoods(
                 foods.map((f) => {
-                    if (f.name?.trim() && !f.calories && idx < cals.length)
-                        return { ...f, calories: String(cals[idx++]) }
+                    if (f.name?.trim() && !f.calories && idx < nutrition.length) {
+                        const n = nutrition[idx++]
+                        return {
+                            ...f,
+                            calories: String(n?.calories || n || 0),
+                            carbs: String(n?.carbs || 0),
+                            protein: String(n?.protein || 0),
+                            fiber: String(n?.fiber || 0),
+                        }
+                    }
                     return f
                 })
             )
@@ -2854,6 +2898,18 @@ export default function MealStamp(props: any) {
 
     const totalCalories = foods.reduce(
         (s, f) => s + (parseInt(f.calories) || 0),
+        0
+    )
+    const totalCarbs = foods.reduce(
+        (s, f) => s + (parseInt(f.carbs) || 0),
+        0
+    )
+    const totalProtein = foods.reduce(
+        (s, f) => s + (parseInt(f.protein) || 0),
+        0
+    )
+    const totalFiber = foods.reduce(
+        (s, f) => s + (parseInt(f.fiber) || 0),
         0
     )
     const hasEmptyCalories = foods.some((f) => f.name?.trim() && !f.calories)
@@ -4086,7 +4142,7 @@ export default function MealStamp(props: any) {
             }
             return langGreetings[Math.floor(Math.random() * langGreetings.length)]
         }
-        const [aiGreeting] = useState(getAiGreeting)
+        const aiGreeting = getAiGreeting()
 
         const handleSave = async () => {
             if (isProFeature && !isPro && !sessionPaid && aiCredits <= 0) {
@@ -4221,6 +4277,9 @@ export default function MealStamp(props: any) {
                                     capturedImage={capturedImage}
                                     timestamp={timestamp}
                                     totalCalories={totalCalories}
+                                    totalCarbs={totalCarbs}
+                                    totalProtein={totalProtein}
+                                    totalFiber={totalFiber}
                                     foods={foods}
                                     cardRef={detailedCardRef}
                                     lang={lang}
