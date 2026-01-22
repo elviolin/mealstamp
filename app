@@ -2427,7 +2427,9 @@ const HealthCard = ({
     const isPortrait = aspectRatio.height > aspectRatio.width
     const maxFoods = isPortrait ? 6 : 3
     const displayFoods = foods.slice(0, maxFoods)
-    const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
+    const mainFontSize = isDigital ? 28 : 22
+    const macroBarFontSize = isDigital ? 18 : 14
+    const subFontSize = isDigital ? 14 : isNeon ? 9 : 10
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
     const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
 
@@ -2544,7 +2546,7 @@ const HealthCard = ({
                         <div
                             style={{
                                 fontFamily: fontStyle,
-                                fontSize: 22,
+                                fontSize: mainFontSize,
                                 fontWeight: 700,
                                 letterSpacing: isSpecialTheme ? 1 : -1,
                                 lineHeight: 1,
@@ -2568,7 +2570,7 @@ const HealthCard = ({
                         <div
                             style={{
                                 fontFamily: fontStyle,
-                                fontSize: 22,
+                                fontSize: mainFontSize,
                                 fontWeight: 700,
                                 letterSpacing: isSpecialTheme ? 1 : -1,
                                 lineHeight: 1,
@@ -2601,22 +2603,22 @@ const HealthCard = ({
                     }}
                 >
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalCarbs}g</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalCarbs}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.carbs}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalProtein}g</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalProtein}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.protein}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFat}g</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFat}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fat}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFiber}g</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFiber}g</div>
                         <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
                     </div>
                 </div>
@@ -3121,11 +3123,11 @@ export default function MealStamp(props: any) {
                         const n = nutrition[idx++]
                         return {
                             ...f,
-                            calories: String(n?.calories || n || 0),
-                            carbs: String(n?.carbs || 0),
-                            protein: String(n?.protein || 0),
-                            fat: String(n?.fat || 0),
-                            fiber: String(n?.fiber || 0),
+                            calories: String(n?.calories ?? 0),
+                            carbs: String(n?.carbs ?? 0),
+                            protein: String(n?.protein ?? 0),
+                            fat: String(n?.fat ?? 0),
+                            fiber: String(n?.fiber ?? 0),
                         }
                     }
                     return f
