@@ -4036,11 +4036,6 @@ export default function MealStamp(props: any) {
                                                             onMouseDown={(e) => {
                                                                 e.preventDefault()
                                                                 handleFoodChange(i, "name", suggestion)
-                                                                // 기본 양도 자동 설정
-                                                                const defaultAmount = getAmountSuggestions(suggestion, lang)[0] || ""
-                                                                if (defaultAmount && !foods[i].amount) {
-                                                                    handleFoodChange(i, "amount", defaultAmount)
-                                                                }
                                                                 setNameSuggestionsIndex(null)
                                                             }}
                                                             style={{
