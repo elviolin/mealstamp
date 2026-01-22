@@ -184,7 +184,7 @@ const SCREENS = {
     COMPLETE: "complete",
     SETTINGS: "settings",
 }
-const CARD_TYPES = { SIMPLE: "simple", DETAILED: "detailed" }
+const CARD_TYPES = { SIMPLE: "simple", DETAILED: "detailed", HEALTH: "health" }
 const CARD_THEMES = { DEFAULT: "default", DIGITAL: "digital", NEON: "neon" }
 const ASPECT_RATIOS = {
     PORTRAIT: { key: "3:4", width: 3, height: 4 },
@@ -242,6 +242,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "다음",
         simple: "심플",
         detailed: "상세",
+        health: "건강",
         save: "저장",
         share: "공유",
         saving: "이미지 저장중",
@@ -310,6 +311,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "次へ",
         simple: "シンプル",
         detailed: "詳細",
+        health: "健康",
         save: "保存",
         share: "共有",
         saving: "保存中",
@@ -377,6 +379,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "Next",
         simple: "Simple",
         detailed: "Detailed",
+        health: "Health",
         save: "Save",
         share: "Share",
         saving: "Saving",
@@ -445,6 +448,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "下一步",
         simple: "简约",
         detailed: "详细",
+        health: "健康",
         save: "保存",
         share: "分享",
         saving: "保存中",
@@ -510,6 +514,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "Suivant",
         simple: "Simple",
         detailed: "Détaillé",
+        health: "Santé",
         save: "Enregistrer",
         share: "Partager",
         saving: "Enregistrement",
@@ -577,6 +582,7 @@ const i18n: Record<string, Record<string, string>> = {
         next: "Weiter",
         simple: "Einfach",
         detailed: "Detailliert",
+        health: "Gesund",
         save: "Speichern",
         share: "Teilen",
         saving: "Speichern",
@@ -2419,6 +2425,194 @@ const DetailedCard = ({
     )
 }
 
+const HealthCard = ({
+    capturedImage,
+    timestamp,
+    totalCalories,
+    totalCarbs = 0,
+    totalProtein = 0,
+    totalFiber = 0,
+    foods = [],
+    cardRef,
+    lang = "ko",
+    theme = "default",
+    aspectRatio = { width: 3, height: 4 },
+}: CardProps) => {
+    const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
+    const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
+    const displayFoods = foods.slice(0, 4)
+    const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
+    const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
+    const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
+
+    return (
+        <div
+            ref={cardRef}
+            style={{
+                width: "100%",
+                aspectRatio: ratioString,
+                overflow: "hidden",
+                position: "relative",
+                background: "#000",
+                fontFamily: DS.font.body,
+            }}
+        >
+            {capturedImage && (
+                <div
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundImage: `url(${capturedImage})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                    }}
+                />
+            )}
+            <div
+                style={{
+                    position: "absolute",
+                    bottom: -1,
+                    left: -1,
+                    right: -1,
+                    height: "75%",
+                    background:
+                        "linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%)",
+                    pointerEvents: "none",
+                }}
+            />
+            <div
+                style={{
+                    position: "absolute",
+                    bottom: 14,
+                    left: 14,
+                    right: 14,
+                    color: "#fff",
+                }}
+            >
+                {/* Food items with macros */}
+                <div style={{ marginBottom: 8 }}>
+                    {displayFoods.map((food: any, i: number) => (
+                        <div
+                            key={i}
+                            style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "4px 0",
+                                fontSize: 12,
+                                borderBottom:
+                                    i < displayFoods.length - 1
+                                        ? "1px solid rgba(255,255,255,0.08)"
+                                        : "none",
+                            }}
+                        >
+                            <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
+                            <div style={{ display: "flex", gap: 8, fontSize: 10, opacity: 0.7 }}>
+                                <span>탄 {food.carbs || 0}</span>
+                                <span>단 {food.protein || 0}</span>
+                                <span>섬 {food.fiber || 0}</span>
+                            </div>
+                        </div>
+                    ))}
+                    {foods.length > 4 && (
+                        <div style={{ fontSize: 10, opacity: 0.4, textAlign: "center", marginTop: 2 }}>
+                            +{foods.length - 4}
+                        </div>
+                    )}
+                </div>
+
+                {/* Total Macros Bar */}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "10px 12px",
+                        background: "rgba(255,255,255,0.1)",
+                        borderRadius: 8,
+                        marginBottom: 8,
+                    }}
+                >
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalCarbs}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>탄수화물</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalProtein}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>단백질</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalFiber}g</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>식이섬유</div>
+                    </div>
+                </div>
+
+                {/* Time & Calories */}
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "flex-end",
+                    }}
+                >
+                    <div>
+                        <div
+                            style={{
+                                fontFamily: fontStyle,
+                                fontSize: 22,
+                                fontWeight: 700,
+                                letterSpacing: isSpecialTheme ? 1 : -1,
+                                lineHeight: 1,
+                                ...glowStyle,
+                            }}
+                        >
+                            {ts.time}
+                        </div>
+                        <div
+                            style={{
+                                fontFamily: isSpecialTheme ? fontStyle : "inherit",
+                                fontSize: subFontSize,
+                                opacity: 0.5,
+                                marginTop: 2,
+                            }}
+                        >
+                            {dateDisplay}
+                        </div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                        <div
+                            style={{
+                                fontFamily: fontStyle,
+                                fontSize: 22,
+                                fontWeight: 700,
+                                letterSpacing: isSpecialTheme ? 1 : -1,
+                                lineHeight: 1,
+                                ...glowStyle,
+                            }}
+                        >
+                            {totalCalories}
+                        </div>
+                        <div
+                            style={{
+                                fontFamily: isSpecialTheme ? fontStyle : "inherit",
+                                fontSize: subFontSize,
+                                opacity: 0.5,
+                                marginTop: 2,
+                            }}
+                        >
+                            KCAL
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export default function MealStamp(props: any) {
     const { apiKeyDefault = "" } = props
     const [screen, setScreen] = useState(SCREENS.LANGUAGE)
@@ -2462,6 +2656,7 @@ export default function MealStamp(props: any) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const simpleCardRef = useRef<HTMLDivElement>(null)
     const detailedCardRef = useRef<HTMLDivElement>(null)
+    const healthCardRef = useRef<HTMLDivElement>(null)
     const streamRef = useRef<MediaStream | null>(null)
     const foodInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
@@ -2957,7 +3152,9 @@ export default function MealStamp(props: any) {
         const ref =
             selectedCardType === CARD_TYPES.SIMPLE
                 ? simpleCardRef
-                : detailedCardRef
+                : selectedCardType === CARD_TYPES.DETAILED
+                ? detailedCardRef
+                : healthCardRef
         if (!ref.current || isSaving) return
         setSavingType("save")
         setIsSaving(true)
@@ -3004,7 +3201,9 @@ export default function MealStamp(props: any) {
         const ref =
             selectedCardType === CARD_TYPES.SIMPLE
                 ? simpleCardRef
-                : detailedCardRef
+                : selectedCardType === CARD_TYPES.DETAILED
+                ? detailedCardRef
+                : healthCardRef
         if (!ref.current || isSaving) return
         setSavingType("share")
         setIsSaving(true)
@@ -4071,78 +4270,12 @@ export default function MealStamp(props: any) {
 
     // COMPLETE SCREEN
     if (screen === SCREENS.COMPLETE) {
+        const hasMacrosData = totalCarbs > 0 || totalProtein > 0 || totalFiber > 0
         const isProFeature =
             selectedCardType === CARD_TYPES.DETAILED ||
+            selectedCardType === CARD_TYPES.HEALTH ||
             (selectedCardType === CARD_TYPES.SIMPLE &&
                 selectedTheme !== CARD_THEMES.DEFAULT)
-
-        // AI Greeting messages
-        const getAiGreeting = () => {
-            const hour = new Date().getHours()
-            const greetings: Record<string, string[]> = {
-                ko: [
-                    "멋진 기록이에요! ✨",
-                    "오늘도 건강한 식사 완료!",
-                    "잘 드셨네요! 👍",
-                    "기록하는 습관, 정말 좋아요!",
-                    "완벽한 한 끼네요!",
-                ],
-                en: [
-                    "Great meal log! ✨",
-                    "Healthy eating, done!",
-                    "Well done! 👍",
-                    "Logging habits are the best!",
-                    "Perfect meal!",
-                ],
-                ja: [
-                    "素敵な記録ですね! ✨",
-                    "今日も健康的な食事!",
-                    "よく食べましたね! 👍",
-                    "記録する習慣、素晴らしい!",
-                    "完璧な一食!",
-                ],
-                zh: [
-                    "很棒的记录! ✨",
-                    "健康饮食完成!",
-                    "吃得很好! 👍",
-                    "记录的习惯真好!",
-                    "完美的一餐!",
-                ],
-                fr: [
-                    "Super enregistrement! ✨",
-                    "Repas sain terminé!",
-                    "Bien mangé! 👍",
-                    "Bonne habitude!",
-                    "Repas parfait!",
-                ],
-                de: [
-                    "Toller Eintrag! ✨",
-                    "Gesunde Mahlzeit!",
-                    "Gut gegessen! 👍",
-                    "Tolle Gewohnheit!",
-                    "Perfekte Mahlzeit!",
-                ],
-            }
-            const mealGreetings: Record<string, Record<string, string>> = {
-                ko: { morning: "좋은 아침이에요! 🌅", lunch: "점심 맛있게 드셨나요? 🍱", dinner: "저녁 식사 수고하셨어요! 🌙" },
-                en: { morning: "Good morning! 🌅", lunch: "Enjoyed your lunch? 🍱", dinner: "Great dinner! 🌙" },
-                ja: { morning: "おはようございます! 🌅", lunch: "ランチ美味しかった? 🍱", dinner: "お疲れ様! 🌙" },
-                zh: { morning: "早上好! 🌅", lunch: "午餐好吃吗? 🍱", dinner: "晚餐辛苦了! 🌙" },
-                fr: { morning: "Bonjour! 🌅", lunch: "Bon déjeuner? 🍱", dinner: "Bon dîner! 🌙" },
-                de: { morning: "Guten Morgen! 🌅", lunch: "Gutes Mittagessen? 🍱", dinner: "Gutes Abendessen! 🌙" },
-            }
-            const langGreetings = greetings[lang] || greetings.en
-            const langMealGreetings = mealGreetings[lang] || mealGreetings.en
-
-            // 30% chance for time-based greeting
-            if (Math.random() < 0.3) {
-                if (hour >= 6 && hour < 10) return langMealGreetings.morning
-                if (hour >= 11 && hour < 14) return langMealGreetings.lunch
-                if (hour >= 17 && hour < 21) return langMealGreetings.dinner
-            }
-            return langGreetings[Math.floor(Math.random() * langGreetings.length)]
-        }
-        const aiGreeting = getAiGreeting()
 
         const handleSave = async () => {
             if (isProFeature && !isPro && !sessionPaid && aiCredits <= 0) {
@@ -4200,40 +4333,6 @@ export default function MealStamp(props: any) {
                     }
                 />
 
-                {/* AI Greeting */}
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 8,
-                        padding: "12px 20px",
-                    }}
-                >
-                    <div
-                        style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: DS.radius.full,
-                            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Icon.Sparkle size={14} color="#fff" />
-                    </div>
-                    <span
-                        style={{
-                            fontSize: 15,
-                            fontWeight: 500,
-                            color: DS.colors.gray[700],
-                        }}
-                    >
-                        {aiGreeting}
-                    </span>
-                </div>
-
                 {/* Card Preview Area */}
                 <div
                     style={{
@@ -4272,7 +4371,7 @@ export default function MealStamp(props: any) {
                                     theme={selectedTheme}
                                     aspectRatio={selectedAspectRatio}
                                 />
-                            ) : (
+                            ) : selectedCardType === CARD_TYPES.DETAILED ? (
                                 <DetailedCard
                                     capturedImage={capturedImage}
                                     timestamp={timestamp}
@@ -4282,6 +4381,20 @@ export default function MealStamp(props: any) {
                                     totalFiber={totalFiber}
                                     foods={foods}
                                     cardRef={detailedCardRef}
+                                    lang={lang}
+                                    theme={selectedTheme}
+                                    aspectRatio={selectedAspectRatio}
+                                />
+                            ) : (
+                                <HealthCard
+                                    capturedImage={capturedImage}
+                                    timestamp={timestamp}
+                                    totalCalories={totalCalories}
+                                    totalCarbs={totalCarbs}
+                                    totalProtein={totalProtein}
+                                    totalFiber={totalFiber}
+                                    foods={foods}
+                                    cardRef={healthCardRef}
                                     lang={lang}
                                     theme={selectedTheme}
                                     aspectRatio={selectedAspectRatio}
@@ -4314,33 +4427,36 @@ export default function MealStamp(props: any) {
                         }}
                     >
                         {[
-                            { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
-                            { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
+                            { key: CARD_TYPES.SIMPLE, label: t("simple") },
+                            { key: CARD_TYPES.DETAILED, label: t("detailed"), isPro: true },
+                            { key: CARD_TYPES.HEALTH, label: t("health") || "건강", isPro: true, needsMacros: true },
                         ].map((item) => {
                             const active = selectedCardType === item.key
+                            const disabled = item.needsMacros && !hasMacrosData
                             return (
                                 <button
                                     key={item.key}
-                                    onClick={() => setSelectedCardType(item.key as any)}
+                                    onClick={() => !disabled && setSelectedCardType(item.key as any)}
                                     style={{
                                         border: "none",
-                                        cursor: "pointer",
+                                        cursor: disabled ? "not-allowed" : "pointer",
                                         borderRadius: DS.radius.full,
-                                        padding: "8px 20px",
-                                        fontSize: DS.fontSize.sm,
+                                        padding: "8px 14px",
+                                        fontSize: 13,
                                         fontWeight: 600,
                                         background: active ? DS.colors.white : "transparent",
-                                        color: active ? DS.colors.black : DS.colors.gray[500],
+                                        color: disabled ? DS.colors.gray[300] : active ? DS.colors.black : DS.colors.gray[500],
                                         boxShadow: active ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        gap: 4,
+                                        gap: 3,
                                         transition: "all 0.15s ease",
+                                        opacity: disabled ? 0.5 : 1,
                                     }}
                                 >
-                                    {item.isPro && <Icon.Sparkle size={10} />}
-                                    {t(item.labelKey)}
+                                    {item.isPro && <Icon.Sparkle size={9} />}
+                                    {item.label}
                                 </button>
                             )
                         })}
