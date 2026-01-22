@@ -2275,14 +2275,14 @@ const DetailedCard = ({
                     color: "#fff",
                 }}
             >
-                <div style={{ marginBottom: 12 }}>
+                <div style={{ marginBottom: 6 }}>
                     {displayFoods.map((food: any, i: number) => (
                         <div
                             key={i}
                             style={{
                                 display: "flex",
                                 justifyContent: "space-between",
-                                padding: "5px 0",
+                                padding: "4px 0",
                                 fontSize: 13,
                                 borderBottom:
                                     i < displayFoods.length - 1
@@ -2299,7 +2299,7 @@ const DetailedCard = ({
                                     fontWeight: 600,
                                 }}
                             >
-                                {food.calories}
+                                {food.calories} <span style={{ fontWeight: 400, fontSize: 11, opacity: 0.7 }}>kcal</span>
                             </span>
                         </div>
                     ))}
@@ -2321,7 +2321,7 @@ const DetailedCard = ({
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "flex-end",
-                        paddingTop: 10,
+                        paddingTop: 8,
                         borderTop: "1px solid rgba(255,255,255,0.15)",
                     }}
                 >
