@@ -2647,6 +2647,8 @@ export default function MealStamp(props: any) {
     const [keyboardHeight, setKeyboardHeight] = useState(0)
     const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
     const [nameSuggestionsIndex, setNameSuggestionsIndex] = useState<number | null>(null)
+    const [zoomLevel, setZoomLevel] = useState(1)
+    const lastPinchDistance = useRef<number | null>(null)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -2807,6 +2809,36 @@ export default function MealStamp(props: any) {
             startCamera()
     }, [facingMode])
 
+    // Reset zoom when switching cameras or screens
+    useEffect(() => {
+        setZoomLevel(1)
+        lastPinchDistance.current = null
+    }, [facingMode, screen])
+
+    // Pinch zoom handlers
+    const handleTouchStart = useCallback((e: React.TouchEvent) => {
+        if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX
+            const dy = e.touches[0].clientY - e.touches[1].clientY
+            lastPinchDistance.current = Math.hypot(dx, dy)
+        }
+    }, [])
+
+    const handleTouchMove = useCallback((e: React.TouchEvent) => {
+        if (e.touches.length === 2 && lastPinchDistance.current !== null) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX
+            const dy = e.touches[0].clientY - e.touches[1].clientY
+            const distance = Math.hypot(dx, dy)
+            const scale = distance / lastPinchDistance.current
+            setZoomLevel((prev) => Math.min(Math.max(prev * scale, 1), 4))
+            lastPinchDistance.current = distance
+        }
+    }, [])
+
+    const handleTouchEnd = useCallback(() => {
+        lastPinchDistance.current = null
+    }, [])
+
     const capturePhoto = async () => {
         if (!previewVideoRef.current || !canvasRef.current) return
         setShowFlash(true)
@@ -2816,8 +2848,10 @@ export default function MealStamp(props: any) {
             ctx = canvas.getContext("2d")!
         const vw = video.videoWidth,
             vh = video.videoHeight,
-            size = Math.min(vw, vh),
-            out = Math.min(1024, size)
+            baseSize = Math.min(vw, vh),
+            // Apply zoom: smaller source area = more zoom
+            size = baseSize / zoomLevel,
+            out = Math.min(1024, baseSize)
         canvas.width = out
         canvas.height = out
         if (isFrontCamera) {
@@ -3466,6 +3500,9 @@ export default function MealStamp(props: any) {
                                 </div>
                             </div>
                             <div
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onTouchEnd={handleTouchEnd}
                                 style={{
                                     position: "absolute",
                                     top: "50%",
@@ -3487,12 +3524,28 @@ export default function MealStamp(props: any) {
                                         width: "100%",
                                         height: "100%",
                                         objectFit: "cover",
-                                        transform:
-                                            facingMode === "user"
-                                                ? "scaleX(-1)"
-                                                : "none",
+                                        transform: `${facingMode === "user" ? "scaleX(-1) " : ""}scale(${zoomLevel})`,
+                                        transition: "transform 0.1s ease-out",
                                     }}
                                 />
+                                {zoomLevel > 1 && (
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            bottom: 8,
+                                            left: "50%",
+                                            transform: "translateX(-50%)",
+                                            background: "rgba(0,0,0,0.6)",
+                                            color: "#fff",
+                                            padding: "4px 10px",
+                                            borderRadius: DS.radius.full,
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                        }}
+                                    >
+                                        {zoomLevel.toFixed(1)}x
+                                    </div>
+                                )}
                             </div>
                         </>
                     )}
