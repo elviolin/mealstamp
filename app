@@ -3489,149 +3489,175 @@ export default function MealStamp(props: any) {
                 <div
                     style={{
                         flex: 1,
-                        overflowY: "auto",
-                        padding: `20px ${DS.content.paddingX}px`,
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: "center",
+                        overflow: "hidden",
                     }}
                 >
-                    {/* Card Preview */}
+                    {/* Card Preview Area - Fixed Height */}
                     <div
                         style={{
-                            width: "100%",
-                            maxWidth: selectedAspectRatio.width > selectedAspectRatio.height ? 300 : 240,
-                            boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-                            borderRadius: DS.radius.xl,
-                            overflow: "hidden",
-                            marginBottom: 24,
-                        }}
-                    >
-                        {selectedCardType === CARD_TYPES.SIMPLE ? (
-                            <SimpleCard
-                                capturedImage={capturedImage}
-                                timestamp={timestamp}
-                                totalCalories={totalCalories}
-                                cardRef={simpleCardRef}
-                                lang={lang}
-                                theme={selectedTheme}
-                                aspectRatio={selectedAspectRatio}
-                            />
-                        ) : (
-                            <DetailedCard
-                                capturedImage={capturedImage}
-                                timestamp={timestamp}
-                                totalCalories={totalCalories}
-                                foods={foods}
-                                cardRef={detailedCardRef}
-                                lang={lang}
-                                theme={selectedTheme}
-                                aspectRatio={selectedAspectRatio}
-                            />
-                        )}
-                    </div>
-
-                    {/* Card Type Selector */}
-                    <div
-                        style={{
+                            flex: 1,
                             display: "flex",
-                            background: DS.colors.gray[100],
-                            borderRadius: DS.radius.md,
-                            padding: 4,
-                            marginBottom: 16,
-                            width: "100%",
-                            maxWidth: 200,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: `16px ${DS.content.paddingX}px`,
+                            minHeight: 0,
                         }}
                     >
-                        {[
-                            { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
-                            { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
-                        ].map((item) => (
-                            <button
-                                key={item.key}
-                                onClick={() => setSelectedCardType(item.key as any)}
-                                style={{
-                                    flex: 1,
-                                    padding: "10px 16px",
-                                    fontSize: DS.fontSize.sm,
-                                    fontWeight: 600,
-                                    color: selectedCardType === item.key ? DS.colors.black : DS.colors.gray[400],
-                                    background: selectedCardType === item.key ? DS.colors.white : "transparent",
-                                    border: "none",
-                                    borderRadius: DS.radius.md - 2,
-                                    cursor: "pointer",
-                                    boxShadow: selectedCardType === item.key ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: 5,
-                                    transition: "all 0.15s ease",
-                                }}
-                            >
-                                {item.isPro && <Icon.Sparkle size={10} />}
-                                {t(item.labelKey)}
-                            </button>
-                        ))}
+                        <div
+                            style={{
+                                width: "100%",
+                                maxWidth: 220,
+                                boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+                                borderRadius: DS.radius.xl,
+                                overflow: "hidden",
+                            }}
+                        >
+                            {selectedCardType === CARD_TYPES.SIMPLE ? (
+                                <SimpleCard
+                                    capturedImage={capturedImage}
+                                    timestamp={timestamp}
+                                    totalCalories={totalCalories}
+                                    cardRef={simpleCardRef}
+                                    lang={lang}
+                                    theme={selectedTheme}
+                                    aspectRatio={selectedAspectRatio}
+                                />
+                            ) : (
+                                <DetailedCard
+                                    capturedImage={capturedImage}
+                                    timestamp={timestamp}
+                                    totalCalories={totalCalories}
+                                    foods={foods}
+                                    cardRef={detailedCardRef}
+                                    lang={lang}
+                                    theme={selectedTheme}
+                                    aspectRatio={selectedAspectRatio}
+                                />
+                            )}
+                        </div>
                     </div>
 
-                    {/* Theme Selector */}
-                    <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-                        {[
-                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
-                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
-                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
-                        ].map((item) => {
-                            const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
-                            return (
-                                <button
-                                    key={item.key}
-                                    onClick={() => {
-                                        setSelectedTheme(item.key)
-                                        localStorage.setItem(STORAGE.theme, item.key)
-                                    }}
-                                    style={{
-                                        padding: "8px 16px",
-                                        fontSize: DS.fontSize.sm,
-                                        fontWeight: 500,
-                                        color: selectedTheme === item.key ? DS.colors.white : DS.colors.gray[600],
-                                        background: selectedTheme === item.key ? DS.colors.black : DS.colors.white,
-                                        border: `1px solid ${selectedTheme === item.key ? DS.colors.black : DS.colors.gray[200]}`,
-                                        borderRadius: DS.radius.full,
-                                        cursor: "pointer",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 4,
-                                        transition: "all 0.15s ease",
-                                    }}
-                                >
-                                    {isProTheme && <Icon.Sparkle size={9} />}
-                                    {item.label}
-                                </button>
-                            )
-                        })}
-                    </div>
+                    {/* Options Toolbar - Fixed Position */}
+                    <div
+                        style={{
+                            padding: `16px ${DS.content.paddingX}px`,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 12,
+                            background: DS.colors.gray[50],
+                            borderTop: `1px solid ${DS.colors.gray[100]}`,
+                        }}
+                    >
+                        {/* Card Type Toggle - Camera Style */}
+                        <div
+                            style={{
+                                display: "flex",
+                                background: DS.colors.gray[800],
+                                borderRadius: DS.radius.full,
+                                padding: 3,
+                                width: 180,
+                            }}
+                        >
+                            {[
+                                { key: CARD_TYPES.SIMPLE, labelKey: "simple" },
+                                { key: CARD_TYPES.DETAILED, labelKey: "detailed", isPro: true },
+                            ].map((item) => {
+                                const active = selectedCardType === item.key
+                                return (
+                                    <button
+                                        key={item.key}
+                                        onClick={() => setSelectedCardType(item.key as any)}
+                                        style={{
+                                            flex: 1,
+                                            border: "none",
+                                            cursor: "pointer",
+                                            borderRadius: DS.radius.full,
+                                            padding: "8px 0",
+                                            fontSize: DS.fontSize.sm,
+                                            fontWeight: 600,
+                                            background: active ? "#fff" : "transparent",
+                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: 4,
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        {item.isPro && <Icon.Sparkle size={10} />}
+                                        {t(item.labelKey)}
+                                    </button>
+                                )
+                            })}
+                        </div>
 
-                    {/* Aspect Ratio Selector */}
-                    <div style={{ display: "flex", gap: 8 }}>
-                        {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => (
-                            <button
-                                key={ratio.key}
-                                onClick={() => setSelectedAspectRatio(ratio)}
-                                style={{
-                                    padding: "8px 16px",
-                                    fontSize: DS.fontSize.sm,
-                                    fontWeight: 500,
-                                    color: selectedAspectRatio.key === ratio.key ? DS.colors.white : DS.colors.gray[600],
-                                    background: selectedAspectRatio.key === ratio.key ? DS.colors.gray[800] : DS.colors.white,
-                                    border: `1px solid ${selectedAspectRatio.key === ratio.key ? DS.colors.gray[800] : DS.colors.gray[200]}`,
-                                    borderRadius: DS.radius.full,
-                                    cursor: "pointer",
-                                    transition: "all 0.15s ease",
-                                }}
-                            >
-                                {ratio.key}
-                            </button>
-                        ))}
+                        {/* Theme & Ratio Row */}
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                            {/* Theme Selector */}
+                            {[
+                                { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
+                                { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
+                                { key: CARD_THEMES.NEON, label: t("themeNeon") },
+                            ].map((item) => {
+                                const isProTheme = selectedCardType === CARD_TYPES.DETAILED || item.key !== CARD_THEMES.DEFAULT
+                                const active = selectedTheme === item.key
+                                return (
+                                    <button
+                                        key={item.key}
+                                        onClick={() => {
+                                            setSelectedTheme(item.key)
+                                            localStorage.setItem(STORAGE.theme, item.key)
+                                        }}
+                                        style={{
+                                            padding: "6px 12px",
+                                            fontSize: DS.fontSize.xs,
+                                            fontWeight: 600,
+                                            color: active ? DS.colors.white : DS.colors.gray[500],
+                                            background: active ? DS.colors.black : DS.colors.white,
+                                            border: `1px solid ${active ? DS.colors.black : DS.colors.gray[200]}`,
+                                            borderRadius: DS.radius.full,
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 3,
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        {isProTheme && <Icon.Sparkle size={8} />}
+                                        {item.label}
+                                    </button>
+                                )
+                            })}
+
+                            <div style={{ width: 1, height: 24, background: DS.colors.gray[200], margin: "0 2px" }} />
+
+                            {/* Aspect Ratio Selector */}
+                            {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => {
+                                const active = selectedAspectRatio.key === ratio.key
+                                return (
+                                    <button
+                                        key={ratio.key}
+                                        onClick={() => setSelectedAspectRatio(ratio)}
+                                        style={{
+                                            padding: "6px 10px",
+                                            fontSize: DS.fontSize.xs,
+                                            fontWeight: 600,
+                                            color: active ? DS.colors.white : DS.colors.gray[500],
+                                            background: active ? DS.colors.gray[700] : DS.colors.white,
+                                            border: `1px solid ${active ? DS.colors.gray[700] : DS.colors.gray[200]}`,
+                                            borderRadius: DS.radius.full,
+                                            cursor: "pointer",
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        {ratio.key}
+                                    </button>
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
 
