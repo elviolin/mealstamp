@@ -2248,8 +2248,9 @@ const DetailedCard = ({
     const isPortrait = aspectRatio.height > aspectRatio.width
     const maxFoods = isPortrait ? 7 : 4
     const displayFoods = foods.slice(0, maxFoods)
-    const mainFontSize = isDigital ? 30 : isNeon ? 24 : 26
-    const subFontSize = isDigital ? 12 : isNeon ? 9 : 10
+    const mainFontSize = isDigital ? 34 : isNeon ? 24 : 26
+    const subFontSize = isDigital ? 14 : isNeon ? 9 : 10
+    const foodFontSize = isDigital ? 14 : 13
     const dateDisplay = isSpecialTheme ? `${ts.date} ${ts.day}` : `${ts.date} (${ts.day})`
     const ratioString = `${aspectRatio.width}/${aspectRatio.height}`
 
@@ -2308,7 +2309,7 @@ const DetailedCard = ({
                                 display: "flex",
                                 justifyContent: "space-between",
                                 padding: "4px 0",
-                                fontSize: 13,
+                                fontSize: foodFontSize,
                                 borderBottom:
                                     i < displayFoods.length - 1
                                         ? "1px solid rgba(255,255,255,0.1)"
@@ -2316,15 +2317,9 @@ const DetailedCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.85 }}>{food.name}</span>
-                            <span
-                                style={{
-                                    fontFamily: isSpecialTheme
-                                        ? fontStyle
-                                        : "inherit",
-                                    fontWeight: 600,
-                                }}
-                            >
-                                {food.calories} <span style={{ fontWeight: 400, fontSize: 11, opacity: 0.7 }}>kcal</span>
+                            <span style={{ fontWeight: 600 }}>
+                                <span style={{ fontFamily: isSpecialTheme ? fontStyle : "inherit" }}>{food.calories}</span>
+                                <span style={{ fontWeight: 400, fontSize: foodFontSize * 0.85, opacity: 0.7, marginLeft: 2 }}>kcal</span>
                             </span>
                         </div>
                     ))}
@@ -2603,23 +2598,31 @@ const HealthCard = ({
                     }}
                 >
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalCarbs}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.carbs}</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, ...glowStyle }}>
+                            <span style={{ fontFamily: fontStyle }}>{totalCarbs}</span><span style={{ fontSize: macroBarFontSize * 0.7 }}>g</span>
+                        </div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.carbs}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalProtein}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.protein}</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, ...glowStyle }}>
+                            <span style={{ fontFamily: fontStyle }}>{totalProtein}</span><span style={{ fontSize: macroBarFontSize * 0.7 }}>g</span>
+                        </div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.protein}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFat}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fat}</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, ...glowStyle }}>
+                            <span style={{ fontFamily: fontStyle }}>{totalFat}</span><span style={{ fontSize: macroBarFontSize * 0.7 }}>g</span>
+                        </div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.fat}</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFiber}g</div>
-                        <div style={{ fontSize: 7, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, ...glowStyle }}>
+                            <span style={{ fontFamily: fontStyle }}>{totalFiber}</span><span style={{ fontSize: macroBarFontSize * 0.7 }}>g</span>
+                        </div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
                     </div>
                 </div>
             </div>
@@ -4042,6 +4045,11 @@ export default function MealStamp(props: any) {
                                                             onMouseDown={(e) => {
                                                                 e.preventDefault()
                                                                 handleFoodChange(i, "name", suggestion)
+                                                                // 기본 양도 자동 설정
+                                                                const defaultAmount = getAmountSuggestions(suggestion, lang)[0] || ""
+                                                                if (defaultAmount && !foods[i].amount) {
+                                                                    handleFoodChange(i, "amount", defaultAmount)
+                                                                }
                                                                 setNameSuggestionsIndex(null)
                                                             }}
                                                             style={{
