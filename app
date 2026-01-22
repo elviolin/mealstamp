@@ -4080,24 +4080,25 @@ export default function MealStamp(props: any) {
                         flex: 1,
                         display: "flex",
                         flexDirection: "column",
-                        overflowY: "auto",
-                        padding: `24px ${DS.content.paddingX}px`,
+                        padding: `20px ${DS.content.paddingX}px`,
                     }}
                 >
-                    {/* Card Preview */}
+                    {/* Card Preview - Fixed height container */}
                     <div
                         style={{
+                            flex: 1,
                             display: "flex",
+                            alignItems: "center",
                             justifyContent: "center",
-                            marginBottom: 24,
+                            minHeight: 280,
+                            maxHeight: 340,
                         }}
                     >
                         <div
                             style={{
-                                width: "100%",
-                                maxWidth: 200,
-                                boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-                                borderRadius: DS.radius.xl,
+                                maxWidth: 180,
+                                boxShadow: "0 16px 48px rgba(0,0,0,0.15)",
+                                borderRadius: DS.radius.lg,
                                 overflow: "hidden",
                             }}
                         >
@@ -4126,23 +4127,23 @@ export default function MealStamp(props: any) {
                         </div>
                     </div>
 
-                    {/* Options */}
+                    {/* Options - Fixed at bottom */}
                     <div
                         style={{
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: 12,
+                            gap: 16,
+                            paddingTop: 20,
                         }}
                     >
-                        {/* Card Type Toggle - Camera Style */}
+                        {/* Card Type Toggle - Subtle style */}
                         <div
                             style={{
                                 display: "flex",
-                                background: DS.colors.gray[800],
+                                background: DS.colors.gray[100],
                                 borderRadius: DS.radius.full,
                                 padding: 3,
-                                width: 180,
                             }}
                         >
                             {[
@@ -4155,15 +4156,15 @@ export default function MealStamp(props: any) {
                                         key={item.key}
                                         onClick={() => setSelectedCardType(item.key as any)}
                                         style={{
-                                            flex: 1,
                                             border: "none",
                                             cursor: "pointer",
                                             borderRadius: DS.radius.full,
-                                            padding: "8px 0",
+                                            padding: "8px 20px",
                                             fontSize: DS.fontSize.sm,
                                             fontWeight: 600,
-                                            background: active ? "#fff" : "transparent",
-                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
+                                            background: active ? DS.colors.white : "transparent",
+                                            color: active ? DS.colors.black : DS.colors.gray[400],
+                                            boxShadow: active ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
@@ -4178,7 +4179,7 @@ export default function MealStamp(props: any) {
                             })}
                         </div>
 
-                        {/* Theme & Ratio Row */}
+                        {/* Theme & Ratio - Compact pills */}
                         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
                             {/* Theme Selector */}
                             {[
@@ -4198,10 +4199,10 @@ export default function MealStamp(props: any) {
                                         style={{
                                             padding: "6px 12px",
                                             fontSize: DS.fontSize.xs,
-                                            fontWeight: 600,
-                                            color: active ? DS.colors.white : DS.colors.gray[500],
-                                            background: active ? DS.colors.black : DS.colors.white,
-                                            border: `1px solid ${active ? DS.colors.black : DS.colors.gray[200]}`,
+                                            fontWeight: 500,
+                                            color: active ? DS.colors.gray[700] : DS.colors.gray[400],
+                                            background: active ? DS.colors.gray[100] : "transparent",
+                                            border: `1px solid ${active ? DS.colors.gray[200] : DS.colors.gray[150] || "#eee"}`,
                                             borderRadius: DS.radius.full,
                                             cursor: "pointer",
                                             display: "flex",
@@ -4215,10 +4216,10 @@ export default function MealStamp(props: any) {
                                     </button>
                                 )
                             })}
+                        </div>
 
-                            <div style={{ width: 1, height: 24, background: DS.colors.gray[200], margin: "0 2px" }} />
-
-                            {/* Aspect Ratio Selector */}
+                        {/* Aspect Ratio - Separate row */}
+                        <div style={{ display: "flex", gap: 8 }}>
                             {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE, ASPECT_RATIOS.LANDSCAPE].map((ratio) => {
                                 const active = selectedAspectRatio.key === ratio.key
                                 return (
@@ -4226,12 +4227,12 @@ export default function MealStamp(props: any) {
                                         key={ratio.key}
                                         onClick={() => setSelectedAspectRatio(ratio)}
                                         style={{
-                                            padding: "6px 10px",
+                                            padding: "6px 14px",
                                             fontSize: DS.fontSize.xs,
-                                            fontWeight: 600,
-                                            color: active ? DS.colors.white : DS.colors.gray[500],
-                                            background: active ? DS.colors.gray[700] : DS.colors.white,
-                                            border: `1px solid ${active ? DS.colors.gray[700] : DS.colors.gray[200]}`,
+                                            fontWeight: 500,
+                                            color: active ? DS.colors.gray[700] : DS.colors.gray[400],
+                                            background: active ? DS.colors.gray[100] : "transparent",
+                                            border: `1px solid ${active ? DS.colors.gray[200] : DS.colors.gray[150] || "#eee"}`,
                                             borderRadius: DS.radius.full,
                                             cursor: "pointer",
                                             transition: "all 0.15s ease",
@@ -4244,7 +4245,7 @@ export default function MealStamp(props: any) {
                         </div>
 
                         {/* Bottom Buttons */}
-                        <div style={{ width: "100%", marginTop: 24 }}>
+                        <div style={{ width: "100%", marginTop: 8 }}>
                             <div style={{ display: "flex", gap: 12 }}>
                                 <Button
                                     variant="secondary"
