@@ -50,6 +50,7 @@ interface CardProps {
     totalCalories: number
     totalCarbs?: number
     totalProtein?: number
+    totalFat?: number
     totalFiber?: number
     cardRef: React.RefObject<HTMLDivElement>
     lang?: string
@@ -2401,6 +2402,7 @@ const HealthCard = ({
     totalCalories,
     totalCarbs = 0,
     totalProtein = 0,
+    totalFat = 0,
     totalFiber = 0,
     foods = [],
     cardRef,
@@ -2480,12 +2482,12 @@ const HealthCard = ({
                             }}
                         >
                             <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
-                            <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
-                                <span style={{ opacity: 0.9, fontWeight: 600 }}>{food.calories || 0}kcal</span>
-                                <span style={{ opacity: 0.5 }}>|</span>
-                                <span style={{ opacity: 0.6 }}>탄{food.carbs || 0}</span>
-                                <span style={{ opacity: 0.6 }}>단{food.protein || 0}</span>
-                                <span style={{ opacity: 0.6 }}>섬{food.fiber || 0}</span>
+                            <div style={{ display: "flex", gap: 5, fontSize: 9, alignItems: "center" }}>
+                                <span style={{ opacity: 0.55 }}>탄수화물 {food.carbs || 0}</span>
+                                <span style={{ opacity: 0.55 }}>단백질 {food.protein || 0}</span>
+                                <span style={{ opacity: 0.55 }}>지방 {food.fat || 0}</span>
+                                <span style={{ opacity: 0.55 }}>식이섬유 {food.fiber || 0}</span>
+                                <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2 }}>{food.calories || 0}kcal</span>
                             </div>
                         </div>
                     ))}
@@ -2560,24 +2562,29 @@ const HealthCard = ({
                     style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        padding: "10px 12px",
+                        padding: "10px 8px",
                         background: "rgba(255,255,255,0.1)",
                         borderRadius: 8,
                     }}
                 >
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalCarbs}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>탄수화물</div>
+                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalCarbs}g</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>탄수화물</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalProtein}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>단백질</div>
+                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalProtein}g</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>단백질</div>
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
-                        <div style={{ fontSize: 16, fontWeight: 700 }}>{totalFiber}g</div>
-                        <div style={{ fontSize: 8, opacity: 0.6 }}>식이섬유</div>
+                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFat}g</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>지방</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 700 }}>{totalFiber}g</div>
+                        <div style={{ fontSize: 7, opacity: 0.6 }}>식이섬유</div>
                     </div>
                 </div>
             </div>
@@ -3023,7 +3030,7 @@ export default function MealStamp(props: any) {
                             {
                                 role: "system",
                                 content:
-                                    "Estimate nutrition for each food item. Return JSON array of objects with: calories (kcal), carbs (g), protein (g), fiber (g). Example: [{\"calories\":320,\"carbs\":45,\"protein\":12,\"fiber\":3},{\"calories\":150,\"carbs\":20,\"protein\":5,\"fiber\":1}]",
+                                    "Estimate nutrition for each food item. Return JSON array of objects with: calories (kcal), carbs (g), protein (g), fat (g), fiber (g). Example: [{\"calories\":320,\"carbs\":45,\"protein\":12,\"fat\":8,\"fiber\":3},{\"calories\":150,\"carbs\":20,\"protein\":5,\"fat\":3,\"fiber\":1}]",
                             },
                             { role: "user", content: list },
                         ],
@@ -3073,6 +3080,10 @@ export default function MealStamp(props: any) {
     )
     const totalProtein = foods.reduce(
         (s, f) => s + (parseInt(f.protein) || 0),
+        0
+    )
+    const totalFat = foods.reduce(
+        (s, f) => s + (parseInt(f.fat) || 0),
         0
     )
     const totalFiber = foods.reduce(
@@ -4242,7 +4253,7 @@ export default function MealStamp(props: any) {
 
     // COMPLETE SCREEN
     if (screen === SCREENS.COMPLETE) {
-        const hasMacrosData = totalCarbs > 0 || totalProtein > 0 || totalFiber > 0
+        const hasMacrosData = totalCarbs > 0 || totalProtein > 0 || totalFat > 0 || totalFiber > 0
         const isProFeature =
             selectedCardType === CARD_TYPES.DETAILED ||
             selectedCardType === CARD_TYPES.HEALTH ||
@@ -4364,6 +4375,7 @@ export default function MealStamp(props: any) {
                                     totalCalories={totalCalories}
                                     totalCarbs={totalCarbs}
                                     totalProtein={totalProtein}
+                                    totalFat={totalFat}
                                     totalFiber={totalFiber}
                                     foods={foods}
                                     cardRef={healthCardRef}
