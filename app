@@ -1734,7 +1734,7 @@ export default function MealStamp(props: any) {
     const { apiKeyDefault = "" } = props
     const [screen, setScreen] = useState(SCREENS.LANGUAGE)
     const [lang, setLang] = useState("ko")
-    const [recordMode, setRecordMode] = useState(RECORD_MODE.MANUAL)
+    const [recordMode, setRecordMode] = useState(RECORD_MODE.AI)
     const [capturedImage, setCapturedImage] = useState<string | null>(null)
     const [foods, setFoods] = useState<any[]>([])
     const [apiKey, setApiKey] = useState(apiKeyDefault)
@@ -1927,7 +1927,7 @@ export default function MealStamp(props: any) {
         setCapturedImage(imageData)
         setTimestamp(new Date())
         setTimeout(() => {
-            const useAI = isPro || recordMode === RECORD_MODE.AI
+            const useAI = recordMode === RECORD_MODE.AI
             if (!useAI) {
                 setFoods([{ name: "", amount: "", calories: "" }])
                 setScreen(SCREENS.RESULT)
@@ -1972,7 +1972,7 @@ export default function MealStamp(props: any) {
                 const imageData = canvas.toDataURL("image/jpeg", 0.92)
                 setCapturedImage(imageData)
                 setTimestamp(new Date())
-                const useAI = isPro || recordMode === RECORD_MODE.AI
+                const useAI = recordMode === RECORD_MODE.AI
                 if (!useAI) {
                     setFoods([{ name: "", amount: "", calories: "" }])
                     setScreen(SCREENS.RESULT)
@@ -2450,13 +2450,13 @@ export default function MealStamp(props: any) {
                                 >
                                     {[
                                         {
-                                            key: RECORD_MODE.MANUAL,
-                                            labelKey: "manual",
-                                        },
-                                        {
                                             key: RECORD_MODE.AI,
                                             labelKey: "ai",
                                             isPro: true,
+                                        },
+                                        {
+                                            key: RECORD_MODE.MANUAL,
+                                            labelKey: "manual",
                                         },
                                     ].map((item) => {
                                         const active = recordMode === item.key,
