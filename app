@@ -2677,12 +2677,8 @@ export default function MealStamp(props: any) {
     const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
     const [nameSuggestionsIndex, setNameSuggestionsIndex] = useState<number | null>(null)
     const [zoomLevel, setZoomLevel] = useState(1)
-    const [dragIndex, setDragIndex] = useState<number | null>(null)
-    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
     const lastPinchDistance = useRef<number | null>(null)
     const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-    const longPressTimer = useRef<NodeJS.Timeout | null>(null)
-    const foodItemRects = useRef<Map<number, DOMRect>>(new Map())
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -3192,50 +3188,6 @@ export default function MealStamp(props: any) {
             updated[i] = { ...updated[i], calories: val.replace(/[^0-9]/g, "") }
         else updated[i] = { ...updated[i], [field]: val, calories: "" }
         setFoods(updated)
-    }
-
-    // Drag and Drop handlers
-    const handleDragStart = (index: number) => {
-        setDragIndex(index)
-        setDragOverIndex(index)
-    }
-    const handleDragMove = (e: React.TouchEvent, index: number) => {
-        if (dragIndex === null) return
-        const touch = e.touches[0]
-        let newOverIndex = index
-        foodItemRects.current.forEach((rect, idx) => {
-            if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                newOverIndex = idx
-            }
-        })
-        if (newOverIndex !== dragOverIndex) {
-            setDragOverIndex(newOverIndex)
-        }
-    }
-    const handleDragEnd = () => {
-        if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
-            const updated = [...foods]
-            const [removed] = updated.splice(dragIndex, 1)
-            updated.splice(dragOverIndex, 0, removed)
-            setFoods(updated)
-        }
-        setDragIndex(null)
-        setDragOverIndex(null)
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current)
-            longPressTimer.current = null
-        }
-    }
-    const handleLongPressStart = (index: number) => {
-        longPressTimer.current = setTimeout(() => {
-            handleDragStart(index)
-        }, 400)
-    }
-    const handleLongPressEnd = () => {
-        if (longPressTimer.current) {
-            clearTimeout(longPressTimer.current)
-            longPressTimer.current = null
-        }
     }
 
     const searchCalories = (name: string, amount: string) => {
@@ -3748,16 +3700,13 @@ export default function MealStamp(props: any) {
                             border: "none",
                             cursor: "pointer",
                             display: "flex",
-                            flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
-                            gap: 2,
                             color: "#fff",
                             backdropFilter: "blur(10px)",
                         }}
                     >
                         <Icon.Gallery />
-                        <span style={{ fontSize: 8, opacity: 0.8 }}>{lang === "ko" ? "앨범" : "Album"}</span>
                     </button>
                     <button
                         onClick={capturePhoto}
@@ -4041,42 +3990,6 @@ export default function MealStamp(props: any) {
                     </div>
                 </div>
 
-                {/* Macro Summary Bar */}
-                {(totalCarbs > 0 || totalProtein > 0 || totalFat > 0) && (
-                    <div
-                        style={{
-                            display: "flex",
-                            gap: 8,
-                            padding: `8px ${DS.content.paddingX}px`,
-                            background: DS.colors.white,
-                            borderBottom: `1px solid ${DS.colors.gray[100]}`,
-                        }}
-                    >
-                        {[
-                            { label: lang === "ko" ? "탄" : "C", value: totalCarbs, color: "#4CAF50" },
-                            { label: lang === "ko" ? "단" : "P", value: totalProtein, color: "#2196F3" },
-                            { label: lang === "ko" ? "지" : "F", value: totalFat, color: "#FF9800" },
-                            { label: lang === "ko" ? "당" : "S", value: totalSugar, color: "#E91E63" },
-                            { label: lang === "ko" ? "섬" : "Fi", value: totalFiber, color: "#9C27B0" },
-                        ].map((item, i) => (
-                            <div
-                                key={i}
-                                style={{
-                                    flex: 1,
-                                    textAlign: "center",
-                                    padding: "6px 0",
-                                    background: DS.colors.gray[50],
-                                    borderRadius: DS.radius.sm,
-                                    borderLeft: `3px solid ${item.color}`,
-                                }}
-                            >
-                                <div style={{ fontSize: 14, fontWeight: 700 }}>{item.value}g</div>
-                                <div style={{ fontSize: 10, color: DS.colors.gray[500] }}>{item.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
                 <div
                     style={{
                         flex: 1,
@@ -4091,20 +4004,13 @@ export default function MealStamp(props: any) {
                     {foods.map((food, i) => (
                         <div
                             key={i}
-                            ref={(el) => {
-                                if (el) foodItemRects.current.set(i, el.getBoundingClientRect())
-                            }}
-                            onTouchMove={(e) => dragIndex !== null && handleDragMove(e, i)}
-                            onTouchEnd={handleDragEnd}
                             style={{
-                                background: dragIndex === i ? DS.colors.gray[100] : DS.colors.white,
+                                background: DS.colors.white,
                                 borderRadius: DS.radius.sm,
                                 padding: "12px 14px",
                                 marginBottom: 10,
-                                border: `1px solid ${dragOverIndex === i && dragIndex !== i ? DS.colors.black : focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
-                                transition: "all 0.15s ease",
-                                opacity: dragIndex === i ? 0.7 : 1,
-                                transform: dragOverIndex === i && dragIndex !== i ? "scale(1.02)" : "scale(1)",
+                                border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
+                                transition: "border-color 0.15s ease",
                             }}
                         >
                             <div
@@ -4115,28 +4021,6 @@ export default function MealStamp(props: any) {
                                     marginBottom: 8,
                                 }}
                             >
-                                {/* Drag Handle */}
-                                <div
-                                    onTouchStart={() => handleLongPressStart(i)}
-                                    onTouchEnd={handleLongPressEnd}
-                                    onTouchCancel={handleLongPressEnd}
-                                    style={{
-                                        width: 20,
-                                        height: 34,
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: 2,
-                                        cursor: "grab",
-                                        touchAction: "none",
-                                        marginLeft: -4,
-                                    }}
-                                >
-                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
-                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
-                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
-                                </div>
                                 <div style={{ flex: 1, position: "relative" }}>
                                     <input
                                         ref={(el) => (foodInputRefs.current[i] = el)}
@@ -4646,9 +4530,9 @@ export default function MealStamp(props: any) {
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
                         {/* Theme Selector */}
                         {[
-                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault"), color: "#ffffff" },
-                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital"), color: "#00ff88" },
-                            { key: CARD_THEMES.NEON, label: t("themeNeon"), color: "#ff00ff" },
+                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
+                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
+                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
                         ].map((item) => {
                             const isProTheme = selectedCardType === CARD_TYPES.DETAILED || selectedCardType === CARD_TYPES.HEALTH || item.key !== CARD_THEMES.DEFAULT
                             const active = selectedTheme === item.key
@@ -4674,16 +4558,7 @@ export default function MealStamp(props: any) {
                                         transition: "all 0.15s ease",
                                     }}
                                 >
-                                    <span
-                                        style={{
-                                            width: 10,
-                                            height: 10,
-                                            borderRadius: "50%",
-                                            background: item.color,
-                                            border: item.key === CARD_THEMES.DEFAULT ? "1px solid #ccc" : "none",
-                                            boxShadow: item.key !== CARD_THEMES.DEFAULT ? `0 0 6px ${item.color}` : "none",
-                                        }}
-                                    />
+                                    {isProTheme && <Icon.Sparkle size={8} />}
                                     {item.label}
                                 </button>
                             )
