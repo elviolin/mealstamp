@@ -283,6 +283,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc:
             "AI 음식 인식과 칼로리 계산을\n무제한으로 사용할 수 있어요",
         saved: "저장 완료",
+        saveAndShare: "저장하기",
         shared: "공유 완료",
         proActivated: "Pro 활성화",
         searchHint:
@@ -351,6 +352,7 @@ const i18n: Record<string, Record<string, string>> = {
         creditsLeft: "無料体験残り{n}回\nProにアップグレードで無制限！",
         unlimitedDesc: "AI食べ物認識とカロリー計算を\n無制限で使用できます",
         saved: "保存完了",
+        saveAndShare: "保存する",
         shared: "共有完了",
         proActivated: "Pro有効化",
         searchHint:
@@ -421,6 +423,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc:
             "Use AI food recognition and\ncalorie calculation unlimited",
         saved: "Saved",
+        saveAndShare: "Save",
         shared: "Shared",
         proActivated: "Pro Activated",
         searchHint:
@@ -488,6 +491,7 @@ const i18n: Record<string, Record<string, string>> = {
         creditsLeft: "免费体验剩余{n}次\n升级Pro享无限次！",
         unlimitedDesc: "无限使用AI食物识别\n和卡路里计算",
         saved: "已保存",
+        saveAndShare: "保存",
         shared: "已分享",
         proActivated: "Pro已激活",
         searchHint: "输入食物名称和份量\n点击搜索按钮查询卡路里",
@@ -555,6 +559,7 @@ const i18n: Record<string, Record<string, string>> = {
             "{n} essais gratuits restants\nPassez à Pro pour illimité!",
         unlimitedDesc: "Reconnaissance IA et calcul\nde calories sans limite",
         saved: "Enregistré",
+        saveAndShare: "Enregistrer",
         shared: "Partagé",
         proActivated: "Pro Activé",
         searchHint:
@@ -622,6 +627,7 @@ const i18n: Record<string, Record<string, string>> = {
         creditsLeft: "{n} kostenlose Versuche\nUpgrade für unbegrenzt!",
         unlimitedDesc: "KI-Erkennung und Kalorien-\nberechnung unbegrenzt",
         saved: "Gespeichert",
+        saveAndShare: "Speichern",
         shared: "Geteilt",
         proActivated: "Pro Aktiviert",
         searchHint: "Name und Menge eingeben,\ndann Suche antippen",
@@ -3214,28 +3220,14 @@ export default function MealStamp(props: any) {
                 backgroundColor: "#000",
                 logging: false,
             })
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-            if (isIOS && navigator.share) {
-                canvas.toBlob(async (blob: Blob | null) => {
-                    if (!blob) return
-                    try {
-                        await navigator.share({
-                            files: [
-                                new File([blob], "mealstamp.png", {
-                                    type: "image/png",
-                                }),
-                            ],
-                        })
-                        toast(t("saved"))
-                    } catch {}
-                }, "image/png")
-            } else {
-                const link = document.createElement("a")
-                link.download = `mealstamp_${Date.now()}.png`
-                link.href = canvas.toDataURL("image/png")
-                link.click()
-                toast(t("saved"))
-            }
+            // iOS: 새 탭에서 이미지 열기 → 길게 눌러 저장
+            canvas.toBlob(async (blob: Blob | null) => {
+                if (!blob) return
+                const blobUrl = URL.createObjectURL(blob)
+                window.open(blobUrl, "_blank")
+                toast(t("saveHint"), 2500)
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
+            }, "image/png")
         } catch {
             alert("Save failed")
         } finally {
@@ -4343,17 +4335,6 @@ export default function MealStamp(props: any) {
             (selectedCardType === CARD_TYPES.SIMPLE &&
                 selectedTheme !== CARD_THEMES.DEFAULT)
 
-        const handleSave = async () => {
-            if (isProFeature && !isPro && !sessionPaid && aiCredits <= 0) {
-                setShowUpgrade(true)
-                return
-            }
-            if (isProFeature && !isPro && !sessionPaid) {
-                updateCredits(Math.max(0, aiCredits - 1))
-                setSessionPaid(true)
-            }
-            await saveCard()
-        }
         const handleShare = async () => {
             if (isProFeature && !isPro && !sessionPaid && aiCredits <= 0) {
                 setShowUpgrade(true)
@@ -4594,26 +4575,15 @@ export default function MealStamp(props: any) {
                         })}
                     </div>
 
-                    {/* Action Buttons */}
-                    <div style={{ display: "flex", gap: 12, width: "100%" }}>
-                        <Button
-                            variant="secondary"
-                            onClick={handleSave}
-                            disabled={isSaving}
-                            style={{ flex: 1 }}
-                        >
-                            {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
-                            {isSaving ? "..." : t("save")}
-                        </Button>
-                        <Button
-                            onClick={handleShare}
-                            disabled={isSaving}
-                            style={{ flex: 1 }}
-                        >
-                            {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
-                            {isSaving ? "..." : t("share")}
-                        </Button>
-                    </div>
+                    {/* Action Button */}
+                    <Button
+                        onClick={handleShare}
+                        disabled={isSaving}
+                        style={{ width: "100%" }}
+                    >
+                        {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
+                        {isSaving ? "..." : t("saveAndShare")}
+                    </Button>
                 </div>
             </div>
         )
