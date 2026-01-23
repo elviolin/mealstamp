@@ -1138,7 +1138,7 @@ const loadNutritionDB = async () => {
     }
 }
 
-// Nutrition lookup function
+// Nutrition lookup function (local DB)
 const lookupNutrition = (foodName: string): { calories: number; carbs: number; protein: number; fat: number; sugar: number; fiber: number } | null => {
     const name = foodName.trim().toLowerCase()
     for (const item of NUTRITION_DB) {
@@ -1154,6 +1154,42 @@ const lookupNutrition = (foodName: string): { calories: number; carbs: number; p
         }
     }
     return null
+}
+
+// 식약처 공공데이터 API 조회
+const FOOD_API_KEY = "3f79c616d1de48c4a7a5bfc7b61a5e07" // 공공데이터포털 인증키
+const lookupFoodAPI = async (foodName: string): Promise<{ calories: number; carbs: number; protein: number; fat: number; sugar: number; fiber: number } | null> => {
+    try {
+        const encodedName = encodeURIComponent(foodName.trim())
+        const url = `https://apis.data.go.kr/1471000/FoodNtrIrdntInfoService1/getFoodNtrItdntList1?serviceKey=${FOOD_API_KEY}&desc_kor=${encodedName}&pageNo=1&numOfRows=1&type=json`
+
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 5000) // 5초 타임아웃
+
+        const res = await fetch(url, { signal: controller.signal })
+        clearTimeout(timeout)
+
+        if (!res.ok) return null
+
+        const data = await res.json()
+        const items = data?.body?.items
+        if (!items || items.length === 0) return null
+
+        const item = items[0]
+        // API 필드: NUTR_CONT1(칼로리), NUTR_CONT2(탄수화물), NUTR_CONT3(단백질), NUTR_CONT4(지방), NUTR_CONT5(당류), NUTR_CONT6(나트륨), NUTR_CONT7(콜레스테롤), NUTR_CONT8(포화지방), NUTR_CONT9(트랜스지방)
+        // 식이섬유는 별도 필드가 없어서 0으로 처리
+        return {
+            calories: Math.round(parseFloat(item.NUTR_CONT1) || 0),
+            carbs: Math.round(parseFloat(item.NUTR_CONT2) || 0),
+            protein: Math.round(parseFloat(item.NUTR_CONT3) || 0),
+            fat: Math.round(parseFloat(item.NUTR_CONT4) || 0),
+            sugar: Math.round(parseFloat(item.NUTR_CONT5) || 0),
+            fiber: 0 // 식약처 API에 식이섬유 데이터 없음
+        }
+    } catch (e) {
+        console.error("식약처 API 조회 실패:", e)
+        return null
+    }
 }
 
 // Common food names for autocomplete (by language)
@@ -3147,25 +3183,39 @@ export default function MealStamp(props: any) {
         await loadNutritionDB()
 
         // Step 1: Try local DB first
-        const localResults: (typeof NUTRITION_DB[string] | null)[] = []
-        const needsApi: typeof toCalc = []
+        type NutritionResult = { cal: number; carb: number; prot: number; fat: number; sugar: number; fiber: number }
+        const results: (NutritionResult | null)[] = []
+        const needsFoodApi: { idx: number; food: typeof toCalc[0] }[] = []
 
-        toCalc.forEach((f) => {
+        toCalc.forEach((f, idx) => {
             const local = lookupNutrition(f.name)
             if (local) {
-                localResults.push({ cal: local.calories, carb: local.carbs, prot: local.protein, fat: local.fat, sugar: local.sugar, fiber: local.fiber, serving: "" })
+                results.push({ cal: local.calories, carb: local.carbs, prot: local.protein, fat: local.fat, sugar: local.sugar, fiber: local.fiber })
             } else {
-                localResults.push(null)
-                needsApi.push(f)
+                results.push(null)
+                needsFoodApi.push({ idx, food: f })
             }
         })
 
-        // If all found in local DB, skip API
-        if (needsApi.length === 0) {
+        // Step 2: Try 식약처 API for items not found locally
+        const needsGpt: { idx: number; food: typeof toCalc[0] }[] = []
+        if (needsFoodApi.length > 0) {
+            await Promise.all(needsFoodApi.map(async ({ idx, food }) => {
+                const apiResult = await lookupFoodAPI(food.name)
+                if (apiResult) {
+                    results[idx] = { cal: apiResult.calories, carb: apiResult.carbs, prot: apiResult.protein, fat: apiResult.fat, sugar: apiResult.sugar, fiber: apiResult.fiber }
+                } else {
+                    needsGpt.push({ idx, food })
+                }
+            }))
+        }
+
+        // If all found (local + 식약처 API), skip GPT
+        if (needsGpt.length === 0) {
             let idx = 0
             setFoods(foods.map((f) => {
-                if (f.name?.trim() && !f.calories && idx < localResults.length) {
-                    const n = localResults[idx++]
+                if (f.name?.trim() && !f.calories && idx < results.length) {
+                    const n = results[idx++]
                     if (n) {
                         return { ...f, calories: String(n.cal), carbs: String(n.carb), protein: String(n.prot), fat: String(n.fat), sugar: String(n.sugar), fiber: String(n.fiber) }
                     }
@@ -3176,13 +3226,13 @@ export default function MealStamp(props: any) {
             return
         }
 
-        // Step 2: Call API for remaining items
+        // Step 3: Call GPT API for remaining items
         if (!apiKey) {
-            // Use local results only
+            // Apply partial results (local + 식약처)
             let idx = 0
             setFoods(foods.map((f) => {
-                if (f.name?.trim() && !f.calories && idx < localResults.length) {
-                    const n = localResults[idx++]
+                if (f.name?.trim() && !f.calories && idx < results.length) {
+                    const n = results[idx++]
                     if (n) {
                         return { ...f, calories: String(n.cal), carbs: String(n.carb), protein: String(n.prot), fat: String(n.fat), sugar: String(n.sugar), fiber: String(n.fiber) }
                     }
@@ -3190,7 +3240,8 @@ export default function MealStamp(props: any) {
                 return f
             }))
             setIsCalculating(false)
-            return alert("로컬 DB에 없는 음식이 있습니다. API 키가 필요합니다.")
+            const notFound = needsGpt.map(g => g.food.name).join(", ")
+            return alert(`일부 음식을 찾지 못했습니다: ${notFound}\nGPT API 키가 필요합니다.`)
         }
 
         if (!isPro && !sessionPaid) {
@@ -3201,10 +3252,10 @@ export default function MealStamp(props: any) {
         const controller = new AbortController(),
             timeout = setTimeout(() => controller.abort(), 30000)
         try {
-            const list = needsApi
+            const list = needsGpt
                 .map(
-                    (f, i) =>
-                        `${i + 1}. ${f.name}${f.amount ? ` (${f.amount})` : ""}`
+                    ({ food }, i) =>
+                        `${i + 1}. ${food.name}${food.amount ? ` (${food.amount})` : ""}`
                 )
                 .join("\n")
             const response = await fetch(
@@ -3258,42 +3309,46 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
             clearTimeout(timeout)
             const data = await response.json()
             if (data.error) throw new Error(data.error.message)
-            const apiNutrition = JSON.parse(
+            const gptNutrition = JSON.parse(
                 (data.choices?.[0]?.message?.content || "[]")
                     .replace(/```json\n?|\n?```/g, "")
                     .trim()
             )
 
-            // Merge local + API results
-            let localIdx = 0
-            let apiIdx = 0
+            // Merge GPT results into results array
+            needsGpt.forEach(({ idx }, i) => {
+                if (i < gptNutrition.length) {
+                    const n = gptNutrition[i]
+                    results[idx] = { cal: n?.calories ?? 0, carb: n?.carbs ?? 0, prot: n?.protein ?? 0, fat: n?.fat ?? 0, sugar: n?.sugar ?? 0, fiber: n?.fiber ?? 0 }
+                }
+            })
+
+            // Apply all results (local + 식약처 + GPT)
+            let idx = 0
             setFoods(
                 foods.map((f) => {
-                    if (f.name?.trim() && !f.calories && localIdx < localResults.length) {
-                        const localN = localResults[localIdx++]
-                        if (localN) {
-                            return { ...f, calories: String(localN.cal), carbs: String(localN.carb), protein: String(localN.prot), fat: String(localN.fat), sugar: String(localN.sugar), fiber: String(localN.fiber) }
-                        } else if (apiIdx < apiNutrition.length) {
-                            const n = apiNutrition[apiIdx++]
-                            return { ...f, calories: String(n?.calories ?? 0), carbs: String(n?.carbs ?? 0), protein: String(n?.protein ?? 0), fat: String(n?.fat ?? 0), sugar: String(n?.sugar ?? 0), fiber: String(n?.fiber ?? 0) }
+                    if (f.name?.trim() && !f.calories && idx < results.length) {
+                        const n = results[idx++]
+                        if (n) {
+                            return { ...f, calories: String(n.cal), carbs: String(n.carb), protein: String(n.prot), fat: String(n.fat), sugar: String(n.sugar), fiber: String(n.fiber) }
                         }
                     }
                     return f
                 })
             )
         } catch (e: any) {
-            // On API error, still apply local results
+            // On GPT API error, still apply local + 식약처 results
             let idx = 0
             setFoods(foods.map((f) => {
-                if (f.name?.trim() && !f.calories && idx < localResults.length) {
-                    const n = localResults[idx++]
+                if (f.name?.trim() && !f.calories && idx < results.length) {
+                    const n = results[idx++]
                     if (n) {
                         return { ...f, calories: String(n.cal), carbs: String(n.carb), protein: String(n.prot), fat: String(n.fat), sugar: String(n.sugar), fiber: String(n.fiber) }
                     }
                 }
                 return f
             }))
-            alert(e?.name === "AbortError" ? "시간 초과 (로컬 DB 결과만 적용)" : "API 오류 (로컬 DB 결과만 적용)")
+            alert(e?.name === "AbortError" ? "시간 초과 (로컬/식약처 DB 결과만 적용)" : "GPT 오류 (로컬/식약처 DB 결과만 적용)")
         } finally {
             setIsCalculating(false)
         }
