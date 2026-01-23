@@ -2677,8 +2677,12 @@ export default function MealStamp(props: any) {
     const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
     const [nameSuggestionsIndex, setNameSuggestionsIndex] = useState<number | null>(null)
     const [zoomLevel, setZoomLevel] = useState(1)
+    const [dragIndex, setDragIndex] = useState<number | null>(null)
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
     const lastPinchDistance = useRef<number | null>(null)
     const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const longPressTimer = useRef<NodeJS.Timeout | null>(null)
+    const foodItemRects = useRef<Map<number, DOMRect>>(new Map())
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -3189,6 +3193,51 @@ export default function MealStamp(props: any) {
         else updated[i] = { ...updated[i], [field]: val, calories: "" }
         setFoods(updated)
     }
+
+    // Drag and Drop handlers
+    const handleDragStart = (index: number) => {
+        setDragIndex(index)
+        setDragOverIndex(index)
+    }
+    const handleDragMove = (e: React.TouchEvent, index: number) => {
+        if (dragIndex === null) return
+        const touch = e.touches[0]
+        let newOverIndex = index
+        foodItemRects.current.forEach((rect, idx) => {
+            if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                newOverIndex = idx
+            }
+        })
+        if (newOverIndex !== dragOverIndex) {
+            setDragOverIndex(newOverIndex)
+        }
+    }
+    const handleDragEnd = () => {
+        if (dragIndex !== null && dragOverIndex !== null && dragIndex !== dragOverIndex) {
+            const updated = [...foods]
+            const [removed] = updated.splice(dragIndex, 1)
+            updated.splice(dragOverIndex, 0, removed)
+            setFoods(updated)
+        }
+        setDragIndex(null)
+        setDragOverIndex(null)
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
+        }
+    }
+    const handleLongPressStart = (index: number) => {
+        longPressTimer.current = setTimeout(() => {
+            handleDragStart(index)
+        }, 400)
+    }
+    const handleLongPressEnd = () => {
+        if (longPressTimer.current) {
+            clearTimeout(longPressTimer.current)
+            longPressTimer.current = null
+        }
+    }
+
     const searchCalories = (name: string, amount: string) => {
         if (!name?.trim()) {
             toast(t("searchHint"), 2500)
@@ -4042,13 +4091,20 @@ export default function MealStamp(props: any) {
                     {foods.map((food, i) => (
                         <div
                             key={i}
+                            ref={(el) => {
+                                if (el) foodItemRects.current.set(i, el.getBoundingClientRect())
+                            }}
+                            onTouchMove={(e) => dragIndex !== null && handleDragMove(e, i)}
+                            onTouchEnd={handleDragEnd}
                             style={{
-                                background: DS.colors.white,
+                                background: dragIndex === i ? DS.colors.gray[100] : DS.colors.white,
                                 borderRadius: DS.radius.sm,
                                 padding: "12px 14px",
                                 marginBottom: 10,
-                                border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
-                                transition: "border-color 0.15s ease",
+                                border: `1px solid ${dragOverIndex === i && dragIndex !== i ? DS.colors.black : focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
+                                transition: "all 0.15s ease",
+                                opacity: dragIndex === i ? 0.7 : 1,
+                                transform: dragOverIndex === i && dragIndex !== i ? "scale(1.02)" : "scale(1)",
                             }}
                         >
                             <div
@@ -4059,6 +4115,28 @@ export default function MealStamp(props: any) {
                                     marginBottom: 8,
                                 }}
                             >
+                                {/* Drag Handle */}
+                                <div
+                                    onTouchStart={() => handleLongPressStart(i)}
+                                    onTouchEnd={handleLongPressEnd}
+                                    onTouchCancel={handleLongPressEnd}
+                                    style={{
+                                        width: 20,
+                                        height: 34,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: 2,
+                                        cursor: "grab",
+                                        touchAction: "none",
+                                        marginLeft: -4,
+                                    }}
+                                >
+                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
+                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
+                                    <div style={{ width: 12, height: 2, background: DS.colors.gray[300], borderRadius: 1 }} />
+                                </div>
                                 <div style={{ flex: 1, position: "relative" }}>
                                     <input
                                         ref={(el) => (foodInputRefs.current[i] = el)}
@@ -5026,56 +5104,6 @@ export default function MealStamp(props: any) {
                         </div>
                     </div>
 
-                    {/* API Key Section */}
-                    <div
-                        style={{
-                            background: DS.colors.white,
-                            borderRadius: DS.radius.lg,
-                            padding: 14,
-                            marginTop: 10,
-                        }}
-                    >
-                        <div
-                            style={{
-                                fontSize: DS.fontSize.xs,
-                                fontWeight: 600,
-                                color: DS.colors.gray[500],
-                                marginBottom: 8,
-                            }}
-                        >
-                            OpenAI API Key
-                        </div>
-                        <input
-                            type="password"
-                            value={apiKey}
-                            onChange={(e) => {
-                                setApiKey(e.target.value)
-                                localStorage.setItem(STORAGE.apiKey, e.target.value)
-                            }}
-                            placeholder="sk-..."
-                            style={{
-                                width: "100%",
-                                padding: "10px 12px",
-                                fontSize: DS.fontSize.sm,
-                                background: DS.colors.gray[50],
-                                border: "none",
-                                borderRadius: DS.radius.sm,
-                                fontFamily: "monospace",
-                                boxSizing: "border-box",
-                            }}
-                        />
-                        <div
-                            style={{
-                                fontSize: 10,
-                                color: DS.colors.gray[400],
-                                marginTop: 6,
-                            }}
-                        >
-                            {lang === "ko"
-                                ? "AI 분석에 사용됩니다. 키는 기기에만 저장됩니다."
-                                : "Used for AI analysis. Key is stored locally only."}
-                        </div>
-                    </div>
                 </div>
             </div>
         )
