@@ -2415,13 +2415,14 @@ const HealthCard = ({
     totalCarbs = 0,
     totalProtein = 0,
     totalFat = 0,
+    totalSugar = 0,
     totalFiber = 0,
     foods = [],
     cardRef,
     lang = "ko",
     theme = "default",
     aspectRatio = { width: 3, height: 4 },
-}: CardProps) => {
+}: CardProps & { totalSugar?: number }) => {
     const { isDigital, isNeon, isSpecialTheme, fontStyle, glowStyle } = getCardStyles(theme)
     const ts = formatTimestamp(timestamp, lang, isSpecialTheme)
     const isPortrait = aspectRatio.height > aspectRatio.width
@@ -2435,22 +2436,22 @@ const HealthCard = ({
 
     // Macro labels by language
     const macroLabels = {
-        ko: { carbs: "탄", protein: "단", fat: "지", fiber: "섬" },
-        en: { carbs: "C", protein: "P", fat: "F", fiber: "F" },
-        ja: { carbs: "炭", protein: "蛋", fat: "脂", fiber: "繊" },
-        zh: { carbs: "碳", protein: "蛋", fat: "脂", fiber: "纤" },
-        fr: { carbs: "G", protein: "P", fat: "L", fiber: "F" },
-        de: { carbs: "K", protein: "E", fat: "F", fiber: "B" },
-    }[lang] || { carbs: "C", protein: "P", fat: "F", fiber: "F" }
+        ko: { carbs: "탄", protein: "단", fat: "지", sugar: "당", fiber: "섬" },
+        en: { carbs: "C", protein: "P", fat: "F", sugar: "S", fiber: "Fi" },
+        ja: { carbs: "炭", protein: "蛋", fat: "脂", sugar: "糖", fiber: "繊" },
+        zh: { carbs: "碳", protein: "蛋", fat: "脂", sugar: "糖", fiber: "纤" },
+        fr: { carbs: "G", protein: "P", fat: "L", sugar: "S", fiber: "F" },
+        de: { carbs: "K", protein: "E", fat: "F", sugar: "Z", fiber: "B" },
+    }[lang] || { carbs: "C", protein: "P", fat: "F", sugar: "S", fiber: "Fi" }
 
     const macroFullLabels = {
-        ko: { carbs: "탄수화물", protein: "단백질", fat: "지방", fiber: "식이섬유" },
-        en: { carbs: "Carbs", protein: "Protein", fat: "Fat", fiber: "Fiber" },
-        ja: { carbs: "炭水化物", protein: "タンパク質", fat: "脂質", fiber: "食物繊維" },
-        zh: { carbs: "碳水", protein: "蛋白质", fat: "脂肪", fiber: "纤维" },
-        fr: { carbs: "Glucides", protein: "Protéines", fat: "Lipides", fiber: "Fibres" },
-        de: { carbs: "Kohlenh.", protein: "Eiweiß", fat: "Fett", fiber: "Ballast." },
-    }[lang] || { carbs: "Carbs", protein: "Protein", fat: "Fat", fiber: "Fiber" }
+        ko: { carbs: "탄수화물", protein: "단백질", fat: "지방", sugar: "당류", fiber: "식이섬유" },
+        en: { carbs: "Carbs", protein: "Protein", fat: "Fat", sugar: "Sugar", fiber: "Fiber" },
+        ja: { carbs: "炭水化物", protein: "タンパク質", fat: "脂質", sugar: "糖質", fiber: "食物繊維" },
+        zh: { carbs: "碳水", protein: "蛋白质", fat: "脂肪", sugar: "糖", fiber: "纤维" },
+        fr: { carbs: "Glucides", protein: "Protéines", fat: "Lipides", sugar: "Sucres", fiber: "Fibres" },
+        de: { carbs: "Kohlenh.", protein: "Eiweiß", fat: "Fett", sugar: "Zucker", fiber: "Ballast." },
+    }[lang] || { carbs: "Carbs", protein: "Protein", fat: "Fat", sugar: "Sugar", fiber: "Fiber" }
 
     return (
         <div
@@ -2521,6 +2522,7 @@ const HealthCard = ({
                                 <span style={{ opacity: 0.55 }}>{macroLabels.carbs}{food.carbs || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.protein}{food.protein || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fat}{food.fat || 0}</span>
+                                <span style={{ opacity: 0.55 }}>{macroLabels.sugar}{food.sugar || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.fiber}{food.fiber || 0}</span>
                                 <span style={{ opacity: 0.9, fontWeight: 600, marginLeft: 2 }}>{food.calories || 0}kcal</span>
                             </div>
@@ -2618,6 +2620,11 @@ const HealthCard = ({
                     </div>
                     <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
                     <div style={{ textAlign: "center", flex: 1 }}>
+                        <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalSugar}</div>
+                        <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.sugar}</div>
+                    </div>
+                    <div style={{ width: 1, background: "rgba(255,255,255,0.15)" }} />
+                    <div style={{ textAlign: "center", flex: 1 }}>
                         <div style={{ fontSize: macroBarFontSize, fontWeight: 700, fontFamily: fontStyle, ...glowStyle }}>{totalFiber}</div>
                         <div style={{ fontSize: 8, opacity: 0.6 }}>{macroFullLabels.fiber}</div>
                     </div>
@@ -2665,6 +2672,7 @@ export default function MealStamp(props: any) {
     const [nameSuggestionsIndex, setNameSuggestionsIndex] = useState<number | null>(null)
     const [zoomLevel, setZoomLevel] = useState(1)
     const lastPinchDistance = useRef<number | null>(null)
+    const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const videoRef = useRef<HTMLVideoElement>(null)
     const previewVideoRef = useRef<HTMLVideoElement>(null)
@@ -3099,7 +3107,7 @@ export default function MealStamp(props: any) {
                             {
                                 role: "system",
                                 content:
-                                    "Estimate nutrition for each food item. Return JSON array of objects with: calories (kcal), carbs (g), protein (g), fat (g), fiber (g). Example: [{\"calories\":320,\"carbs\":45,\"protein\":12,\"fat\":8,\"fiber\":3},{\"calories\":150,\"carbs\":20,\"protein\":5,\"fat\":3,\"fiber\":1}]",
+                                    "Estimate nutrition for each food item. Return JSON array of objects with: calories (kcal), carbs (g), protein (g), fat (g), sugar (g), fiber (g). Example: [{\"calories\":320,\"carbs\":45,\"protein\":12,\"fat\":8,\"sugar\":5,\"fiber\":3},{\"calories\":150,\"carbs\":20,\"protein\":5,\"fat\":3,\"sugar\":8,\"fiber\":1}]",
                             },
                             { role: "user", content: list },
                         ],
@@ -3127,6 +3135,7 @@ export default function MealStamp(props: any) {
                             carbs: String(n?.carbs ?? 0),
                             protein: String(n?.protein ?? 0),
                             fat: String(n?.fat ?? 0),
+                            sugar: String(n?.sugar ?? 0),
                             fiber: String(n?.fiber ?? 0),
                         }
                     }
@@ -3154,6 +3163,10 @@ export default function MealStamp(props: any) {
     )
     const totalFat = foods.reduce(
         (s, f) => s + (parseInt(f.fat) || 0),
+        0
+    )
+    const totalSugar = foods.reduce(
+        (s, f) => s + (parseInt(f.sugar) || 0),
         0
     )
     const totalFiber = foods.reduce(
@@ -3953,13 +3966,16 @@ export default function MealStamp(props: any) {
                                             )
                                         }
                                         onFocus={() => {
+                                            if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current)
                                             setFocusedFoodIndex(i)
                                             setNameSuggestionsIndex(i)
                                         }}
-                                        onBlur={() => setTimeout(() => {
-                                            setFocusedFoodIndex(null)
-                                            setNameSuggestionsIndex(null)
-                                        }, 200)}
+                                        onBlur={() => {
+                                            blurTimeoutRef.current = setTimeout(() => {
+                                                setFocusedFoodIndex(null)
+                                                setNameSuggestionsIndex(null)
+                                            }, 200)
+                                        }}
                                         placeholder={t("foodName")}
                                         style={{
                                             ...input,
@@ -4117,8 +4133,13 @@ export default function MealStamp(props: any) {
                                                 e.target.value
                                             )
                                         }
-                                        onFocus={() => setFocusedFoodIndex(i)}
-                                        onBlur={() => setTimeout(() => setFocusedFoodIndex(null), 150)}
+                                        onFocus={() => {
+                                            if (blurTimeoutRef.current) clearTimeout(blurTimeoutRef.current)
+                                            setFocusedFoodIndex(i)
+                                        }}
+                                        onBlur={() => {
+                                            blurTimeoutRef.current = setTimeout(() => setFocusedFoodIndex(null), 200)
+                                        }}
                                         placeholder={t("amount")}
                                         style={{
                                             ...input,
@@ -4440,6 +4461,7 @@ export default function MealStamp(props: any) {
                                     totalCarbs={totalCarbs}
                                     totalProtein={totalProtein}
                                     totalFat={totalFat}
+                                    totalSugar={totalSugar}
                                     totalFiber={totalFiber}
                                     foods={foods}
                                     cardRef={healthCardRef}
