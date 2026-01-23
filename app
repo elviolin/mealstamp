@@ -284,6 +284,7 @@ const i18n: Record<string, Record<string, string>> = {
             "AI 음식 인식과 칼로리 계산을\n무제한으로 사용할 수 있어요",
         saved: "저장 완료",
         saveAndShare: "저장하기",
+        cancel: "취소",
         shared: "공유 완료",
         proActivated: "Pro 활성화",
         searchHint:
@@ -353,6 +354,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc: "AI食べ物認識とカロリー計算を\n無制限で使用できます",
         saved: "保存完了",
         saveAndShare: "保存する",
+        cancel: "キャンセル",
         shared: "共有完了",
         proActivated: "Pro有効化",
         searchHint:
@@ -424,6 +426,7 @@ const i18n: Record<string, Record<string, string>> = {
             "Use AI food recognition and\ncalorie calculation unlimited",
         saved: "Saved",
         saveAndShare: "Save",
+        cancel: "Cancel",
         shared: "Shared",
         proActivated: "Pro Activated",
         searchHint:
@@ -492,6 +495,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc: "无限使用AI食物识别\n和卡路里计算",
         saved: "已保存",
         saveAndShare: "保存",
+        cancel: "取消",
         shared: "已分享",
         proActivated: "Pro已激活",
         searchHint: "输入食物名称和份量\n点击搜索按钮查询卡路里",
@@ -560,6 +564,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc: "Reconnaissance IA et calcul\nde calories sans limite",
         saved: "Enregistré",
         saveAndShare: "Enregistrer",
+        cancel: "Annuler",
         shared: "Partagé",
         proActivated: "Pro Activé",
         searchHint:
@@ -628,6 +633,7 @@ const i18n: Record<string, Record<string, string>> = {
         unlimitedDesc: "KI-Erkennung und Kalorien-\nberechnung unbegrenzt",
         saved: "Gespeichert",
         saveAndShare: "Speichern",
+        cancel: "Abbrechen",
         shared: "Geteilt",
         proActivated: "Pro Aktiviert",
         searchHint: "Name und Menge eingeben,\ndann Suche antippen",
@@ -3544,24 +3550,69 @@ export default function MealStamp(props: any) {
                                         transition: "transform 0.1s ease-out",
                                     }}
                                 />
-                                {zoomLevel > 1 && (
-                                    <div
+                                {/* Corner Guidelines */}
+                                <div style={{ position: "absolute", top: 12, left: 12, width: 24, height: 24, borderTop: "2px solid rgba(255,255,255,0.6)", borderLeft: "2px solid rgba(255,255,255,0.6)", borderRadius: "4px 0 0 0" }} />
+                                <div style={{ position: "absolute", top: 12, right: 12, width: 24, height: 24, borderTop: "2px solid rgba(255,255,255,0.6)", borderRight: "2px solid rgba(255,255,255,0.6)", borderRadius: "0 4px 0 0" }} />
+                                <div style={{ position: "absolute", bottom: 12, left: 12, width: 24, height: 24, borderBottom: "2px solid rgba(255,255,255,0.6)", borderLeft: "2px solid rgba(255,255,255,0.6)", borderRadius: "0 0 0 4px" }} />
+                                <div style={{ position: "absolute", bottom: 12, right: 12, width: 24, height: 24, borderBottom: "2px solid rgba(255,255,255,0.6)", borderRight: "2px solid rgba(255,255,255,0.6)", borderRadius: "0 0 4px 0" }} />
+
+                                {/* Zoom Controls */}
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        bottom: 12,
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 8,
+                                        background: "rgba(0,0,0,0.5)",
+                                        borderRadius: DS.radius.full,
+                                        padding: "4px 8px",
+                                    }}
+                                >
+                                    <button
+                                        onClick={() => setZoomLevel(prev => Math.max(1, prev - 0.5))}
                                         style={{
-                                            position: "absolute",
-                                            bottom: 8,
-                                            left: "50%",
-                                            transform: "translateX(-50%)",
-                                            background: "rgba(0,0,0,0.6)",
+                                            width: 24,
+                                            height: 24,
+                                            borderRadius: "50%",
+                                            background: "rgba(255,255,255,0.2)",
+                                            border: "none",
                                             color: "#fff",
-                                            padding: "4px 10px",
-                                            borderRadius: DS.radius.full,
-                                            fontSize: 11,
-                                            fontWeight: 600,
+                                            fontSize: 16,
+                                            fontWeight: 700,
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
                                         }}
                                     >
+                                        -
+                                    </button>
+                                    <span style={{ color: "#fff", fontSize: 11, fontWeight: 600, minWidth: 32, textAlign: "center" }}>
                                         {zoomLevel.toFixed(1)}x
-                                    </div>
-                                )}
+                                    </span>
+                                    <button
+                                        onClick={() => setZoomLevel(prev => Math.min(4, prev + 0.5))}
+                                        style={{
+                                            width: 24,
+                                            height: 24,
+                                            borderRadius: "50%",
+                                            background: "rgba(255,255,255,0.2)",
+                                            border: "none",
+                                            color: "#fff",
+                                            fontSize: 16,
+                                            fontWeight: 700,
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        +
+                                    </button>
+                                </div>
                             </div>
                         </>
                     )}
@@ -3648,13 +3699,16 @@ export default function MealStamp(props: any) {
                             border: "none",
                             cursor: "pointer",
                             display: "flex",
+                            flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
+                            gap: 2,
                             color: "#fff",
                             backdropFilter: "blur(10px)",
                         }}
                     >
                         <Icon.Gallery />
+                        <span style={{ fontSize: 8, opacity: 0.8 }}>{lang === "ko" ? "앨범" : "Album"}</span>
                     </button>
                     <button
                         onClick={capturePhoto}
@@ -3787,6 +3841,22 @@ export default function MealStamp(props: any) {
                         >
                             {t("analyzingDesc")}
                         </div>
+                        <button
+                            onClick={resetToCamera}
+                            style={{
+                                marginTop: 24,
+                                padding: "10px 24px",
+                                fontSize: DS.fontSize.sm,
+                                fontWeight: 600,
+                                color: DS.colors.gray[500],
+                                background: DS.colors.gray[100],
+                                border: "none",
+                                borderRadius: DS.radius.full,
+                                cursor: "pointer",
+                            }}
+                        >
+                            {t("cancel")}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3921,6 +3991,42 @@ export default function MealStamp(props: any) {
                         )}
                     </div>
                 </div>
+
+                {/* Macro Summary Bar */}
+                {(totalCarbs > 0 || totalProtein > 0 || totalFat > 0) && (
+                    <div
+                        style={{
+                            display: "flex",
+                            gap: 8,
+                            padding: `8px ${DS.content.paddingX}px`,
+                            background: DS.colors.white,
+                            borderBottom: `1px solid ${DS.colors.gray[100]}`,
+                        }}
+                    >
+                        {[
+                            { label: lang === "ko" ? "탄" : "C", value: totalCarbs, color: "#4CAF50" },
+                            { label: lang === "ko" ? "단" : "P", value: totalProtein, color: "#2196F3" },
+                            { label: lang === "ko" ? "지" : "F", value: totalFat, color: "#FF9800" },
+                            { label: lang === "ko" ? "당" : "S", value: totalSugar, color: "#E91E63" },
+                            { label: lang === "ko" ? "섬" : "Fi", value: totalFiber, color: "#9C27B0" },
+                        ].map((item, i) => (
+                            <div
+                                key={i}
+                                style={{
+                                    flex: 1,
+                                    textAlign: "center",
+                                    padding: "6px 0",
+                                    background: DS.colors.gray[50],
+                                    borderRadius: DS.radius.sm,
+                                    borderLeft: `3px solid ${item.color}`,
+                                }}
+                            >
+                                <div style={{ fontSize: 14, fontWeight: 700 }}>{item.value}g</div>
+                                <div style={{ fontSize: 10, color: DS.colors.gray[500] }}>{item.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <div
                     style={{
@@ -4462,9 +4568,9 @@ export default function MealStamp(props: any) {
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
                         {/* Theme Selector */}
                         {[
-                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
-                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
-                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
+                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault"), color: "#ffffff" },
+                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital"), color: "#00ff88" },
+                            { key: CARD_THEMES.NEON, label: t("themeNeon"), color: "#ff00ff" },
                         ].map((item) => {
                             const isProTheme = selectedCardType === CARD_TYPES.DETAILED || selectedCardType === CARD_TYPES.HEALTH || item.key !== CARD_THEMES.DEFAULT
                             const active = selectedTheme === item.key
@@ -4490,7 +4596,16 @@ export default function MealStamp(props: any) {
                                         transition: "all 0.15s ease",
                                     }}
                                 >
-                                    {isProTheme && <Icon.Sparkle size={8} />}
+                                    <span
+                                        style={{
+                                            width: 10,
+                                            height: 10,
+                                            borderRadius: "50%",
+                                            background: item.color,
+                                            border: item.key === CARD_THEMES.DEFAULT ? "1px solid #ccc" : "none",
+                                            boxShadow: item.key !== CARD_THEMES.DEFAULT ? `0 0 6px ${item.color}` : "none",
+                                        }}
+                                    />
                                     {item.label}
                                 </button>
                             )
@@ -4908,6 +5023,57 @@ export default function MealStamp(props: any) {
                                     ›
                                 </span>
                             </button>
+                        </div>
+                    </div>
+
+                    {/* API Key Section */}
+                    <div
+                        style={{
+                            background: DS.colors.white,
+                            borderRadius: DS.radius.lg,
+                            padding: 14,
+                            marginTop: 10,
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontSize: DS.fontSize.xs,
+                                fontWeight: 600,
+                                color: DS.colors.gray[500],
+                                marginBottom: 8,
+                            }}
+                        >
+                            OpenAI API Key
+                        </div>
+                        <input
+                            type="password"
+                            value={apiKey}
+                            onChange={(e) => {
+                                setApiKey(e.target.value)
+                                localStorage.setItem(STORAGE.apiKey, e.target.value)
+                            }}
+                            placeholder="sk-..."
+                            style={{
+                                width: "100%",
+                                padding: "10px 12px",
+                                fontSize: DS.fontSize.sm,
+                                background: DS.colors.gray[50],
+                                border: "none",
+                                borderRadius: DS.radius.sm,
+                                fontFamily: "monospace",
+                                boxSizing: "border-box",
+                            }}
+                        />
+                        <div
+                            style={{
+                                fontSize: 10,
+                                color: DS.colors.gray[400],
+                                marginTop: 6,
+                            }}
+                        >
+                            {lang === "ko"
+                                ? "AI 분석에 사용됩니다. 키는 기기에만 저장됩니다."
+                                : "Used for AI analysis. Key is stored locally only."}
                         </div>
                     </div>
                 </div>
