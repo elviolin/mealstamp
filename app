@@ -4467,141 +4467,144 @@ export default function MealStamp(props: any) {
                     }
                 />
 
-                {/* Design Options - Top */}
-                <div
-                    style={{
-                        padding: `12px ${DS.content.paddingX}px`,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 10,
-                        background: DS.colors.white,
-                        borderBottom: `1px solid ${DS.colors.gray[100]}`,
-                    }}
-                >
-                    {/* Card Type Toggle */}
-                    <div
-                        style={{
-                            display: "flex",
-                            background: DS.colors.gray[200],
-                            borderRadius: DS.radius.full,
-                            padding: 3,
-                        }}
-                    >
-                        {[
-                            { key: CARD_TYPES.SIMPLE, label: t("simple") },
-                            { key: CARD_TYPES.DETAILED, label: t("detailed"), isPro: true },
-                            { key: CARD_TYPES.HEALTH, label: t("health") || "건강", isPro: true, needsMacros: true },
-                        ].map((item) => {
-                            const active = selectedCardType === item.key
-                            const disabled = item.needsMacros && !hasMacrosData
-                            return (
-                                <button
-                                    key={item.key}
-                                    onClick={() => !disabled && setSelectedCardType(item.key as any)}
-                                    style={{
-                                        border: "none",
-                                        cursor: disabled ? "not-allowed" : "pointer",
-                                        borderRadius: DS.radius.full,
-                                        padding: "8px 14px",
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                        background: active ? DS.colors.white : "transparent",
-                                        color: disabled ? DS.colors.gray[300] : active ? DS.colors.black : DS.colors.gray[500],
-                                        boxShadow: active ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: 3,
-                                        transition: "all 0.15s ease",
-                                        opacity: disabled ? 0.5 : 1,
-                                    }}
-                                >
-                                    {item.isPro && <Icon.Sparkle size={9} />}
-                                    {item.label}
-                                </button>
-                            )
-                        })}
-                    </div>
-
-                    {/* Theme & Ratio Row */}
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
-                        {/* Theme Selector */}
-                        {[
-                            { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
-                            { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
-                            { key: CARD_THEMES.NEON, label: t("themeNeon") },
-                        ].map((item) => {
-                            const isProTheme = selectedCardType === CARD_TYPES.DETAILED || selectedCardType === CARD_TYPES.HEALTH || item.key !== CARD_THEMES.DEFAULT
-                            const active = selectedTheme === item.key
-                            return (
-                                <button
-                                    key={item.key}
-                                    onClick={() => {
-                                        setSelectedTheme(item.key)
-                                        localStorage.setItem(STORAGE.theme, item.key)
-                                    }}
-                                    style={{
-                                        padding: "6px 12px",
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 600,
-                                        color: active ? DS.colors.white : DS.colors.gray[500],
-                                        background: active ? DS.colors.black : DS.colors.white,
-                                        border: `1px solid ${active ? DS.colors.black : DS.colors.gray[200]}`,
-                                        borderRadius: DS.radius.full,
-                                        cursor: "pointer",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: 3,
-                                        transition: "all 0.15s ease",
-                                    }}
-                                >
-                                    {isProTheme && <Icon.Sparkle size={8} />}
-                                    {item.label}
-                                </button>
-                            )
-                        })}
-
-                        <div style={{ width: 1, height: 24, background: DS.colors.gray[300], margin: "0 4px" }} />
-
-                        {/* Aspect Ratio Selector - Portrait & Square only */}
-                        {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE].map((ratio) => {
-                            const active = selectedAspectRatio.key === ratio.key
-                            return (
-                                <button
-                                    key={ratio.key}
-                                    onClick={() => setSelectedAspectRatio(ratio)}
-                                    style={{
-                                        padding: "6px 10px",
-                                        fontSize: DS.fontSize.xs,
-                                        fontWeight: 600,
-                                        color: active ? DS.colors.white : DS.colors.gray[500],
-                                        background: active ? DS.colors.gray[700] : DS.colors.white,
-                                        border: `1px solid ${active ? DS.colors.gray[700] : DS.colors.gray[200]}`,
-                                        borderRadius: DS.radius.full,
-                                        cursor: "pointer",
-                                        transition: "all 0.15s ease",
-                                    }}
-                                >
-                                    {ratio.key}
-                                </button>
-                            )
-                        })}
-                    </div>
-                </div>
-
-                {/* Card Preview Area */}
+                {/* Card Preview Area - Full Dark Background */}
                 <div
                     style={{
                         flex: 1,
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
                         padding: `20px ${DS.content.paddingX}px`,
                         minHeight: 0,
-                        background: DS.colors.gray[100],
+                        background: "#1a1a1a",
+                        position: "relative",
                     }}
                 >
+                    {/* Design Options Overlay */}
+                    <div
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            padding: `12px ${DS.content.paddingX}px`,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: 8,
+                            background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%)",
+                            paddingBottom: 40,
+                        }}
+                    >
+                        {/* Card Type Toggle */}
+                        <div
+                            style={{
+                                display: "flex",
+                                background: "rgba(255,255,255,0.15)",
+                                borderRadius: DS.radius.full,
+                                padding: 3,
+                                backdropFilter: "blur(10px)",
+                            }}
+                        >
+                            {[
+                                { key: CARD_TYPES.SIMPLE, label: t("simple") },
+                                { key: CARD_TYPES.DETAILED, label: t("detailed"), isPro: true },
+                                { key: CARD_TYPES.HEALTH, label: t("health") || "건강", isPro: true, needsMacros: true },
+                            ].map((item) => {
+                                const active = selectedCardType === item.key
+                                const disabled = item.needsMacros && !hasMacrosData
+                                return (
+                                    <button
+                                        key={item.key}
+                                        onClick={() => !disabled && setSelectedCardType(item.key as any)}
+                                        style={{
+                                            border: "none",
+                                            cursor: disabled ? "not-allowed" : "pointer",
+                                            borderRadius: DS.radius.full,
+                                            padding: "7px 12px",
+                                            fontSize: 12,
+                                            fontWeight: 600,
+                                            background: active ? "rgba(255,255,255,0.95)" : "transparent",
+                                            color: disabled ? "rgba(255,255,255,0.3)" : active ? "#000" : "rgba(255,255,255,0.7)",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: 3,
+                                            transition: "all 0.15s ease",
+                                            opacity: disabled ? 0.5 : 1,
+                                        }}
+                                    >
+                                        {item.isPro && <Icon.Sparkle size={8} />}
+                                        {item.label}
+                                    </button>
+                                )
+                            })}
+                        </div>
+
+                        {/* Theme & Ratio Row */}
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                            {[
+                                { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
+                                { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
+                                { key: CARD_THEMES.NEON, label: t("themeNeon") },
+                            ].map((item) => {
+                                const isProTheme = selectedCardType === CARD_TYPES.DETAILED || selectedCardType === CARD_TYPES.HEALTH || item.key !== CARD_THEMES.DEFAULT
+                                const active = selectedTheme === item.key
+                                return (
+                                    <button
+                                        key={item.key}
+                                        onClick={() => {
+                                            setSelectedTheme(item.key)
+                                            localStorage.setItem(STORAGE.theme, item.key)
+                                        }}
+                                        style={{
+                                            padding: "5px 10px",
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
+                                            background: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.1)",
+                                            border: "none",
+                                            borderRadius: DS.radius.full,
+                                            cursor: "pointer",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 3,
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        {isProTheme && <Icon.Sparkle size={7} />}
+                                        {item.label}
+                                    </button>
+                                )
+                            })}
+
+                            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.2)", margin: "0 2px" }} />
+
+                            {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE].map((ratio) => {
+                                const active = selectedAspectRatio.key === ratio.key
+                                return (
+                                    <button
+                                        key={ratio.key}
+                                        onClick={() => setSelectedAspectRatio(ratio)}
+                                        style={{
+                                            padding: "5px 8px",
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
+                                            background: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.1)",
+                                            border: "none",
+                                            borderRadius: DS.radius.full,
+                                            cursor: "pointer",
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        {ratio.key}
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
                     <div
                         style={{
                             width: "100%",
@@ -4655,23 +4658,40 @@ export default function MealStamp(props: any) {
                     </div>
                 </div>
 
-                {/* Save Button - Bottom */}
+                {/* Save Button - Bottom with gradient */}
                 <div
                     style={{
-                        padding: `16px ${DS.content.paddingX}px`,
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        padding: `40px ${DS.content.paddingX}px 0`,
                         paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
-                        background: DS.colors.white,
-                        borderTop: `1px solid ${DS.colors.gray[100]}`,
+                        background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
                     }}
                 >
-                    <Button
+                    <button
                         onClick={handleShare}
                         disabled={isSaving}
-                        style={{ width: "100%" }}
+                        style={{
+                            width: "100%",
+                            padding: "14px 20px",
+                            fontSize: 15,
+                            fontWeight: 700,
+                            color: "#000",
+                            background: "#fff",
+                            border: "none",
+                            borderRadius: DS.radius.full,
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 6,
+                        }}
                     >
                         {isProFeature && !isPro && !sessionPaid && <Icon.Sparkle size={12} />}
                         {isSaving ? "..." : t("saveAndShare")}
-                    </Button>
+                    </button>
                 </div>
             </div>
         )
