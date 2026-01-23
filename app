@@ -1102,91 +1102,55 @@ const FOOD_CATEGORIES: Record<string, string[]> = {
 }
 
 // ============================================
-// Local Nutrition Database (per standard serving)
+// Nutrition Database - loaded from external JSON
 // Sources: 식약처, USDA, 日本食品標準成分表
 // ============================================
-const NUTRITION_DB: Record<string, { cal: number; carb: number; prot: number; fat: number; sugar: number; fiber: number; serving: string }> = {
-    // 한국 밥류
-    "흰밥": { cal: 313, carb: 68, prot: 6, fat: 1, sugar: 0, fiber: 1, serving: "1공기(210g)" },
-    "현미밥": { cal: 340, carb: 72, prot: 7, fat: 2, sugar: 0, fiber: 3, serving: "1공기(210g)" },
-    "잡곡밥": { cal: 320, carb: 67, prot: 7, fat: 2, sugar: 1, fiber: 4, serving: "1공기(210g)" },
-    "볶음밥": { cal: 450, carb: 65, prot: 12, fat: 15, sugar: 3, fiber: 2, serving: "1인분(300g)" },
-    "비빔밥": { cal: 550, carb: 75, prot: 18, fat: 18, sugar: 5, fiber: 5, serving: "1인분(450g)" },
-    "김밥": { cal: 480, carb: 70, prot: 12, fat: 15, sugar: 4, fiber: 3, serving: "1줄(250g)" },
-    "카레라이스": { cal: 520, carb: 78, prot: 14, fat: 16, sugar: 8, fiber: 3, serving: "1인분(400g)" },
-    // 한국 면류
-    "라면": { cal: 500, carb: 75, prot: 10, fat: 18, sugar: 4, fiber: 2, serving: "1봉지" },
-    "짜장면": { cal: 650, carb: 95, prot: 15, fat: 22, sugar: 8, fiber: 3, serving: "1인분" },
-    "짬뽕": { cal: 520, carb: 70, prot: 20, fat: 18, sugar: 5, fiber: 4, serving: "1인분" },
-    "칼국수": { cal: 450, carb: 72, prot: 15, fat: 10, sugar: 3, fiber: 3, serving: "1인분" },
-    "냉면": { cal: 480, carb: 90, prot: 12, fat: 5, sugar: 15, fiber: 3, serving: "1인분" },
-    "비빔냉면": { cal: 550, carb: 88, prot: 14, fat: 12, sugar: 18, fiber: 4, serving: "1인분" },
-    // 한국 국/찌개
-    "김치찌개": { cal: 180, carb: 10, prot: 15, fat: 10, sugar: 3, fiber: 2, serving: "1인분(300g)" },
-    "된장찌개": { cal: 150, carb: 12, prot: 10, fat: 8, sugar: 2, fiber: 3, serving: "1인분(300g)" },
-    "순두부찌개": { cal: 200, carb: 8, prot: 14, fat: 12, sugar: 2, fiber: 1, serving: "1인분(350g)" },
-    "미역국": { cal: 80, carb: 5, prot: 8, fat: 3, sugar: 1, fiber: 2, serving: "1그릇(300ml)" },
-    "삼계탕": { cal: 650, carb: 35, prot: 45, fat: 35, sugar: 2, fiber: 2, serving: "1인분" },
-    // 한국 고기류
-    "삼겹살": { cal: 520, carb: 0, prot: 25, fat: 45, sugar: 0, fiber: 0, serving: "1인분(200g)" },
-    "불고기": { cal: 350, carb: 15, prot: 28, fat: 20, sugar: 10, fiber: 1, serving: "1인분(150g)" },
-    "갈비": { cal: 480, carb: 12, prot: 30, fat: 35, sugar: 8, fiber: 0, serving: "1인분(200g)" },
-    "치킨": { cal: 550, carb: 20, prot: 35, fat: 38, sugar: 3, fiber: 1, serving: "반마리(350g)" },
-    "제육볶음": { cal: 400, carb: 18, prot: 25, fat: 26, sugar: 8, fiber: 2, serving: "1인분(200g)" },
-    // 한국 반찬류
-    "김치": { cal: 20, carb: 4, prot: 1, fat: 0, sugar: 2, fiber: 2, serving: "1접시(50g)" },
-    "계란후라이": { cal: 90, carb: 1, prot: 6, fat: 7, sugar: 0, fiber: 0, serving: "1개" },
-    "계란찜": { cal: 120, carb: 3, prot: 10, fat: 8, sugar: 1, fiber: 0, serving: "1인분(150g)" },
-    "두부": { cal: 80, carb: 2, prot: 8, fat: 5, sugar: 0, fiber: 1, serving: "1/4모(100g)" },
-    // 미국/양식
-    "햄버거": { cal: 540, carb: 45, prot: 25, fat: 30, sugar: 8, fiber: 2, serving: "1개" },
-    "치즈버거": { cal: 620, carb: 48, prot: 30, fat: 35, sugar: 9, fiber: 2, serving: "1개" },
-    "감자튀김": { cal: 320, carb: 42, prot: 4, fat: 15, sugar: 1, fiber: 4, serving: "중(130g)" },
-    "피자": { cal: 270, carb: 33, prot: 12, fat: 10, sugar: 4, fiber: 2, serving: "1조각(100g)" },
-    "스테이크": { cal: 400, carb: 0, prot: 45, fat: 24, sugar: 0, fiber: 0, serving: "1인분(200g)" },
-    "샐러드": { cal: 150, carb: 12, prot: 5, fat: 10, sugar: 5, fiber: 4, serving: "1접시(200g)" },
-    "시저샐러드": { cal: 280, carb: 15, prot: 12, fat: 20, sugar: 3, fiber: 3, serving: "1접시(250g)" },
-    "파스타": { cal: 450, carb: 65, prot: 15, fat: 14, sugar: 5, fiber: 3, serving: "1인분(300g)" },
-    "까르보나라": { cal: 550, carb: 60, prot: 18, fat: 28, sugar: 3, fiber: 2, serving: "1인분(350g)" },
-    "샌드위치": { cal: 350, carb: 38, prot: 18, fat: 14, sugar: 5, fiber: 3, serving: "1개" },
-    // 일본식
-    "초밥": { cal: 45, carb: 8, prot: 3, fat: 1, sugar: 2, fiber: 0, serving: "1개" },
-    "라멘": { cal: 480, carb: 65, prot: 18, fat: 16, sugar: 3, fiber: 2, serving: "1그릇" },
-    "돈카츠": { cal: 550, carb: 35, prot: 28, fat: 35, sugar: 5, fiber: 2, serving: "1인분" },
-    "우동": { cal: 380, carb: 70, prot: 12, fat: 5, sugar: 8, fiber: 2, serving: "1그릇" },
-    "규동": { cal: 650, carb: 85, prot: 22, fat: 22, sugar: 12, fiber: 2, serving: "1그릇" },
-    "오니기리": { cal: 180, carb: 38, prot: 4, fat: 1, sugar: 1, fiber: 1, serving: "1개" },
-    // 중식
-    "짜장밥": { cal: 580, carb: 90, prot: 14, fat: 18, sugar: 8, fiber: 3, serving: "1인분" },
-    "탕수육": { cal: 450, carb: 40, prot: 20, fat: 24, sugar: 18, fiber: 1, serving: "1인분(200g)" },
-    "깐풍기": { cal: 480, carb: 25, prot: 28, fat: 32, sugar: 12, fiber: 2, serving: "1인분(250g)" },
-    "마파두부": { cal: 280, carb: 12, prot: 16, fat: 20, sugar: 3, fiber: 2, serving: "1인분(250g)" },
-    // 음료
-    "아메리카노": { cal: 5, carb: 1, prot: 0, fat: 0, sugar: 0, fiber: 0, serving: "1잔(355ml)" },
-    "카페라떼": { cal: 150, carb: 12, prot: 8, fat: 8, sugar: 10, fiber: 0, serving: "1잔(355ml)" },
-    "콜라": { cal: 140, carb: 39, prot: 0, fat: 0, sugar: 39, fiber: 0, serving: "1캔(355ml)" },
-    "맥주": { cal: 150, carb: 13, prot: 1, fat: 0, sugar: 0, fiber: 0, serving: "1캔(355ml)" },
-    "소주": { cal: 65, carb: 0, prot: 0, fat: 0, sugar: 0, fiber: 0, serving: "1잔(50ml)" },
-    // 빵/디저트
-    "식빵": { cal: 80, carb: 15, prot: 3, fat: 1, sugar: 2, fiber: 1, serving: "1장" },
-    "크로아상": { cal: 230, carb: 26, prot: 5, fat: 12, sugar: 6, fiber: 1, serving: "1개" },
-    "도넛": { cal: 250, carb: 30, prot: 4, fat: 14, sugar: 15, fiber: 1, serving: "1개" },
-    "케이크": { cal: 350, carb: 45, prot: 5, fat: 18, sugar: 30, fiber: 1, serving: "1조각" },
-    "아이스크림": { cal: 200, carb: 25, prot: 4, fat: 10, sugar: 20, fiber: 0, serving: "1스쿱(100g)" },
-    // 과일
-    "사과": { cal: 95, carb: 25, prot: 0, fat: 0, sugar: 19, fiber: 4, serving: "1개(200g)" },
-    "바나나": { cal: 105, carb: 27, prot: 1, fat: 0, sugar: 14, fiber: 3, serving: "1개(120g)" },
-    "오렌지": { cal: 62, carb: 15, prot: 1, fat: 0, sugar: 12, fiber: 3, serving: "1개(130g)" },
-    "딸기": { cal: 50, carb: 12, prot: 1, fat: 0, sugar: 7, fiber: 3, serving: "10개(150g)" },
-    "포도": { cal: 70, carb: 18, prot: 1, fat: 0, sugar: 16, fiber: 1, serving: "1송이(100g)" },
+type NutritionItem = { name: string; aliases: string[]; cal: number; carb: number; prot: number; fat: number; sugar: number; fiber: number; serving: string }
+let NUTRITION_DB: NutritionItem[] = []
+let nutritionDbLoaded = false
+
+// Load nutrition DB from GitHub (or local cache)
+const loadNutritionDB = async () => {
+    if (nutritionDbLoaded) return
+    try {
+        // Try localStorage cache first
+        const cached = localStorage.getItem("mealstamp_nutrition_db")
+        const cacheTime = localStorage.getItem("mealstamp_nutrition_db_time")
+        const oneDay = 24 * 60 * 60 * 1000
+
+        if (cached && cacheTime && Date.now() - parseInt(cacheTime) < oneDay) {
+            NUTRITION_DB = JSON.parse(cached)
+            nutritionDbLoaded = true
+            return
+        }
+
+        // Fetch from GitHub raw
+        const res = await fetch("https://raw.githubusercontent.com/elviolin/mealstamp/main/nutrition-db.json")
+        if (res.ok) {
+            const data = await res.json()
+            NUTRITION_DB = data.foods || []
+            localStorage.setItem("mealstamp_nutrition_db", JSON.stringify(NUTRITION_DB))
+            localStorage.setItem("mealstamp_nutrition_db_time", String(Date.now()))
+            nutritionDbLoaded = true
+        }
+    } catch (e) {
+        console.error("Failed to load nutrition DB:", e)
+    }
 }
 
 // Nutrition lookup function
 const lookupNutrition = (foodName: string): { calories: number; carbs: number; protein: number; fat: number; sugar: number; fiber: number } | null => {
     const name = foodName.trim().toLowerCase()
-    for (const [key, value] of Object.entries(NUTRITION_DB)) {
-        if (name.includes(key.toLowerCase()) || key.toLowerCase().includes(name)) {
-            return { calories: value.cal, carbs: value.carb, protein: value.prot, fat: value.fat, sugar: value.sugar, fiber: value.fiber }
+    for (const item of NUTRITION_DB) {
+        // Check main name
+        if (name.includes(item.name.toLowerCase()) || item.name.toLowerCase().includes(name)) {
+            return { calories: item.cal, carbs: item.carb, protein: item.prot, fat: item.fat, sugar: item.sugar, fiber: item.fiber }
+        }
+        // Check aliases
+        for (const alias of item.aliases || []) {
+            if (name.includes(alias.toLowerCase()) || alias.toLowerCase().includes(name)) {
+                return { calories: item.cal, carbs: item.carb, protein: item.prot, fat: item.fat, sugar: item.sugar, fiber: item.fiber }
+            }
         }
     }
     return null
@@ -2800,6 +2764,8 @@ export default function MealStamp(props: any) {
         } else {
             setLang(detectSystemLanguage())
         }
+        // Preload nutrition database
+        loadNutritionDB()
     }, [])
 
     // Keyboard height detection for mobile
@@ -3176,6 +3142,9 @@ export default function MealStamp(props: any) {
         if (!toCalc.length) return alert("계산할 음식이 없습니다.")
 
         setIsCalculating(true)
+
+        // Ensure nutrition DB is loaded
+        await loadNutritionDB()
 
         // Step 1: Try local DB first
         const localResults: (typeof NUTRITION_DB[string] | null)[] = []
