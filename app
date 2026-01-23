@@ -4338,17 +4338,15 @@ export default function MealStamp(props: any) {
                 <div
                     style={{
                         position: "fixed",
-                        bottom: 0,
+                        bottom: keyboardHeight,
                         left: 0,
                         right: 0,
-                        transform: `translateY(-${keyboardHeight}px)`,
                         padding: `12px ${DS.content.paddingX}px`,
                         paddingBottom: keyboardHeight > 0 ? 10 : "max(14px, env(safe-area-inset-bottom))",
-                        background: keyboardHeight > 0 ? DS.colors.white : DS.colors.gray[50],
-                        borderTop: keyboardHeight > 0 ? `1px solid ${DS.colors.gray[200]}` : "none",
+                        background: DS.colors.white,
+                        borderTop: `1px solid ${DS.colors.gray[200]}`,
                         zIndex: 100,
-                        transition: "transform 0.15s ease-out, padding 0.15s ease-out, background 0.15s ease-out",
-                        boxShadow: keyboardHeight > 0 ? "0 -4px 20px rgba(0,0,0,0.08)" : "none",
+                        transition: "bottom 0.15s ease-out",
                     }}
                 >
                     <button
