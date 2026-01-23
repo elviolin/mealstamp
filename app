@@ -4401,90 +4401,16 @@ export default function MealStamp(props: any) {
                     }
                 />
 
-                {/* Card Preview Area */}
+                {/* Design Options - Top */}
                 <div
                     style={{
-                        flex: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                    }}
-                >
-                    <div
-                        style={{
-                            flex: 1,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            padding: `20px ${DS.content.paddingX}px`,
-                            minHeight: 0,
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: "100%",
-                                maxWidth: 260,
-                                boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
-                                borderRadius: DS.radius.xl,
-                                overflow: "hidden",
-                            }}
-                        >
-                            {selectedCardType === CARD_TYPES.SIMPLE ? (
-                                <SimpleCard
-                                    capturedImage={capturedImage}
-                                    timestamp={timestamp}
-                                    totalCalories={totalCalories}
-                                    cardRef={simpleCardRef}
-                                    lang={lang}
-                                    theme={selectedTheme}
-                                    aspectRatio={selectedAspectRatio}
-                                />
-                            ) : selectedCardType === CARD_TYPES.DETAILED ? (
-                                <DetailedCard
-                                    capturedImage={capturedImage}
-                                    timestamp={timestamp}
-                                    totalCalories={totalCalories}
-                                    totalCarbs={totalCarbs}
-                                    totalProtein={totalProtein}
-                                    totalFiber={totalFiber}
-                                    foods={foods}
-                                    cardRef={detailedCardRef}
-                                    lang={lang}
-                                    theme={selectedTheme}
-                                    aspectRatio={selectedAspectRatio}
-                                />
-                            ) : (
-                                <HealthCard
-                                    capturedImage={capturedImage}
-                                    timestamp={timestamp}
-                                    totalCalories={totalCalories}
-                                    totalCarbs={totalCarbs}
-                                    totalProtein={totalProtein}
-                                    totalFat={totalFat}
-                                    totalSugar={totalSugar}
-                                    totalFiber={totalFiber}
-                                    foods={foods}
-                                    cardRef={healthCardRef}
-                                    lang={lang}
-                                    theme={selectedTheme}
-                                    aspectRatio={selectedAspectRatio}
-                                />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Options Toolbar */}
-                <div
-                    style={{
-                        padding: `16px ${DS.content.paddingX}px`,
-                        paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
+                        padding: `12px ${DS.content.paddingX}px`,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: 12,
-                        background: DS.colors.gray[50],
-                        borderTop: `1px solid ${DS.colors.gray[100]}`,
+                        gap: 10,
+                        background: DS.colors.white,
+                        borderBottom: `1px solid ${DS.colors.gray[100]}`,
                     }}
                 >
                     {/* Card Type Toggle */}
@@ -4596,8 +4522,82 @@ export default function MealStamp(props: any) {
                             )
                         })}
                     </div>
+                </div>
 
-                    {/* Action Button */}
+                {/* Card Preview Area */}
+                <div
+                    style={{
+                        flex: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: `20px ${DS.content.paddingX}px`,
+                        minHeight: 0,
+                        background: DS.colors.gray[100],
+                    }}
+                >
+                    <div
+                        style={{
+                            width: "100%",
+                            maxWidth: 260,
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+                            borderRadius: DS.radius.xl,
+                            overflow: "hidden",
+                        }}
+                    >
+                        {selectedCardType === CARD_TYPES.SIMPLE ? (
+                            <SimpleCard
+                                capturedImage={capturedImage}
+                                timestamp={timestamp}
+                                totalCalories={totalCalories}
+                                cardRef={simpleCardRef}
+                                lang={lang}
+                                theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
+                            />
+                        ) : selectedCardType === CARD_TYPES.DETAILED ? (
+                            <DetailedCard
+                                capturedImage={capturedImage}
+                                timestamp={timestamp}
+                                totalCalories={totalCalories}
+                                totalCarbs={totalCarbs}
+                                totalProtein={totalProtein}
+                                totalFiber={totalFiber}
+                                foods={foods}
+                                cardRef={detailedCardRef}
+                                lang={lang}
+                                theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
+                            />
+                        ) : (
+                            <HealthCard
+                                capturedImage={capturedImage}
+                                timestamp={timestamp}
+                                totalCalories={totalCalories}
+                                totalCarbs={totalCarbs}
+                                totalProtein={totalProtein}
+                                totalFat={totalFat}
+                                totalSugar={totalSugar}
+                                totalFiber={totalFiber}
+                                foods={foods}
+                                cardRef={healthCardRef}
+                                lang={lang}
+                                theme={selectedTheme}
+                                aspectRatio={selectedAspectRatio}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {/* Save Button - Bottom */}
+                <div
+                    style={{
+                        padding: `16px ${DS.content.paddingX}px`,
+                        paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
+                        background: DS.colors.white,
+                        borderTop: `1px solid ${DS.colors.gray[100]}`,
+                    }}
+                >
                     <Button
                         onClick={handleShare}
                         disabled={isSaving}
