@@ -1416,15 +1416,18 @@ const getAmountSuggestions = (foodName: string, lang: string): string[] => {
                 const gramMatch = serving.match(/(\d+)\s*g/i)
                 if (gramMatch) {
                     const grams = parseInt(gramMatch[1])
-                    suggestions.push(`${grams}g`)
-                    // Add common fractions
-                    if (grams >= 150) suggestions.push(`${Math.round(grams / 2)}g`)
-                    if (grams >= 300) suggestions.push(`${Math.round(grams / 3)}g`)
+                    // Add original gram weight if it's a round number
+                    if (grams % 50 === 0 || grams % 10 === 0) {
+                        suggestions.push(`${grams}g`)
+                    }
                 }
 
-                // Add generic gram options if not already present
-                if (!suggestions.some(s => s.includes('100g'))) {
-                    suggestions.push('100g')
+                // Add common round gram options
+                const commonGrams = ['100g', '150g', '200g', '50g']
+                for (const g of commonGrams) {
+                    if (suggestions.length < 4 && !suggestions.includes(g)) {
+                        suggestions.push(g)
+                    }
                 }
 
                 // Limit to 4 suggestions
