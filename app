@@ -1381,6 +1381,61 @@ const getFoodCategory = (foodName: string): string => {
 }
 
 const getAmountSuggestions = (foodName: string, lang: string): string[] => {
+    // First, try to find food in nutrition DB for accurate suggestions
+    if (foodName.trim() && NUTRITION_DB.length > 0) {
+        const name = foodName.trim().toLowerCase()
+        for (const item of NUTRITION_DB) {
+            const match = name.includes(item.name.toLowerCase()) ||
+                          item.name.toLowerCase().includes(name) ||
+                          (item.aliases || []).some(a => name.includes(a.toLowerCase()) || a.toLowerCase().includes(name))
+
+            if (match && item.serving) {
+                // Parse serving to generate smart suggestions
+                const suggestions: string[] = []
+                const serving = item.serving
+
+                // Extract base unit (e.g., "1공기", "1인분", "1개")
+                const unitMatch = serving.match(/^(\d*\.?\d*)\s*([가-힣a-zA-Z]+)/)
+                if (unitMatch) {
+                    const num = parseFloat(unitMatch[1]) || 1
+                    const unit = unitMatch[2]
+
+                    // Add full serving
+                    if (num === 1) {
+                        suggestions.push(`1${unit}`)
+                        // Add half
+                        if (['공기', '그릇', '인분', '개', '조각', '장', '봉지', '컵', '잔', '병', '줄', '판', '마리'].some(u => unit.includes(u))) {
+                            suggestions.push(`반${unit}`)
+                        }
+                    } else {
+                        suggestions.push(`${num}${unit}`)
+                    }
+                }
+
+                // Extract gram weight (e.g., "210g" from "1공기(210g)")
+                const gramMatch = serving.match(/(\d+)\s*g/i)
+                if (gramMatch) {
+                    const grams = parseInt(gramMatch[1])
+                    suggestions.push(`${grams}g`)
+                    // Add common fractions
+                    if (grams >= 150) suggestions.push(`${Math.round(grams / 2)}g`)
+                    if (grams >= 300) suggestions.push(`${Math.round(grams / 3)}g`)
+                }
+
+                // Add generic gram options if not already present
+                if (!suggestions.some(s => s.includes('100g'))) {
+                    suggestions.push('100g')
+                }
+
+                // Limit to 4 suggestions
+                if (suggestions.length >= 2) {
+                    return suggestions.slice(0, 4)
+                }
+            }
+        }
+    }
+
+    // Fallback to category-based suggestions
     const category = getFoodCategory(foodName)
     const langSuggestions = AMOUNT_SUGGESTIONS[lang] || AMOUNT_SUGGESTIONS.en
     return langSuggestions[category] || langSuggestions.default
