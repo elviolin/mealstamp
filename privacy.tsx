@@ -324,7 +324,7 @@ const CONTENT = {
     de: {
         title: "Datenschutzrichtlinie",
         updated: "Letzte Aktualisierung: 26. Januar 2025",
-        intro: "educulture („wir", „uns" oder „unser") betreibt MealStamp (die „App"). Diese Seite informiert Sie über unsere Richtlinien bezüglich der Erfassung, Verwendung und Offenlegung personenbezogener Daten.",
+        intro: "educulture (\"wir\", \"uns\" oder \"unser\") betreibt MealStamp (die \"App\"). Diese Seite informiert Sie ueber unsere Richtlinien bezueglich der Erfassung, Verwendung und Offenlegung personenbezogener Daten.",
         sections: [
             {
                 title: "1. Erfasste Informationen",
