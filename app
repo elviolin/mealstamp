@@ -3699,7 +3699,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             <div
                                 style={{
                                     position: "absolute",
-                                    top: "calc(50% - min(calc(50vw - 24px), 170px) - 52px)",
+                                    top: "calc(50% - min(calc(50vw - 24px), 170px) - 60px)",
                                     left: "50%",
                                     transform: "translateX(-50%)",
                                     zIndex: 80,
@@ -3710,9 +3710,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         display: "flex",
                                         background: "rgba(0,0,0,0.5)",
                                         borderRadius: DS.radius.full,
-                                        padding: 3,
+                                        padding: 4,
                                         backdropFilter: "blur(10px)",
-                                        width: 160,
+                                        width: 180,
                                     }}
                                 >
                                     {[
@@ -3746,8 +3746,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                                     cursor: "pointer",
                                                     borderRadius:
                                                         DS.radius.full,
-                                                    padding: "8px 0",
-                                                    fontSize: DS.fontSize.sm,
+                                                    padding: "10px 0",
+                                                    fontSize: 14,
                                                     fontWeight: 600,
                                                     background: active
                                                         ? "#fff"
@@ -3830,27 +3830,27 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 <div
                                     style={{
                                         position: "absolute",
-                                        bottom: 12,
+                                        bottom: 14,
                                         left: "50%",
                                         transform: "translateX(-50%)",
                                         display: "flex",
                                         alignItems: "center",
-                                        gap: 8,
+                                        gap: 10,
                                         background: "rgba(0,0,0,0.5)",
                                         borderRadius: DS.radius.full,
-                                        padding: "4px 8px",
+                                        padding: "6px 12px",
                                     }}
                                 >
                                     <button
                                         onClick={() => setZoomLevel(prev => Math.max(1, prev - 0.5))}
                                         style={{
-                                            width: 24,
-                                            height: 24,
+                                            width: 32,
+                                            height: 32,
                                             borderRadius: "50%",
                                             background: "rgba(255,255,255,0.2)",
                                             border: "none",
                                             color: "#fff",
-                                            fontSize: 16,
+                                            fontSize: 18,
                                             fontWeight: 700,
                                             cursor: "pointer",
                                             display: "flex",
@@ -3860,19 +3860,19 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     >
                                         -
                                     </button>
-                                    <span style={{ color: "#fff", fontSize: 11, fontWeight: 600, minWidth: 32, textAlign: "center" }}>
+                                    <span style={{ color: "#fff", fontSize: 13, fontWeight: 600, minWidth: 40, textAlign: "center" }}>
                                         {zoomLevel.toFixed(1)}x
                                     </span>
                                     <button
                                         onClick={() => setZoomLevel(prev => Math.min(4, prev + 0.5))}
                                         style={{
-                                            width: 24,
-                                            height: 24,
+                                            width: 32,
+                                            height: 32,
                                             borderRadius: "50%",
                                             background: "rgba(255,255,255,0.2)",
                                             border: "none",
                                             color: "#fff",
-                                            fontSize: 16,
+                                            fontSize: 18,
                                             fontWeight: 700,
                                             cursor: "pointer",
                                             display: "flex",
@@ -3913,22 +3913,22 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             <button
                                 onClick={() => setShowCreditInfo(true)}
                                 style={{
-                                    padding: "6px 12px",
+                                    padding: "10px 16px",
                                     background: "rgba(0,0,0,0.4)",
                                     borderRadius: DS.radius.full,
                                     color: "#fff",
-                                    fontSize: DS.fontSize.sm,
-                                    fontWeight: 500,
+                                    fontSize: 14,
+                                    fontWeight: 600,
                                     fontFamily: DS.font.system,
                                     backdropFilter: "blur(10px)",
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 6,
+                                    gap: 8,
                                     border: "none",
                                     cursor: "pointer",
                                 }}
                             >
-                                <Icon.Sparkle size={11} />
+                                <Icon.Sparkle size={14} />
                                 {isPro
                                     ? "Pro"
                                     : `${aiCredits}/${DEFAULT_CREDITS}`}
@@ -3951,8 +3951,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        padding: 20,
-                        paddingBottom: "max(28px, env(safe-area-inset-bottom))",
+                        padding: 24,
+                        paddingBottom: "max(32px, env(safe-area-inset-bottom))",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "space-between",
@@ -3962,9 +3962,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         style={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: DS.radius.md,
+                            width: 56,
+                            height: 56,
+                            borderRadius: DS.radius.lg,
                             background: "rgba(255,255,255,0.15)",
                             border: "none",
                             cursor: "pointer",
@@ -3980,8 +3980,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                     <button
                         onClick={capturePhoto}
                         style={{
-                            width: 72,
-                            height: 72,
+                            width: 80,
+                            height: 80,
                             borderRadius: "50%",
                             background:
                                 recordMode === RECORD_MODE.AI
@@ -4008,12 +4008,12 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         }}
                     >
                         {recordMode === RECORD_MODE.AI ? (
-                            <Icon.Sparkle size={20} />
+                            <Icon.Sparkle size={24} />
                         ) : (
                             <div
                                 style={{
-                                    width: 56,
-                                    height: 56,
+                                    width: 64,
+                                    height: 64,
                                     borderRadius: "50%",
                                     background: "#fff",
                                     border: "3px solid #000",
@@ -4028,8 +4028,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             )
                         }
                         style={{
-                            width: 48,
-                            height: 48,
+                            width: 56,
+                            height: 56,
                             borderRadius: "50%",
                             background: DS.colors.gray[800],
                             border: "none",
@@ -4166,18 +4166,18 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                 />
                 <div
                     style={{
-                        padding: `0 ${DS.content.paddingX}px 14px`,
+                        padding: `0 ${DS.content.paddingX}px 16px`,
                         display: "flex",
                         alignItems: "center",
-                        gap: 12,
+                        gap: 14,
                     }}
                 >
                     {capturedImage && (
                         <button
                             onClick={() => setShowImageModal(true)}
                             style={{
-                                width: 52,
-                                height: 52,
+                                width: 64,
+                                height: 64,
                                 borderRadius: DS.radius.md,
                                 overflow: "hidden",
                                 flexShrink: 0,
@@ -4199,11 +4199,11 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             <div
                                 style={{
                                     position: "absolute",
-                                    bottom: 3,
-                                    right: 3,
-                                    width: 18,
-                                    height: 18,
-                                    borderRadius: 4,
+                                    bottom: 4,
+                                    right: 4,
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: 5,
                                     background: "rgba(0,0,0,0.5)",
                                     display: "flex",
                                     alignItems: "center",
@@ -4218,16 +4218,16 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                     <div>
                         <div
                             style={{
-                                fontSize: DS.fontSize.xs,
+                                fontSize: DS.fontSize.sm,
                                 color: DS.colors.gray[500],
-                                marginBottom: 2,
+                                marginBottom: 4,
                             }}
                         >
                             {t("totalCalories")}
                         </div>
                         <div
                             style={{
-                                fontSize: 30,
+                                fontSize: 34,
                                 fontWeight: 700,
                                 letterSpacing: -1.5,
                                 lineHeight: 1,
@@ -4236,7 +4236,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             {totalCalories}
                             <span
                                 style={{
-                                    fontSize: DS.fontSize.sm,
+                                    fontSize: DS.fontSize.md,
                                     fontWeight: 500,
                                     color: DS.colors.gray[400],
                                     marginLeft: 4,
@@ -4266,7 +4266,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         overflowX: "hidden",
                         WebkitOverflowScrolling: "touch",
                         padding: `0 ${DS.content.paddingX}px`,
-                        paddingBottom: 130 + keyboardHeight,
+                        paddingBottom: 140 + keyboardHeight,
                         transition: "padding-bottom 0.15s ease-out",
                     }}
                 >
@@ -4275,9 +4275,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             key={i}
                             style={{
                                 background: DS.colors.white,
-                                borderRadius: DS.radius.sm,
-                                padding: "12px 14px",
-                                marginBottom: 10,
+                                borderRadius: DS.radius.md,
+                                padding: "14px 16px",
+                                marginBottom: 12,
                                 border: `1px solid ${focusedFoodIndex === i ? DS.colors.gray[300] : DS.colors.gray[200]}`,
                                 transition: "border-color 0.15s ease",
                             }}
@@ -4286,8 +4286,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 6,
-                                    marginBottom: 8,
+                                    gap: 8,
+                                    marginBottom: 10,
                                 }}
                             >
                                 <div style={{ flex: 1, position: "relative" }}>
@@ -4415,9 +4415,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         searchCalories(food.name, food.amount)
                                     }
                                     style={{
-                                        width: 34,
-                                        height: 34,
-                                        borderRadius: 8,
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: 10,
                                         background: DS.colors.gray[100],
                                         border: "none",
                                         cursor: "pointer",
@@ -4437,9 +4437,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         )
                                     }
                                     style={{
-                                        width: 34,
-                                        height: 34,
-                                        borderRadius: 8,
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: 10,
                                         background: "#FEE2E2",
                                         border: "none",
                                         cursor: "pointer",
@@ -4456,7 +4456,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 6,
+                                    gap: 8,
                                 }}
                             >
                                 <div style={{ flex: 1, position: "relative" }}>
@@ -4483,7 +4483,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             width: "100%",
                                             fontSize: 16,
                                             color: DS.colors.gray[600],
-                                            padding: "9px 28px 9px 12px",
+                                            padding: "11px 28px 11px 14px",
                                         }}
                                     />
                                     {food.amount && (
@@ -4529,10 +4529,10 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         alignItems: "center",
                                         justifyContent: "center",
                                         background: DS.colors.gray[100],
-                                        borderRadius: 8,
-                                        padding: "0 8px",
-                                        height: 34,
-                                        width: 74,
+                                        borderRadius: 10,
+                                        padding: "0 10px",
+                                        height: 40,
+                                        width: 88,
                                         flexShrink: 0,
                                     }}
                                 >
@@ -4550,7 +4550,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         placeholder="0"
                                         style={{
                                             ...input,
-                                            width: 36,
+                                            width: 42,
                                             fontSize: 16,
                                             textAlign: "right",
                                             fontWeight: 700,
@@ -4613,8 +4613,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         bottom: keyboardHeight,
                         left: 0,
                         right: 0,
-                        padding: `12px ${DS.content.paddingX}px`,
-                        paddingBottom: keyboardHeight > 0 ? 10 : "max(14px, env(safe-area-inset-bottom))",
+                        padding: `14px ${DS.content.paddingX}px`,
+                        paddingBottom: keyboardHeight > 0 ? 12 : "max(20px, env(safe-area-inset-bottom))",
                         background: DS.colors.white,
                         borderTop: `1px solid ${DS.colors.gray[200]}`,
                         zIndex: 100,
@@ -4634,19 +4634,19 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         }}
                         style={{
                             width: "100%",
-                            padding: 11,
-                            fontSize: DS.fontSize.sm,
+                            padding: 14,
+                            fontSize: 14,
                             fontWeight: 600,
                             color: DS.colors.gray[500],
                             background: DS.colors.white,
                             border: `1.5px dashed ${DS.colors.gray[300]}`,
-                            borderRadius: DS.radius.sm,
+                            borderRadius: DS.radius.md,
                             cursor: "pointer",
-                            marginBottom: 10,
+                            marginBottom: 12,
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            gap: 6,
+                            gap: 8,
                         }}
                     >
                         <Icon.Plus /> {t("addFood")}
@@ -4881,8 +4881,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                     <div
                         style={{
                             width: "100%",
-                            maxWidth: 260,
-                            boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+                            maxWidth: 280,
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
                             borderRadius: DS.radius.xl,
                             overflow: "hidden",
                         }}
