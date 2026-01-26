@@ -301,6 +301,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "코드가 없으신가요?",
         purchaseHere: "구매하기",
         cameraPermission: "카메라",
+        privacyPolicy: "개인정보처리방침",
+        termsOfService: "이용약관",
         allow: "허용",
         cameraAllowed: "카메라 권한이 허용되었습니다",
         cameraSettings: "설정에서 카메라 권한을 허용해주세요",
@@ -371,6 +373,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "コードをお持ちでないですか？",
         purchaseHere: "購入する",
         cameraPermission: "カメラ",
+        privacyPolicy: "プライバシーポリシー",
+        termsOfService: "利用規約",
         allow: "許可",
         cameraAllowed: "カメラの権限が許可されました",
         cameraSettings: "設定からカメラの権限を許可してください",
@@ -442,6 +446,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "Don't have a code?",
         purchaseHere: "Purchase here",
         cameraPermission: "Camera",
+        privacyPolicy: "Privacy Policy",
+        termsOfService: "Terms of Service",
         allow: "Allow",
         cameraAllowed: "Camera permission granted",
         cameraSettings: "Please allow camera access in settings",
@@ -510,6 +516,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "没有代码？",
         purchaseHere: "点击购买",
         cameraPermission: "相机",
+        privacyPolicy: "隐私政策",
+        termsOfService: "服务条款",
         allow: "允许",
         cameraAllowed: "相机权限已允许",
         cameraSettings: "请在设置中允许相机访问",
@@ -580,6 +588,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "Pas de code ?",
         purchaseHere: "Acheter ici",
         cameraPermission: "Caméra",
+        privacyPolicy: "Politique de confidentialité",
+        termsOfService: "Conditions d'utilisation",
         allow: "Autoriser",
         cameraAllowed: "Permission caméra accordée",
         cameraSettings: "Autorisez l'accès caméra dans les paramètres",
@@ -649,6 +659,8 @@ const i18n: Record<string, Record<string, string>> = {
         noProCode: "Kein Code?",
         purchaseHere: "Hier kaufen",
         cameraPermission: "Kamera",
+        privacyPolicy: "Datenschutzrichtlinie",
+        termsOfService: "Nutzungsbedingungen",
         allow: "Erlauben",
         cameraAllowed: "Kameraerlaubnis erteilt",
         cameraSettings: "Erlauben Sie den Kamerazugriff in den Einstellungen",
@@ -5252,6 +5264,60 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 </span>
                             </button>
                         </div>
+                    </div>
+
+                    {/* Privacy Policy & Terms */}
+                    <div
+                        style={{
+                            background: DS.colors.white,
+                            borderRadius: DS.radius.lg,
+                            padding: 14,
+                            marginTop: 10,
+                        }}
+                    >
+                        <button
+                            onClick={() => window.open("https://elviolin.github.io/mealstamp/privacy.html?lang=" + lang, "_blank")}
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: "12px 0",
+                                background: "transparent",
+                                border: "none",
+                                borderBottom: `1px solid ${DS.colors.gray[100]}`,
+                                cursor: "pointer",
+                                fontSize: DS.fontSize.sm,
+                            }}
+                        >
+                            <span style={{ fontWeight: 500 }}>
+                                {t("privacyPolicy")}
+                            </span>
+                            <span style={{ color: DS.colors.gray[400] }}>
+                                ›
+                            </span>
+                        </button>
+                        <button
+                            onClick={() => window.open("https://elviolin.github.io/mealstamp/privacy.html?lang=" + lang, "_blank")}
+                            style={{
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: "12px 0",
+                                background: "transparent",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: DS.fontSize.sm,
+                            }}
+                        >
+                            <span style={{ fontWeight: 500 }}>
+                                {t("termsOfService")}
+                            </span>
+                            <span style={{ color: DS.colors.gray[400] }}>
+                                ›
+                            </span>
+                        </button>
                     </div>
 
                 </div>
