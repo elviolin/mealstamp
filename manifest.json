@@ -1,0 +1,21 @@
+{
+  "name": "MealStamp",
+  "short_name": "MealStamp",
+  "description": "AI 칼로리 기록 앱",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "ko",
+  "background_color": "#FFFFFF",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://elviolin.github.io/mealstamp/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
