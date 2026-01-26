@@ -272,7 +272,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "무제한 사용",
         buyPro: "Pro 구매",
         watchAdFree: "광고 보고 무료 저장",
-        thankYou: "구매해주셔서 감사합니다 💙",
+        thankYou: "구매해주셔서 감사합니다 🖤",
         language: "언어",
         upgradeToPro: "Pro로 업그레이드",
         upgradeDesc: "AI 음식 인식과 칼로리 계산을\n무제한으로 사용하세요",
@@ -345,7 +345,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "無制限使用",
         buyPro: "Pro購入",
         watchAdFree: "広告を見て無料保存",
-        thankYou: "ご購入ありがとうございます 💙",
+        thankYou: "ご購入ありがとうございます 🖤",
         language: "言語",
         upgradeToPro: "Proにアップグレード",
         upgradeDesc: "AI食べ物認識とカロリー計算を\n無制限で使用できます",
@@ -417,7 +417,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "Unlimited usage",
         buyPro: "Buy Pro",
         watchAdFree: "Watch Ad & Save Free",
-        thankYou: "Thank you for your purchase 💙",
+        thankYou: "Thank you for your purchase 🖤",
         language: "Language",
         upgradeToPro: "Upgrade to Pro",
         upgradeDesc:
@@ -490,7 +490,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "无限使用",
         buyPro: "购买Pro",
         watchAdFree: "看广告免费保存",
-        thankYou: "感谢您的购买 💙",
+        thankYou: "感谢您的购买 🖤",
         language: "语言",
         upgradeToPro: "升级到Pro",
         upgradeDesc: "无限使用AI食物识别\n和卡路里计算",
@@ -560,7 +560,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "Utilisation illimitée",
         buyPro: "Acheter Pro",
         watchAdFree: "Voir pub & sauver gratuit",
-        thankYou: "Merci pour votre achat 💙",
+        thankYou: "Merci pour votre achat 🖤",
         language: "Langue",
         upgradeToPro: "Passer à Pro",
         upgradeDesc: "Reconnaissance IA et calcul\nde calories sans limite",
@@ -632,7 +632,7 @@ const i18n: Record<string, Record<string, string>> = {
         feature3: "Unbegrenzte Nutzung",
         buyPro: "Pro kaufen",
         watchAdFree: "Werbung sehen & gratis speichern",
-        thankYou: "Danke für Ihren Kauf 💙",
+        thankYou: "Danke für Ihren Kauf 🖤",
         language: "Sprache",
         upgradeToPro: "Auf Pro upgraden",
         upgradeDesc: "KI-Erkennung und Kalorien-\nberechnung unbegrenzt",
@@ -2489,8 +2489,8 @@ const DetailedCard = ({
                                         : "none",
                             }}
                         >
-                            <span style={{ opacity: 0.85 }}>{food.name}</span>
-                            <span style={{ fontWeight: 600 }}>
+                            <span style={{ opacity: 0.85, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 8 }}>{food.name}</span>
+                            <span style={{ fontWeight: 600, flexShrink: 0 }}>
                                 {food.calories} <span style={{ fontWeight: 400, fontSize: foodFontSize * 0.85, opacity: 0.7 }}>kcal</span>
                             </span>
                         </div>
@@ -2684,7 +2684,7 @@ const HealthCard = ({
                                         : "none",
                             }}
                         >
-                            <span style={{ opacity: 0.9, flex: 1 }}>{food.name}</span>
+                            <span style={{ opacity: 0.9, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: 8 }}>{food.name}</span>
                             <div style={{ display: "flex", gap: 6, fontSize: 10, alignItems: "center" }}>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.carbs}{food.carbs || 0}</span>
                                 <span style={{ opacity: 0.55 }}>{macroLabels.protein}{food.protein || 0}</span>
@@ -4704,7 +4704,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
         }
 
         return (
-            <div style={container}>
+            <div style={{ ...container, background: "#1a1a1a" }}>
                 <Toast show={showToast} message={toastMessage} />
                 <LoadingOverlay
                     show={isSaving}
@@ -4724,13 +4724,15 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                 />
 
                 <Header
+                    background="transparent"
+                    color="#fff"
                     left={
-                        <IconButton onClick={() => setScreen(SCREENS.RESULT)}>
+                        <IconButton onClick={() => setScreen(SCREENS.RESULT)} color="#fff">
                             <Icon.Back />
                         </IconButton>
                     }
                     right={
-                        <IconButton onClick={resetToCamera}>
+                        <IconButton onClick={resetToCamera} color="#fff">
                             <Icon.X />
                         </IconButton>
                     }
@@ -5202,6 +5204,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     borderRadius: DS.radius.sm,
                                     cursor: "pointer",
                                     fontSize: DS.fontSize.sm,
+                                    color: DS.colors.black,
                                 }}
                             >
                                 <span style={{ fontWeight: 500 }}>
@@ -5254,6 +5257,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     borderRadius: DS.radius.sm,
                                     cursor: "pointer",
                                     fontSize: DS.fontSize.sm,
+                                    color: DS.colors.black,
                                 }}
                             >
                                 <span style={{ fontWeight: 500 }}>
@@ -5288,6 +5292,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 borderBottom: `1px solid ${DS.colors.gray[100]}`,
                                 cursor: "pointer",
                                 fontSize: DS.fontSize.sm,
+                                color: DS.colors.black,
                             }}
                         >
                             <span style={{ fontWeight: 500 }}>
@@ -5309,6 +5314,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 border: "none",
                                 cursor: "pointer",
                                 fontSize: DS.fontSize.sm,
+                                color: DS.colors.black,
                             }}
                         >
                             <span style={{ fontWeight: 500 }}>
