@@ -1,5 +1,5 @@
 import { addPropertyControls, ControlType } from "framer"
-import { useState, useRef, useEffect, useCallback } from "react"
+import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 
 // ============================================
 // Types & Interfaces
@@ -8,34 +8,17 @@ interface Food {
     name: string
     amount: string
     calories: string
+    carbs?: string
+    protein?: string
+    fat?: string
+    sugar?: string
+    fiber?: string
 }
 
 interface TimestampFormatted {
     date: string
     time: string
     day: string
-}
-
-interface ButtonProps {
-    children: React.ReactNode
-    variant?: "primary" | "secondary" | "ghost"
-    disabled?: boolean
-    onClick?: () => void
-    style?: React.CSSProperties
-}
-
-interface IconButtonProps {
-    onClick?: () => void
-    children: React.ReactNode
-    color?: string
-}
-
-interface HeaderProps {
-    left?: React.ReactNode
-    center?: React.ReactNode
-    right?: React.ReactNode
-    background?: string
-    color?: string
 }
 
 interface BottomSheetProps {
@@ -308,6 +291,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "설정에서 카메라 권한을 허용해주세요",
         proRequired: "Pro 기능",
         proRequiredDesc: "상세 카드 저장은 Pro 기능이에요",
+        saveHint: "이미지를 길게 눌러서 저장하세요",
         foodContext:
             "Korean food like bibimbap, bulgogi, kimchi. Use Korean portion terms.",
     },
@@ -380,6 +364,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "設定からカメラの権限を許可してください",
         proRequired: "Pro機能",
         proRequiredDesc: "詳細カード保存はPro機能です",
+        saveHint: "画像を長押しして保存してください",
         foodContext:
             "Japanese food like sushi, ramen, tempura. Use Japanese portion terms.",
     },
@@ -453,6 +438,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "Please allow camera access in settings",
         proRequired: "Pro Feature",
         proRequiredDesc: "Saving detailed cards is a Pro feature",
+        saveHint: "Long press the image to save",
         foodContext:
             "Western food like burgers, pizza, salads. Use standard portions.",
     },
@@ -523,6 +509,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "请在设置中允许相机访问",
         proRequired: "Pro功能",
         proRequiredDesc: "保存详细卡片是Pro功能",
+        saveHint: "长按图片保存",
         foodContext:
             "Chinese food like dumplings, fried rice. Use Chinese portion terms.",
     },
@@ -595,6 +582,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "Autorisez l'accès caméra dans les paramètres",
         proRequired: "Fonction Pro",
         proRequiredDesc: "La sauvegarde détaillée est une fonction Pro",
+        saveHint: "Appuyez longuement sur l'image pour sauvegarder",
         foodContext:
             "French food like croissant, baguette. Use French portion terms.",
     },
@@ -666,6 +654,7 @@ const i18n: Record<string, Record<string, string>> = {
         cameraSettings: "Erlauben Sie den Kamerazugriff in den Einstellungen",
         proRequired: "Pro-Funktion",
         proRequiredDesc: "Detailliertes Speichern ist eine Pro-Funktion",
+        saveHint: "Halten Sie das Bild gedrückt, um es zu speichern",
         foodContext:
             "German food like bratwurst, schnitzel. Use German portion terms.",
     },
@@ -1533,6 +1522,31 @@ const commonStyles = {
         position: "relative",
         background: "#000",
         fontFamily: DS.font.body,
+    } as React.CSSProperties,
+    container: {
+        width: "100%",
+        height: "100%",
+        position: "fixed",
+        inset: 0,
+        background: DS.colors.gray[50],
+        fontFamily: DS.font.body,
+        color: DS.colors.black,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        touchAction: "manipulation",
+        WebkitTextSizeAdjust: "100%",
+    } as React.CSSProperties,
+    input: {
+        fontSize: 16,
+        fontFamily: DS.font.body,
+        border: "none",
+        outline: "none",
+        background: DS.colors.gray[100],
+        borderRadius: DS.radius.sm,
+        boxSizing: "border-box",
+        minWidth: 0,
+        touchAction: "manipulation",
     } as React.CSSProperties,
 }
 
@@ -2996,11 +3010,7 @@ export default function MealStamp(props: any) {
             startCamera()
         else stopCamera()
         return stopCamera
-    }, [screen, startCamera, stopCamera])
-    useEffect(() => {
-        if (screen === SCREENS.CAMERA || screen === SCREENS.LANGUAGE)
-            startCamera()
-    }, [facingMode])
+    }, [screen, facingMode, startCamera, stopCamera])
 
     // Reset zoom when switching cameras or screens
     useEffect(() => {
@@ -3424,33 +3434,18 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
         }
     }
 
-    const totalCalories = foods.reduce(
-        (s, f) => s + (parseInt(f.calories) || 0),
-        0
-    )
-    const totalCarbs = foods.reduce(
-        (s, f) => s + (parseInt(f.carbs) || 0),
-        0
-    )
-    const totalProtein = foods.reduce(
-        (s, f) => s + (parseInt(f.protein) || 0),
-        0
-    )
-    const totalFat = foods.reduce(
-        (s, f) => s + (parseInt(f.fat) || 0),
-        0
-    )
-    const totalSugar = foods.reduce(
-        (s, f) => s + (parseInt(f.sugar) || 0),
-        0
-    )
-    const totalFiber = foods.reduce(
-        (s, f) => s + (parseInt(f.fiber) || 0),
-        0
-    )
-    const hasEmptyCalories = foods.some((f) => f.name?.trim() && !f.calories)
-    const canComplete =
-        foods.length > 0 && foods.every((f) => f.name?.trim() && f.calories)
+    // Memoized nutrition totals for performance
+    const { totalCalories, totalCarbs, totalProtein, totalFat, totalSugar, totalFiber } = useMemo(() => ({
+        totalCalories: foods.reduce((s, f) => s + (parseInt(f.calories) || 0), 0),
+        totalCarbs: foods.reduce((s, f) => s + (parseInt(f.carbs) || 0), 0),
+        totalProtein: foods.reduce((s, f) => s + (parseInt(f.protein) || 0), 0),
+        totalFat: foods.reduce((s, f) => s + (parseInt(f.fat) || 0), 0),
+        totalSugar: foods.reduce((s, f) => s + (parseInt(f.sugar) || 0), 0),
+        totalFiber: foods.reduce((s, f) => s + (parseInt(f.fiber) || 0), 0),
+    }), [foods])
+
+    const hasEmptyCalories = useMemo(() => foods.some((f) => f.name?.trim() && !f.calories), [foods])
+    const canComplete = useMemo(() => foods.length > 0 && foods.every((f) => f.name?.trim() && f.calories), [foods])
     const handleFoodChange = (i: number, field: string, val: string) => {
         const updated = [...foods]
         if (field === "calories")
@@ -3571,31 +3566,9 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
         toast("광고 기능 준비 중", 1500)
     }
 
-    const container: React.CSSProperties = {
-        width: "100%",
-        height: "100%",
-        position: "fixed",
-        inset: 0,
-        background: DS.colors.gray[50],
-        fontFamily: DS.font.body,
-        color: DS.colors.black,
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        touchAction: "manipulation",
-        WebkitTextSizeAdjust: "100%",
-    }
-    const input: React.CSSProperties = {
-        fontSize: 16,
-        fontFamily: DS.font.body,
-        border: "none",
-        outline: "none",
-        background: DS.colors.gray[100],
-        borderRadius: DS.radius.sm,
-        boxSizing: "border-box",
-        minWidth: 0,
-        touchAction: "manipulation",
-    }
+    // Use pre-defined styles for performance (avoid recreation on every render)
+    const container = commonStyles.container
+    const input = commonStyles.input
 
     // CAMERA SCREEN
     if (screen === SCREENS.CAMERA || screen === SCREENS.LANGUAGE) {
@@ -4417,7 +4390,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     style={{
                                         width: 40,
                                         height: 40,
-                                        borderRadius: 10,
+                                        borderRadius: DS.radius.sm,
                                         background: DS.colors.gray[100],
                                         border: "none",
                                         cursor: "pointer",
@@ -4439,7 +4412,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     style={{
                                         width: 40,
                                         height: 40,
-                                        borderRadius: 10,
+                                        borderRadius: DS.radius.sm,
                                         background: "#FEE2E2",
                                         border: "none",
                                         cursor: "pointer",
@@ -4529,7 +4502,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         alignItems: "center",
                                         justifyContent: "center",
                                         background: DS.colors.gray[100],
-                                        borderRadius: 10,
+                                        borderRadius: DS.radius.sm,
                                         padding: "0 10px",
                                         height: 40,
                                         width: 88,
