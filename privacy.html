@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - MealStamp</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', 'SF Pro Display', sans-serif;
+            background: #fff;
+            color: #000;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+            color: #666;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn:hover {
+            border-color: #000;
+            color: #000;
+        }
+
+        .lang-btn.active {
+            background: #000;
+            border-color: #000;
+            color: #fff;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #000;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        .updated {
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* Content */
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 16px;
+        }
+
+        ul {
+            padding-left: 0;
+            margin-bottom: 20px;
+            list-style: none;
+        }
+
+        li {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+            padding-left: 20px;
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        strong {
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Contact Box */
+        .contact-box {
+            margin-top: 48px;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 16px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .contact-box h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 16px;
+        }
+
+        .contact-box p {
+            margin-bottom: 6px;
+        }
+
+        .contact-box a {
+            color: #000;
+            text-decoration: none;
+            border-bottom: 1px solid #ccc;
+            transition: border-color 0.2s;
+        }
+
+        .contact-box a:hover {
+            border-color: #000;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                padding: 40px 20px 60px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            .lang-switcher {
+                margin-bottom: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+            <button class="lang-btn active" data-lang="ko">한국어</button>
+            <button class="lang-btn" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="ja">日本語</button>
+            <button class="lang-btn" data-lang="zh">中文</button>
+            <button class="lang-btn" data-lang="fr">Français</button>
+            <button class="lang-btn" data-lang="de">Deutsch</button>
+        </div>
+
+        <div class="header">
+            <div class="logo">MealStamp</div>
+            <h1 class="title-text" data-ko="개인정보처리방침" data-en="Privacy Policy" data-ja="プライバシーポリシー" data-zh="隐私政策" data-fr="Politique de confidentialité" data-de="Datenschutzrichtlinie">개인정보처리방침</h1>
+            <p class="updated updated-text" data-ko="최종 업데이트: 2025년 1월 26일" data-en="Last Updated: January 26, 2025" data-ja="最終更新: 2025年1月26日" data-zh="最后更新：2025年1月26日" data-fr="Dernière mise à jour : 26 janvier 2025" data-de="Letzte Aktualisierung: 26. Januar 2025">최종 업데이트: 2025년 1월 26일</p>
+        </div>
+
+        <!-- Korean -->
+        <div class="content active" id="content-ko">
+            <p>educulture(이하 "회사")는 MealStamp(이하 "앱") 이용자의 개인정보를 중요시하며, 개인정보보호법 등 관련 법령을 준수합니다.</p>
+
+            <h2>1. 수집하는 정보</h2>
+            <p>앱은 서비스 제공을 위해 다음 정보를 수집할 수 있습니다:</p>
+            <ul>
+                <li><strong>카메라 접근</strong> — 음식 사진 촬영을 위해 카메라에 접근합니다. 촬영된 사진은 기기에서만 처리되며 서버에 저장되지 않습니다.</li>
+                <li><strong>기기 저장 데이터</strong> — 언어 설정, 테마 설정, Pro 구매 상태 등이 기기 내 로컬 저장소에 저장됩니다.</li>
+            </ul>
+
+            <h2>2. 정보의 이용 목적</h2>
+            <ul>
+                <li>AI 기반 음식 인식 및 칼로리 분석 서비스 제공</li>
+                <li>사용자 설정 저장 및 서비스 개선</li>
+                <li>Pro 기능 제공 및 구매 상태 관리</li>
+            </ul>
+
+            <h2>3. 제3자 서비스</h2>
+            <p>앱은 다음 제3자 서비스를 이용합니다:</p>
+            <ul>
+                <li><strong>OpenAI API</strong> — 음식 이미지 분석 및 칼로리 계산. 이미지는 분석 후 즉시 삭제됩니다.</li>
+                <li><strong>식품의약품안전처 API</strong> — 영양 정보 조회</li>
+                <li><strong>Lemon Squeezy</strong> — Pro 버전 결제 처리</li>
+            </ul>
+
+            <h2>4. 정보의 보관 및 삭제</h2>
+            <ul>
+                <li><strong>사진 데이터</strong> — 서버에 저장되지 않으며, 앱 사용 중에만 임시로 기기 메모리에 존재합니다.</li>
+                <li><strong>설정 데이터</strong> — 앱 삭제 시 함께 삭제됩니다.</li>
+                <li>사용자는 언제든지 앱을 삭제하여 모든 로컬 데이터를 삭제할 수 있습니다.</li>
+            </ul>
+
+            <h2>5. 이용자의 권리</h2>
+            <ul>
+                <li>카메라 접근 권한을 기기 설정에서 언제든지 해제할 수 있습니다.</li>
+                <li>앱 삭제를 통해 모든 로컬 데이터를 삭제할 수 있습니다.</li>
+                <li>개인정보 관련 문의 및 요청을 아래 연락처로 할 수 있습니다.</li>
+            </ul>
+
+            <h2>6. 아동의 개인정보</h2>
+            <p>앱은 만 14세 미만 아동의 개인정보를 의도적으로 수집하지 않습니다.</p>
+
+            <h2>7. 방침의 변경</h2>
+            <p>본 개인정보처리방침은 관련 법령 또는 서비스 변경에 따라 수정될 수 있으며, 변경 시 앱 내 또는 웹사이트를 통해 공지합니다.</p>
+
+            <div class="contact-box">
+                <h2>8. 연락처</h2>
+                <p><strong>운영자</strong>: educulture</p>
+                <p><strong>이메일</strong>: <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>웹사이트</strong>: <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <!-- English -->
+        <div class="content" id="content-en">
+            <p>educulture ("we", "us", or "our") operates MealStamp (the "App"). This page informs you of our policies regarding the collection, use, and disclosure of personal information.</p>
+
+            <h2>1. Information We Collect</h2>
+            <p>The App may collect the following information to provide our services:</p>
+            <ul>
+                <li><strong>Camera Access</strong> — We access your camera to take photos of food. Photos are processed locally on your device and are not stored on our servers.</li>
+                <li><strong>Local Storage</strong> — Settings such as language preference, theme selection, and Pro purchase status are stored locally on your device.</li>
+            </ul>
+
+            <h2>2. How We Use Information</h2>
+            <ul>
+                <li>To provide AI-powered food recognition and calorie analysis</li>
+                <li>To save your preferences and improve the service</li>
+                <li>To manage Pro features and purchase status</li>
+            </ul>
+
+            <h2>3. Third-Party Services</h2>
+            <p>The App uses the following third-party services:</p>
+            <ul>
+                <li><strong>OpenAI API</strong> — For food image analysis and calorie calculation. Images are deleted immediately after analysis.</li>
+                <li><strong>Korea FDA API</strong> — For nutrition information lookup.</li>
+                <li><strong>Lemon Squeezy</strong> — For processing Pro version payments.</li>
+            </ul>
+
+            <h2>4. Data Retention and Deletion</h2>
+            <ul>
+                <li><strong>Photo data</strong> — Not stored on servers. Only exists temporarily in device memory during app use.</li>
+                <li><strong>Settings data</strong> — Deleted when the app is uninstalled.</li>
+                <li>You can delete all local data at any time by uninstalling the app.</li>
+            </ul>
+
+            <h2>5. Your Rights</h2>
+            <ul>
+                <li>Revoke camera access permission at any time through your device settings.</li>
+                <li>Delete all local data by uninstalling the app.</li>
+                <li>Contact us for any privacy-related inquiries or requests.</li>
+            </ul>
+
+            <h2>6. Children's Privacy</h2>
+            <p>The App does not intentionally collect personal information from children under 14 years of age.</p>
+
+            <h2>7. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy in the App or on our website.</p>
+
+            <div class="contact-box">
+                <h2>8. Contact Us</h2>
+                <p><strong>Operator</strong>: educulture</p>
+                <p><strong>Email</strong>: <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>Website</strong>: <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <!-- Japanese -->
+        <div class="content" id="content-ja">
+            <p>educulture（以下「当社」）は、MealStamp（以下「アプリ」）をご利用いただくユーザーの個人情報を重視し、関連法令を遵守します。</p>
+
+            <h2>1. 収集する情報</h2>
+            <p>アプリは、サービス提供のために以下の情報を収集する場合があります：</p>
+            <ul>
+                <li><strong>カメラへのアクセス</strong> — 食事の写真撮影のためにカメラにアクセスします。撮影した写真はデバイス上でのみ処理され、サーバーには保存されません。</li>
+                <li><strong>ローカルストレージ</strong> — 言語設定、テーマ設定、Pro購入状態などがデバイス内に保存されます。</li>
+            </ul>
+
+            <h2>2. 情報の利用目的</h2>
+            <ul>
+                <li>AIによる食品認識とカロリー分析サービスの提供</li>
+                <li>ユーザー設定の保存とサービスの改善</li>
+                <li>Pro機能の提供と購入状態の管理</li>
+            </ul>
+
+            <h2>3. 第三者サービス</h2>
+            <p>アプリは以下の第三者サービスを利用しています：</p>
+            <ul>
+                <li><strong>OpenAI API</strong> — 食品画像分析とカロリー計算。画像は分析後すぐに削除されます。</li>
+                <li><strong>韓国食品医薬品安全処API</strong> — 栄養情報の照会</li>
+                <li><strong>Lemon Squeezy</strong> — Pro版の決済処理</li>
+            </ul>
+
+            <h2>4. 情報の保管と削除</h2>
+            <ul>
+                <li><strong>写真データ</strong> — サーバーに保存されず、アプリ使用中のみデバイスメモリに一時的に存在します。</li>
+                <li><strong>設定データ</strong> — アプリ削除時に一緒に削除されます。</li>
+                <li>ユーザーはいつでもアプリを削除してすべてのローカルデータを削除できます。</li>
+            </ul>
+
+            <h2>5. ユーザーの権利</h2>
+            <ul>
+                <li>デバイス設定からいつでもカメラアクセス権限を解除できます。</li>
+                <li>アプリを削除することですべてのローカルデータを削除できます。</li>
+                <li>個人情報に関するお問い合わせは下記連絡先までご連絡ください。</li>
+            </ul>
+
+            <h2>6. 児童の個人情報</h2>
+            <p>アプリは14歳未満の児童の個人情報を意図的に収集しません。</p>
+
+            <h2>7. ポリシーの変更</h2>
+            <p>本プライバシーポリシーは、関連法令またはサービスの変更に伴い修正される場合があります。変更時はアプリ内またはウェブサイトでお知らせします。</p>
+
+            <div class="contact-box">
+                <h2>8. お問い合わせ</h2>
+                <p><strong>運営者</strong>: educulture</p>
+                <p><strong>メール</strong>: <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>ウェブサイト</strong>: <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <!-- Chinese -->
+        <div class="content" id="content-zh">
+            <p>educulture（以下简称"我们"）运营MealStamp（以下简称"应用"）。本页面向您介绍我们在收集、使用和披露个人信息方面的政策。</p>
+
+            <h2>1. 我们收集的信息</h2>
+            <p>为提供服务，应用可能收集以下信息：</p>
+            <ul>
+                <li><strong>相机访问</strong> — 我们访问您的相机以拍摄食物照片。照片仅在您的设备上处理，不会存储在我们的服务器上。</li>
+                <li><strong>本地存储</strong> — 语言偏好、主题选择和Pro购买状态等设置存储在您的设备本地。</li>
+            </ul>
+
+            <h2>2. 信息使用目的</h2>
+            <ul>
+                <li>提供AI食物识别和卡路里分析服务</li>
+                <li>保存用户设置并改进服务</li>
+                <li>管理Pro功能和购买状态</li>
+            </ul>
+
+            <h2>3. 第三方服务</h2>
+            <p>应用使用以下第三方服务：</p>
+            <ul>
+                <li><strong>OpenAI API</strong> — 用于食物图像分析和卡路里计算。图像在分析后立即删除。</li>
+                <li><strong>韩国食品药品安全处API</strong> — 用于营养信息查询</li>
+                <li><strong>Lemon Squeezy</strong> — 用于处理Pro版本付款</li>
+            </ul>
+
+            <h2>4. 数据保留和删除</h2>
+            <ul>
+                <li><strong>照片数据</strong> — 不存储在服务器上，仅在应用使用期间临时存在于设备内存中。</li>
+                <li><strong>设置数据</strong> — 卸载应用时删除。</li>
+                <li>您可以随时通过卸载应用删除所有本地数据。</li>
+            </ul>
+
+            <h2>5. 您的权利</h2>
+            <ul>
+                <li>随时通过设备设置撤销相机访问权限。</li>
+                <li>通过卸载应用删除所有本地数据。</li>
+                <li>如有隐私相关问题，请通过以下联系方式联系我们。</li>
+            </ul>
+
+            <h2>6. 儿童隐私</h2>
+            <p>应用不会故意收集14岁以下儿童的个人信息。</p>
+
+            <h2>7. 政策变更</h2>
+            <p>我们可能会不时更新本隐私政策。任何变更将在应用内或网站上公布。</p>
+
+            <div class="contact-box">
+                <h2>8. 联系我们</h2>
+                <p><strong>运营者</strong>: educulture</p>
+                <p><strong>邮箱</strong>: <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>网站</strong>: <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <!-- French -->
+        <div class="content" id="content-fr">
+            <p>educulture (« nous ») exploite MealStamp (l'« Application »). Cette page vous informe de nos politiques concernant la collecte, l'utilisation et la divulgation des informations personnelles.</p>
+
+            <h2>1. Informations collectées</h2>
+            <p>L'Application peut collecter les informations suivantes pour fournir nos services :</p>
+            <ul>
+                <li><strong>Accès à la caméra</strong> — Nous accédons à votre caméra pour photographier les aliments. Les photos sont traitées localement sur votre appareil et ne sont pas stockées sur nos serveurs.</li>
+                <li><strong>Stockage local</strong> — Les paramètres tels que la préférence linguistique, la sélection du thème et l'état d'achat Pro sont stockés localement sur votre appareil.</li>
+            </ul>
+
+            <h2>2. Utilisation des informations</h2>
+            <ul>
+                <li>Fournir la reconnaissance alimentaire par IA et l'analyse des calories</li>
+                <li>Sauvegarder vos préférences et améliorer le service</li>
+                <li>Gérer les fonctionnalités Pro et l'état d'achat</li>
+            </ul>
+
+            <h2>3. Services tiers</h2>
+            <p>L'Application utilise les services tiers suivants :</p>
+            <ul>
+                <li><strong>API OpenAI</strong> — Pour l'analyse d'images alimentaires et le calcul des calories. Les images sont supprimées immédiatement après l'analyse.</li>
+                <li><strong>API FDA Corée</strong> — Pour la recherche d'informations nutritionnelles</li>
+                <li><strong>Lemon Squeezy</strong> — Pour le traitement des paiements Pro</li>
+            </ul>
+
+            <h2>4. Conservation et suppression des données</h2>
+            <ul>
+                <li><strong>Données photo</strong> — Non stockées sur les serveurs. N'existent que temporairement dans la mémoire de l'appareil pendant l'utilisation.</li>
+                <li><strong>Données de paramètres</strong> — Supprimées lors de la désinstallation de l'application.</li>
+                <li>Vous pouvez supprimer toutes les données locales à tout moment en désinstallant l'application.</li>
+            </ul>
+
+            <h2>5. Vos droits</h2>
+            <ul>
+                <li>Révoquer l'autorisation d'accès à la caméra à tout moment via les paramètres de votre appareil.</li>
+                <li>Supprimer toutes les données locales en désinstallant l'application.</li>
+                <li>Nous contacter pour toute demande relative à la confidentialité.</li>
+            </ul>
+
+            <h2>6. Confidentialité des enfants</h2>
+            <p>L'Application ne collecte pas intentionnellement d'informations personnelles auprès d'enfants de moins de 14 ans.</p>
+
+            <h2>7. Modifications de cette politique</h2>
+            <p>Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Les modifications seront publiées dans l'Application ou sur notre site web.</p>
+
+            <div class="contact-box">
+                <h2>8. Nous contacter</h2>
+                <p><strong>Opérateur</strong> : educulture</p>
+                <p><strong>Email</strong> : <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>Site web</strong> : <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <!-- German -->
+        <div class="content" id="content-de">
+            <p>educulture („wir", „uns" oder „unser") betreibt MealStamp (die „App"). Diese Seite informiert Sie über unsere Richtlinien bezüglich der Erfassung, Verwendung und Offenlegung personenbezogener Daten.</p>
+
+            <h2>1. Erfasste Informationen</h2>
+            <p>Die App kann zur Bereitstellung unserer Dienste folgende Informationen erfassen:</p>
+            <ul>
+                <li><strong>Kamerazugriff</strong> — Wir greifen auf Ihre Kamera zu, um Fotos von Lebensmitteln aufzunehmen. Fotos werden lokal auf Ihrem Gerät verarbeitet und nicht auf unseren Servern gespeichert.</li>
+                <li><strong>Lokaler Speicher</strong> — Einstellungen wie Sprachpräferenz, Themenauswahl und Pro-Kaufstatus werden lokal auf Ihrem Gerät gespeichert.</li>
+            </ul>
+
+            <h2>2. Verwendung der Informationen</h2>
+            <ul>
+                <li>Bereitstellung von KI-gestützter Lebensmittelerkennung und Kalorienanalyse</li>
+                <li>Speichern Ihrer Präferenzen und Verbesserung des Dienstes</li>
+                <li>Verwaltung von Pro-Funktionen und Kaufstatus</li>
+            </ul>
+
+            <h2>3. Drittanbieterdienste</h2>
+            <p>Die App nutzt folgende Drittanbieterdienste:</p>
+            <ul>
+                <li><strong>OpenAI API</strong> — Für Lebensmittelbildanalyse und Kalorienberechnung. Bilder werden nach der Analyse sofort gelöscht.</li>
+                <li><strong>Korea FDA API</strong> — Für Ernährungsinformationsabfragen</li>
+                <li><strong>Lemon Squeezy</strong> — Für die Abwicklung von Pro-Zahlungen</li>
+            </ul>
+
+            <h2>4. Datenspeicherung und -löschung</h2>
+            <ul>
+                <li><strong>Fotodaten</strong> — Werden nicht auf Servern gespeichert. Existieren nur temporär im Gerätespeicher während der Nutzung.</li>
+                <li><strong>Einstellungsdaten</strong> — Werden bei Deinstallation der App gelöscht.</li>
+                <li>Sie können alle lokalen Daten jederzeit durch Deinstallation der App löschen.</li>
+            </ul>
+
+            <h2>5. Ihre Rechte</h2>
+            <ul>
+                <li>Widerrufen Sie die Kamerazugriffsberechtigung jederzeit über Ihre Geräteeinstellungen.</li>
+                <li>Löschen Sie alle lokalen Daten durch Deinstallation der App.</li>
+                <li>Kontaktieren Sie uns bei datenschutzbezogenen Anfragen.</li>
+            </ul>
+
+            <h2>6. Datenschutz für Kinder</h2>
+            <p>Die App erfasst nicht absichtlich personenbezogene Daten von Kindern unter 14 Jahren.</p>
+
+            <h2>7. Änderungen dieser Richtlinie</h2>
+            <p>Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Änderungen werden in der App oder auf unserer Website veröffentlicht.</p>
+
+            <div class="contact-box">
+                <h2>8. Kontakt</h2>
+                <p><strong>Betreiber</strong>: educulture</p>
+                <p><strong>E-Mail</strong>: <a href="mailto:support@mealstamp.app">support@mealstamp.app</a></p>
+                <p><strong>Website</strong>: <a href="https://mealstamp.app">mealstamp.app</a></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 MealStamp by educulture</p>
+        </div>
+    </div>
+
+    <script>
+        const buttons = document.querySelectorAll('.lang-btn');
+        const contents = document.querySelectorAll('.content');
+        const titleText = document.querySelector('.title-text');
+        const updatedText = document.querySelector('.updated-text');
+
+        // Check URL parameter for language
+        const urlParams = new URLSearchParams(window.location.search);
+        const langParam = urlParams.get('lang');
+        if (langParam && ['ko', 'en', 'ja', 'zh', 'fr', 'de'].includes(langParam)) {
+            switchLanguage(langParam);
+        }
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.dataset.lang;
+                switchLanguage(lang);
+            });
+        });
+
+        function switchLanguage(lang) {
+            // Update buttons
+            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-lang="${lang}"]`).classList.add('active');
+
+            // Update content
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(`content-${lang}`).classList.add('active');
+
+            // Update title and date
+            titleText.textContent = titleText.dataset[lang];
+            updatedText.textContent = updatedText.dataset[lang];
+
+            // Update URL without reload
+            const url = new URL(window.location);
+            url.searchParams.set('lang', lang);
+            window.history.replaceState({}, '', url);
+        }
+    </script>
+</body>
+</html>
