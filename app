@@ -4760,12 +4760,12 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             top: 0,
                             left: 0,
                             right: 0,
-                            padding: `12px ${DS.content.paddingX}px`,
+                            padding: `16px ${DS.content.paddingX}px`,
                             display: "flex",
                             flexDirection: "column",
                             alignItems: "center",
-                            gap: 8,
-                            paddingBottom: 40,
+                            gap: 12,
+                            paddingBottom: 48,
                         }}
                     >
                         {/* Card Type Toggle */}
@@ -4774,8 +4774,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 display: "flex",
                                 background: DS.colors.white,
                                 borderRadius: DS.radius.full,
-                                padding: 3,
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                                padding: 4,
+                                boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
                             }}
                         >
                             {[
@@ -4793,20 +4793,20 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             border: "none",
                                             cursor: disabled ? "not-allowed" : "pointer",
                                             borderRadius: DS.radius.full,
-                                            padding: "7px 12px",
-                                            fontSize: 12,
+                                            padding: "10px 16px",
+                                            fontSize: 13,
                                             fontWeight: 600,
                                             background: active ? DS.colors.black : "transparent",
                                             color: disabled ? DS.colors.gray[300] : active ? "#fff" : DS.colors.gray[500],
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
-                                            gap: 3,
+                                            gap: 4,
                                             transition: "all 0.15s ease",
                                             opacity: disabled ? 0.5 : 1,
                                         }}
                                     >
-                                        {item.isPro && <Icon.Sparkle size={8} />}
+                                        {item.isPro && <Icon.Sparkle size={10} />}
                                         {item.label}
                                     </button>
                                 )
@@ -4814,7 +4814,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         </div>
 
                         {/* Theme & Ratio Row */}
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
                             {[
                                 { key: CARD_THEMES.DEFAULT, label: t("themeDefault") },
                                 { key: CARD_THEMES.DIGITAL, label: t("themeDigital") },
@@ -4830,8 +4830,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             localStorage.setItem(STORAGE.theme, item.key)
                                         }}
                                         style={{
-                                            padding: "5px 10px",
-                                            fontSize: 11,
+                                            padding: "8px 14px",
+                                            fontSize: 12,
                                             fontWeight: 600,
                                             color: active ? "#fff" : DS.colors.gray[500],
                                             background: active ? DS.colors.black : DS.colors.white,
@@ -4840,18 +4840,18 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             cursor: "pointer",
                                             display: "flex",
                                             alignItems: "center",
-                                            gap: 3,
+                                            gap: 4,
                                             transition: "all 0.15s ease",
-                                            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                         }}
                                     >
-                                        {isProTheme && <Icon.Sparkle size={7} />}
+                                        {isProTheme && <Icon.Sparkle size={9} />}
                                         {item.label}
                                     </button>
                                 )
                             })}
 
-                            <div style={{ width: 1, height: 20, background: DS.colors.gray[300], margin: "0 2px" }} />
+                            <div style={{ width: 1, height: 24, background: DS.colors.gray[300], margin: "0 4px" }} />
 
                             {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE].map((ratio) => {
                                 const active = selectedAspectRatio.key === ratio.key
@@ -4860,8 +4860,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         key={ratio.key}
                                         onClick={() => setSelectedAspectRatio(ratio)}
                                         style={{
-                                            padding: "5px 8px",
-                                            fontSize: 11,
+                                            padding: "8px 12px",
+                                            fontSize: 12,
                                             fontWeight: 600,
                                             color: active ? "#fff" : DS.colors.gray[500],
                                             background: active ? DS.colors.black : DS.colors.white,
@@ -4869,7 +4869,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             borderRadius: DS.radius.full,
                                             cursor: "pointer",
                                             transition: "all 0.15s ease",
-                                            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                                            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                                         }}
                                     >
                                         {ratio.key}
