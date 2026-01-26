@@ -4456,7 +4456,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
-                                    gap: 8,
+                                    gap: 6,
                                 }}
                             >
                                 <div style={{ flex: 1, position: "relative" }}>
@@ -4527,10 +4527,13 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                     style={{
                                         display: "flex",
                                         alignItems: "center",
+                                        justifyContent: "center",
                                         background: DS.colors.gray[100],
                                         borderRadius: 8,
-                                        padding: "0 10px",
+                                        padding: "0 8px",
                                         height: 34,
+                                        width: 74,
+                                        flexShrink: 0,
                                     }}
                                 >
                                     <input
@@ -4547,7 +4550,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                         placeholder="0"
                                         style={{
                                             ...input,
-                                            width: 44,
+                                            width: 36,
                                             fontSize: 16,
                                             textAlign: "right",
                                             fontWeight: 700,
@@ -4704,7 +4707,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
         }
 
         return (
-            <div style={{ ...container, background: "#1a1a1a" }}>
+            <div style={container}>
                 <Toast show={showToast} message={toastMessage} />
                 <LoadingOverlay
                     show={isSaving}
@@ -4724,21 +4727,19 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                 />
 
                 <Header
-                    background="transparent"
-                    color="#fff"
                     left={
-                        <IconButton onClick={() => setScreen(SCREENS.RESULT)} color="#fff">
+                        <IconButton onClick={() => setScreen(SCREENS.RESULT)}>
                             <Icon.Back />
                         </IconButton>
                     }
                     right={
-                        <IconButton onClick={resetToCamera} color="#fff">
+                        <IconButton onClick={resetToCamera}>
                             <Icon.X />
                         </IconButton>
                     }
                 />
 
-                {/* Card Preview Area - Full Dark Background */}
+                {/* Card Preview Area */}
                 <div
                     style={{
                         flex: 1,
@@ -4748,7 +4749,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         justifyContent: "center",
                         padding: `20px ${DS.content.paddingX}px`,
                         minHeight: 0,
-                        background: "#1a1a1a",
+                        background: DS.colors.gray[100],
                         position: "relative",
                     }}
                 >
@@ -4764,7 +4765,6 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             flexDirection: "column",
                             alignItems: "center",
                             gap: 8,
-                            background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%)",
                             paddingBottom: 40,
                         }}
                     >
@@ -4772,10 +4772,10 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         <div
                             style={{
                                 display: "flex",
-                                background: "rgba(255,255,255,0.15)",
+                                background: DS.colors.white,
                                 borderRadius: DS.radius.full,
                                 padding: 3,
-                                backdropFilter: "blur(10px)",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
                             }}
                         >
                             {[
@@ -4796,8 +4796,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             padding: "7px 12px",
                                             fontSize: 12,
                                             fontWeight: 600,
-                                            background: active ? "rgba(255,255,255,0.95)" : "transparent",
-                                            color: disabled ? "rgba(255,255,255,0.3)" : active ? "#000" : "rgba(255,255,255,0.7)",
+                                            background: active ? DS.colors.black : "transparent",
+                                            color: disabled ? DS.colors.gray[300] : active ? "#fff" : DS.colors.gray[500],
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent: "center",
@@ -4833,8 +4833,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             padding: "5px 10px",
                                             fontSize: 11,
                                             fontWeight: 600,
-                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
-                                            background: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.1)",
+                                            color: active ? "#fff" : DS.colors.gray[500],
+                                            background: active ? DS.colors.black : DS.colors.white,
                                             border: "none",
                                             borderRadius: DS.radius.full,
                                             cursor: "pointer",
@@ -4842,6 +4842,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             alignItems: "center",
                                             gap: 3,
                                             transition: "all 0.15s ease",
+                                            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                                         }}
                                     >
                                         {isProTheme && <Icon.Sparkle size={7} />}
@@ -4850,7 +4851,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                 )
                             })}
 
-                            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.2)", margin: "0 2px" }} />
+                            <div style={{ width: 1, height: 20, background: DS.colors.gray[300], margin: "0 2px" }} />
 
                             {[ASPECT_RATIOS.PORTRAIT, ASPECT_RATIOS.SQUARE].map((ratio) => {
                                 const active = selectedAspectRatio.key === ratio.key
@@ -4862,12 +4863,13 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                                             padding: "5px 8px",
                                             fontSize: 11,
                                             fontWeight: 600,
-                                            color: active ? "#000" : "rgba(255,255,255,0.6)",
-                                            background: active ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.1)",
+                                            color: active ? "#fff" : DS.colors.gray[500],
+                                            background: active ? DS.colors.black : DS.colors.white,
                                             border: "none",
                                             borderRadius: DS.radius.full,
                                             cursor: "pointer",
                                             transition: "all 0.15s ease",
+                                            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                                         }}
                                     >
                                         {ratio.key}
@@ -4929,16 +4931,13 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                     </div>
                 </div>
 
-                {/* Save Button - Bottom with gradient */}
+                {/* Save Button - Bottom */}
                 <div
                     style={{
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        padding: `40px ${DS.content.paddingX}px 0`,
+                        padding: `16px ${DS.content.paddingX}px`,
                         paddingBottom: `max(20px, env(safe-area-inset-bottom))`,
-                        background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)",
+                        background: DS.colors.white,
+                        borderTop: `1px solid ${DS.colors.gray[200]}`,
                     }}
                 >
                     <button
@@ -4949,8 +4948,8 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                             padding: "14px 20px",
                             fontSize: 15,
                             fontWeight: 700,
-                            color: "#000",
-                            background: "#fff",
+                            color: "#fff",
+                            background: DS.colors.black,
                             border: "none",
                             borderRadius: DS.radius.full,
                             cursor: "pointer",
