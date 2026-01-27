@@ -294,6 +294,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "이미지를 길게 눌러서 저장하세요",
         foodContext:
             "Korean food like bibimbap, bulgogi, kimchi. Use Korean portion terms.",
+        analysisFailed: "분석 실패",
+        timeout: "시간 초과",
     },
     ja: {
         selectLanguage: "言語を選択してください",
@@ -367,6 +369,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "画像を長押しして保存してください",
         foodContext:
             "Japanese food like sushi, ramen, tempura. Use Japanese portion terms.",
+        analysisFailed: "分析失敗",
+        timeout: "タイムアウト",
     },
     en: {
         selectLanguage: "Select your language",
@@ -441,6 +445,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "Long press the image to save",
         foodContext:
             "Western food like burgers, pizza, salads. Use standard portions.",
+        analysisFailed: "Analysis Failed",
+        timeout: "Timeout",
     },
     zh: {
         selectLanguage: "请选择语言",
@@ -512,6 +518,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "长按图片保存",
         foodContext:
             "Chinese food like dumplings, fried rice. Use Chinese portion terms.",
+        analysisFailed: "分析失败",
+        timeout: "超时",
     },
     fr: {
         selectLanguage: "Choisissez votre langue",
@@ -585,6 +593,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "Appuyez longuement sur l'image pour sauvegarder",
         foodContext:
             "French food like croissant, baguette. Use French portion terms.",
+        analysisFailed: "Échec de l'analyse",
+        timeout: "Délai dépassé",
     },
     de: {
         selectLanguage: "Sprache wählen",
@@ -657,6 +667,8 @@ const i18n: Record<string, Record<string, string>> = {
         saveHint: "Halten Sie das Bild gedrückt, um es zu speichern",
         foodContext:
             "German food like bratwurst, schnitzel. Use German portion terms.",
+        analysisFailed: "Analyse fehlgeschlagen",
+        timeout: "Zeitüberschreitung",
     },
 }
 
@@ -3240,7 +3252,7 @@ export default function MealStamp(props: any) {
             clearTimeout(timeout)
             setFoods([
                 {
-                    name: e?.name === "AbortError" ? "시간 초과" : "분석 실패",
+                    name: e?.name === "AbortError" ? t("timeout") : t("analysisFailed"),
                     amount: "",
                     calories: "",
                 },
