@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
@@ -137,6 +139,21 @@ class MainActivity : ComponentActivity() {
 
         webView.loadUrl("https://mealstamp.app")
         setContentView(webView)
+
+        // 10초 타임아웃: 로딩 안 되면 에러 페이지 표시
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!isWebViewLoaded) {
+                webView.stopLoading()
+                webView.loadDataWithBaseURL(
+                    null,
+                    getErrorPageHtml(),
+                    "text/html",
+                    "UTF-8",
+                    null
+                )
+                isWebViewLoaded = true
+            }
+        }, 10000)
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
