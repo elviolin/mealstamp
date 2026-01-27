@@ -3504,12 +3504,23 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                 backgroundColor: "#000",
                 logging: false,
             })
-            // iOS: 새 탭에서 이미지 열기 → 길게 눌러 저장
+            // 안드로이드: 다운로드 링크로 저장 / iOS: 새 탭에서 열기
             canvas.toBlob(async (blob: Blob | null) => {
                 if (!blob) return
                 const blobUrl = URL.createObjectURL(blob)
-                window.open(blobUrl, "_blank")
-                toast(t("saveHint"), 2500)
+                const isAndroid = /android/i.test(navigator.userAgent)
+                if (isAndroid) {
+                    const a = document.createElement("a")
+                    a.href = blobUrl
+                    a.download = `mealstamp_${Date.now()}.png`
+                    document.body.appendChild(a)
+                    a.click()
+                    document.body.removeChild(a)
+                    toast(t("saved"), 1500)
+                } else {
+                    window.open(blobUrl, "_blank")
+                    toast(t("saveHint"), 2500)
+                }
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 60000)
             }, "image/png")
         } catch {
