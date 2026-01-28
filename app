@@ -296,6 +296,7 @@ const i18n: Record<string, Record<string, string>> = {
             "Korean food like bibimbap, bulgogi, kimchi. Use Korean portion terms.",
         analysisFailed: "분석 실패",
         timeout: "시간 초과",
+        checkNetwork: "인터넷 연결을 확인해주세요",
     },
     ja: {
         selectLanguage: "言語を選択してください",
@@ -371,6 +372,7 @@ const i18n: Record<string, Record<string, string>> = {
             "Japanese food like sushi, ramen, tempura. Use Japanese portion terms.",
         analysisFailed: "分析失敗",
         timeout: "タイムアウト",
+        checkNetwork: "インターネット接続を確認してください",
     },
     en: {
         selectLanguage: "Select your language",
@@ -447,6 +449,7 @@ const i18n: Record<string, Record<string, string>> = {
             "Western food like burgers, pizza, salads. Use standard portions.",
         analysisFailed: "Analysis Failed",
         timeout: "Timeout",
+        checkNetwork: "Please check your internet connection",
     },
     zh: {
         selectLanguage: "请选择语言",
@@ -520,6 +523,7 @@ const i18n: Record<string, Record<string, string>> = {
             "Chinese food like dumplings, fried rice. Use Chinese portion terms.",
         analysisFailed: "分析失败",
         timeout: "超时",
+        checkNetwork: "请检查网络连接",
     },
     fr: {
         selectLanguage: "Choisissez votre langue",
@@ -595,6 +599,7 @@ const i18n: Record<string, Record<string, string>> = {
             "French food like croissant, baguette. Use French portion terms.",
         analysisFailed: "Échec de l'analyse",
         timeout: "Délai dépassé",
+        checkNetwork: "Veuillez vérifier votre connexion Internet",
     },
     de: {
         selectLanguage: "Sprache wählen",
@@ -669,6 +674,7 @@ const i18n: Record<string, Record<string, string>> = {
             "German food like bratwurst, schnitzel. Use German portion terms.",
         analysisFailed: "Analyse fehlgeschlagen",
         timeout: "Zeitüberschreitung",
+        checkNetwork: "Bitte überprüfen Sie Ihre Internetverbindung",
     },
 }
 
@@ -3253,7 +3259,7 @@ export default function MealStamp(props: any) {
             setFoods([
                 {
                     name: e?.name === "AbortError" ? t("timeout") : t("analysisFailed"),
-                    amount: "",
+                    amount: t("checkNetwork"),
                     calories: "",
                 },
             ])
