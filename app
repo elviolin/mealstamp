@@ -1918,8 +1918,23 @@ const ImageModal = ({ show, src, onClose }: { show: boolean; src: string | null;
     )
 }
 
-const Toast = ({ show, message }: { show: boolean; message: string }) => {
+const Toast = ({ show, message, icon = "check" }: { show: boolean; message: string; icon?: string }) => {
     if (!show) return null
+    const icons: Record<string, JSX.Element> = {
+        check: (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style={{ stroke: "#fff", strokeWidth: 2.5 }}>
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        ),
+        wifi: (
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" style={{ stroke: "#fff", strokeWidth: 2 }}>
+                <path d="M1 9l2 2a14.1 14.1 0 0118 0l2-2A16.1 16.1 0 001 9z" />
+                <path d="M5 13l2 2a9.9 9.9 0 0110 0l2-2a12 12 0 00-14 0z" />
+                <path d="M9 17l3 3 3-3a4.2 4.2 0 00-6 0z" />
+                <line x1="2" y1="2" x2="22" y2="22" style={{ strokeWidth: 2.5 }} />
+            </svg>
+        ),
+    }
     return (
         <>
             <style>{`
@@ -1949,15 +1964,7 @@ const Toast = ({ show, message }: { show: boolean; message: string }) => {
                     boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
                 }}
             >
-                <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    style={{ stroke: "#fff", strokeWidth: 2.5 }}
-                >
-                    <polyline points="20 6 9 17 4 12" />
-                </svg>
+                {icons[icon] || icons.check}
                 <span
                     style={{
                         color: DS.colors.white,
@@ -2853,6 +2860,7 @@ export default function MealStamp(props: any) {
     const [isFrontCamera, setIsFrontCamera] = useState(false)
     const [showToast, setShowToast] = useState(false)
     const [toastMessage, setToastMessage] = useState("")
+    const [toastIcon, setToastIcon] = useState("check")
     const [isSaving, setIsSaving] = useState(false)
     const [isPro, setIsPro] = useState(false)
     const [aiCredits, setAiCredits] = useState(DEFAULT_CREDITS)
@@ -2949,8 +2957,9 @@ export default function MealStamp(props: any) {
         setAiCredits(n)
         localStorage.setItem(STORAGE.credits, String(n))
     }
-    const toast = (msg: string, duration = 1200) => {
+    const toast = (msg: string, duration = 1200, icon = "check") => {
         setToastMessage(msg)
+        setToastIcon(icon)
         setShowToast(true)
         setTimeout(() => setShowToast(false), duration)
     }
@@ -3264,7 +3273,7 @@ export default function MealStamp(props: any) {
                 },
             ])
             setScreen(SCREENS.RESULT)
-            toast(t("checkNetwork"), 2500)
+            toast(t("checkNetwork"), 2500, "wifi")
         }
     }
 
@@ -3605,7 +3614,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
         const showLangSheet = screen === SCREENS.LANGUAGE || showLanguageSheet
         return (
             <div style={{ ...container, background: "#000" }}>
-                <Toast show={showToast} message={toastMessage} />
+                <Toast show={showToast} message={toastMessage} icon={toastIcon} />
                 <CaptureFlash show={showFlash} />
                 <style>{`@keyframes geminiGlow { 0%, 100% { background-position: 0% 50%; box-shadow: 0 0 24px rgba(200,230,255,0.6); } 50% { background-position: 100% 50%; box-shadow: 0 0 24px rgba(255,250,230,0.6); } }`}</style>
 
@@ -4137,7 +4146,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
     if (screen === SCREENS.RESULT) {
         return (
             <div style={{ ...container, position: "fixed", inset: 0 }}>
-                <Toast show={showToast} message={toastMessage} />
+                <Toast show={showToast} message={toastMessage} icon={toastIcon} />
                 <ImageModal
                     show={showImageModal}
                     src={capturedImage}
@@ -4711,7 +4720,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
 
         return (
             <div style={container}>
-                <Toast show={showToast} message={toastMessage} />
+                <Toast show={showToast} message={toastMessage} icon={toastIcon} />
                 <LoadingOverlay
                     show={isSaving}
                     message={
@@ -4992,7 +5001,7 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
 
         return (
             <div style={container}>
-                <Toast show={showToast} message={toastMessage} />
+                <Toast show={showToast} message={toastMessage} icon={toastIcon} />
                 <LanguageSheet
                     show={showLanguageSheet}
                     onClose={() => setShowLanguageSheet(false)}
