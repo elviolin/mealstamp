@@ -297,6 +297,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "분석 실패",
         timeout: "시간 초과",
         checkNetwork: "인터넷 연결을 확인해주세요",
+        monthlyPro: "월간 Pro",
+        annualPro: "연간 Pro",
+        month: "월",
+        year: "년",
+        restorePurchases: "구매 복원",
+        savingsPercent: "{n}% 할인",
+        purchaseError: "결제 오류가 발생했어요",
+        noActiveSubscription: "활성 구독이 없습니다",
     },
     ja: {
         selectLanguage: "言語を選択してください",
@@ -373,6 +381,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "分析失敗",
         timeout: "タイムアウト",
         checkNetwork: "インターネット接続を確認してください",
+        monthlyPro: "月額Pro",
+        annualPro: "年額Pro",
+        month: "月",
+        year: "年",
+        restorePurchases: "購入を復元",
+        savingsPercent: "{n}%オフ",
+        purchaseError: "購入エラーが発生しました",
+        noActiveSubscription: "有効なサブスクリプションがありません",
     },
     en: {
         selectLanguage: "Select your language",
@@ -450,6 +466,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "Analysis Failed",
         timeout: "Timeout",
         checkNetwork: "Please check your internet connection",
+        monthlyPro: "Monthly Pro",
+        annualPro: "Annual Pro",
+        month: "mo",
+        year: "yr",
+        restorePurchases: "Restore Purchases",
+        savingsPercent: "{n}% off",
+        purchaseError: "Purchase error occurred",
+        noActiveSubscription: "No active subscription found",
     },
     zh: {
         selectLanguage: "请选择语言",
@@ -524,6 +548,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "分析失败",
         timeout: "超时",
         checkNetwork: "请检查网络连接",
+        monthlyPro: "月度Pro",
+        annualPro: "年度Pro",
+        month: "月",
+        year: "年",
+        restorePurchases: "恢复购买",
+        savingsPercent: "省{n}%",
+        purchaseError: "购买出错",
+        noActiveSubscription: "未找到有效订阅",
     },
     fr: {
         selectLanguage: "Choisissez votre langue",
@@ -600,6 +632,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "Échec de l'analyse",
         timeout: "Délai dépassé",
         checkNetwork: "Veuillez vérifier votre connexion Internet",
+        monthlyPro: "Pro mensuel",
+        annualPro: "Pro annuel",
+        month: "mois",
+        year: "an",
+        restorePurchases: "Restaurer les achats",
+        savingsPercent: "-{n}%",
+        purchaseError: "Erreur de paiement",
+        noActiveSubscription: "Aucun abonnement actif trouvé",
     },
     de: {
         selectLanguage: "Sprache wählen",
@@ -675,6 +715,14 @@ const i18n: Record<string, Record<string, string>> = {
         analysisFailed: "Analyse fehlgeschlagen",
         timeout: "Zeitüberschreitung",
         checkNetwork: "Bitte überprüfen Sie Ihre Internetverbindung",
+        monthlyPro: "Monatliches Pro",
+        annualPro: "Jährliches Pro",
+        month: "Mo.",
+        year: "Jahr",
+        restorePurchases: "Käufe wiederherstellen",
+        savingsPercent: "{n}% Rabatt",
+        purchaseError: "Kauffehler aufgetreten",
+        noActiveSubscription: "Kein aktives Abo gefunden",
     },
 }
 
@@ -2118,7 +2166,18 @@ const UpgradeSheet = ({
     onClose,
     t,
     onBuyPro,
-}: SheetProps) => (
+    isAndroidApp,
+    androidMonthlyPrice,
+    androidAnnualPrice,
+    onAndroidPurchase,
+    onRestorePurchases,
+}: SheetProps & {
+    isAndroidApp?: boolean
+    androidMonthlyPrice?: string | null
+    androidAnnualPrice?: string | null
+    onAndroidPurchase?: (productId: string) => void
+    onRestorePurchases?: () => void
+}) => (
     <BottomSheet show={show} onClose={onClose}>
         <div style={{ textAlign: "center", marginBottom: 18 }}>
             <div style={{ ...commonStyles.sheetIcon, background: DS.colors.gray[100] }}>
@@ -2127,9 +2186,28 @@ const UpgradeSheet = ({
             <div style={commonStyles.sheetTitle}>{t("upgradeToPro")}</div>
             <div style={commonStyles.sheetDesc}>{t("upgradeDesc")}</div>
         </div>
-        <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
-        <div style={{ height: 8 }} />
-        <Button variant="ghost" onClick={onClose}>{t("later")}</Button>
+        {isAndroidApp ? (
+            <>
+                <Button onClick={() => onAndroidPurchase?.("mealstamp_pro_monthly")}>
+                    {t("monthlyPro")} · {androidMonthlyPrice || "$3.99"}/{t("month")}
+                </Button>
+                <div style={{ height: 8 }} />
+                <Button variant="secondary" onClick={() => onAndroidPurchase?.("mealstamp_pro_annual")}>
+                    {t("annualPro")} · {androidAnnualPrice || "$29.99"}/{t("year")}
+                    <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>
+                        {t("savingsPercent", { n: 37 })}
+                    </span>
+                </Button>
+                <div style={{ height: 8 }} />
+                <Button variant="ghost" onClick={onRestorePurchases}>{t("restorePurchases")}</Button>
+            </>
+        ) : (
+            <>
+                <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+                <div style={{ height: 8 }} />
+                <Button variant="ghost" onClick={onClose}>{t("later")}</Button>
+            </>
+        )}
     </BottomSheet>
 )
 
@@ -2140,7 +2218,14 @@ const CreditInfoSheet = ({
     isPro = false,
     aiCredits = 0,
     onBuyPro,
-}: SheetProps) => (
+    isAndroidApp,
+    androidMonthlyPrice,
+    onAndroidPurchase,
+}: SheetProps & {
+    isAndroidApp?: boolean
+    androidMonthlyPrice?: string | null
+    onAndroidPurchase?: (productId: string) => void
+}) => (
     <BottomSheet show={show} onClose={onClose}>
         <div style={{ textAlign: "center", marginBottom: 18 }}>
             <div style={{
@@ -2159,7 +2244,13 @@ const CreditInfoSheet = ({
         </div>
         {!isPro && (
             <>
-                <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+                {isAndroidApp ? (
+                    <Button onClick={() => onAndroidPurchase?.("mealstamp_pro_monthly")}>
+                        {t("monthlyPro")} · {androidMonthlyPrice || "$3.99"}/{t("month")}
+                    </Button>
+                ) : (
+                    <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+                )}
                 <div style={{ height: 8 }} />
             </>
         )}
@@ -2290,7 +2381,15 @@ const ProRequiredSheet = ({
     t,
     onBuyPro,
     onWatchAd,
-}: SheetProps & { onWatchAd?: () => void }) => (
+    isAndroidApp,
+    androidMonthlyPrice,
+    onAndroidPurchase,
+}: SheetProps & {
+    onWatchAd?: () => void
+    isAndroidApp?: boolean
+    androidMonthlyPrice?: string | null
+    onAndroidPurchase?: (productId: string) => void
+}) => (
     <BottomSheet show={show} onClose={onClose}>
         <div style={{ textAlign: "center", marginBottom: 18 }}>
             <div style={{ ...commonStyles.sheetIcon, background: DS.colors.black, color: "#fff" }}>
@@ -2301,7 +2400,13 @@ const ProRequiredSheet = ({
                 {t("proRequiredDesc")}
             </div>
         </div>
-        <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+        {isAndroidApp ? (
+            <Button onClick={() => onAndroidPurchase?.("mealstamp_pro_monthly")}>
+                {t("monthlyPro")} · {androidMonthlyPrice || "$3.99"}/{t("month")}
+            </Button>
+        ) : (
+            <Button onClick={onBuyPro}>{t("buyPro")} · $2.99</Button>
+        )}
         <div style={{ height: 8 }} />
         <Button variant="secondary" onClick={onWatchAd}>
             <Icon.Play /> {t("watchAdFree")}
@@ -2873,6 +2978,9 @@ export default function MealStamp(props: any) {
     const [showProCodeSheet, setShowProCodeSheet] = useState(false)
     const [proCodeInput, setProCodeInput] = useState("")
     const [proCodeError, setProCodeError] = useState("")
+    const [isAndroidApp, setIsAndroidApp] = useState(false)
+    const [androidMonthlyPrice, setAndroidMonthlyPrice] = useState<string | null>(null)
+    const [androidAnnualPrice, setAndroidAnnualPrice] = useState<string | null>(null)
     const [savingType, setSavingType] = useState<"save" | "share" | null>(null)
     const [keyboardHeight, setKeyboardHeight] = useState(0)
     const [focusedFoodIndex, setFocusedFoodIndex] = useState<number | null>(null)
@@ -2910,6 +3018,44 @@ export default function MealStamp(props: any) {
         } else {
             setLang(detectSystemLanguage())
         }
+        // Detect Android native app
+        const androidDetected = typeof (window as any).Android !== "undefined" &&
+            typeof (window as any).Android.getIsAndroid === "function"
+        setIsAndroidApp(androidDetected)
+
+        // Register Android billing callback
+        if (androidDetected) {
+            ;(window as any).onAndroidBilling = (data: any) => {
+                if (data.type === "subscriptionStatus") {
+                    if (data.isActive) {
+                        localStorage.setItem(STORAGE.pro, "true")
+                        setIsPro(true)
+                        setShowUpgrade(false)
+                        setToastMessage(i18n[lang]?.proActivated || "Pro Activated")
+                        setToastIcon("check")
+                        setShowToast(true)
+                        setTimeout(() => setShowToast(false), 2500)
+                    } else {
+                        // Only deactivate if no Pro code exists
+                        const savedProCode = localStorage.getItem(STORAGE.proCode)
+                        if (!savedProCode || !validateProCode(savedProCode)) {
+                            localStorage.removeItem(STORAGE.pro)
+                            setIsPro(false)
+                        }
+                    }
+                } else if (data.type === "productsReady") {
+                    setAndroidMonthlyPrice(data.monthlyPrice || null)
+                    setAndroidAnnualPrice(data.annualPrice || null)
+                } else if (data.type === "purchaseError") {
+                    // Show error toast
+                    setToastMessage(data.message || "Purchase error")
+                    setToastIcon("error")
+                    setShowToast(true)
+                    setTimeout(() => setShowToast(false), 2500)
+                }
+            }
+        }
+
         // Preload nutrition database
         loadNutritionDB()
     }, [])
@@ -3643,6 +3789,15 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         setShowUpgrade(false)
                         toast(t("proActivated"))
                     }}
+                    isAndroidApp={isAndroidApp}
+                    androidMonthlyPrice={androidMonthlyPrice}
+                    androidAnnualPrice={androidAnnualPrice}
+                    onAndroidPurchase={(productId) => {
+                        (window as any).Android?.purchaseSubscription(productId)
+                    }}
+                    onRestorePurchases={() => {
+                        (window as any).Android?.restorePurchases()
+                    }}
                 />
 
                 <CreditInfoSheet
@@ -3656,6 +3811,11 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         setIsPro(true)
                         setShowCreditInfo(false)
                         toast(t("proActivated"))
+                    }}
+                    isAndroidApp={isAndroidApp}
+                    androidMonthlyPrice={androidMonthlyPrice}
+                    onAndroidPurchase={(productId) => {
+                        (window as any).Android?.purchaseSubscription(productId)
                     }}
                 />
 
@@ -4161,6 +4321,15 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         setIsPro(true)
                         setShowUpgrade(false)
                         toast(t("proActivated"))
+                    }}
+                    isAndroidApp={isAndroidApp}
+                    androidMonthlyPrice={androidMonthlyPrice}
+                    androidAnnualPrice={androidAnnualPrice}
+                    onAndroidPurchase={(productId) => {
+                        (window as any).Android?.purchaseSubscription(productId)
+                    }}
+                    onRestorePurchases={() => {
+                        (window as any).Android?.restorePurchases()
                     }}
                 />
 
@@ -4736,6 +4905,11 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         setShowUpgrade(false)
                     }}
                     onWatchAd={watchAdAndSave}
+                    isAndroidApp={isAndroidApp}
+                    androidMonthlyPrice={androidMonthlyPrice}
+                    onAndroidPurchase={(productId) => {
+                        (window as any).Android?.purchaseSubscription(productId)
+                    }}
                 />
 
                 <Header
@@ -5151,20 +5325,55 @@ Example: [{"calories":320,"carbs":45,"protein":12,"fat":8,"sugar":5,"fiber":3}]`
                         </div>
                         {!isPro ? (
                             <>
-                                <Button
-                                    onClick={() =>
-                                        window.open(LEMON_SQUEEZY_URL, "_blank")
-                                    }
-                                >
-                                    {t("buyPro")} · $2.99
-                                </Button>
-                                <div style={{ height: 8 }} />
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => setShowProCodeSheet(true)}
-                                >
-                                    {t("enterCode")}
-                                </Button>
+                                {isAndroidApp ? (
+                                    <>
+                                        <Button
+                                            onClick={() =>
+                                                (window as any).Android?.purchaseSubscription("mealstamp_pro_monthly")
+                                            }
+                                        >
+                                            {t("monthlyPro")} · {androidMonthlyPrice || "$3.99"}/{t("month")}
+                                        </Button>
+                                        <div style={{ height: 8 }} />
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() =>
+                                                (window as any).Android?.purchaseSubscription("mealstamp_pro_annual")
+                                            }
+                                        >
+                                            {t("annualPro")} · {androidAnnualPrice || "$29.99"}/{t("year")}
+                                            <span style={{ marginLeft: 6, fontSize: 11, opacity: 0.7 }}>
+                                                {t("savingsPercent", { n: 37 })}
+                                            </span>
+                                        </Button>
+                                        <div style={{ height: 8 }} />
+                                        <Button
+                                            variant="ghost"
+                                            onClick={() =>
+                                                (window as any).Android?.restorePurchases()
+                                            }
+                                        >
+                                            {t("restorePurchases")}
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={() =>
+                                                window.open(LEMON_SQUEEZY_URL, "_blank")
+                                            }
+                                        >
+                                            {t("buyPro")} · $2.99
+                                        </Button>
+                                        <div style={{ height: 8 }} />
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => setShowProCodeSheet(true)}
+                                        >
+                                            {t("enterCode")}
+                                        </Button>
+                                    </>
+                                )}
                             </>
                         ) : (
                             <div
