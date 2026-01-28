@@ -3259,11 +3259,12 @@ export default function MealStamp(props: any) {
             setFoods([
                 {
                     name: e?.name === "AbortError" ? t("timeout") : t("analysisFailed"),
-                    amount: t("checkNetwork"),
+                    amount: "",
                     calories: "",
                 },
             ])
             setScreen(SCREENS.RESULT)
+            toast(t("checkNetwork"), 2500)
         }
     }
 
