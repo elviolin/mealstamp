@@ -1636,16 +1636,6 @@ export default function LovePickApp(props: {
         [screen]
     )
 
-    const SCREENS: { id: Screen; label: string }[] = [
-        { id: "splash", label: "스플래시" },
-        { id: "phone", label: "전화번호" },
-        { id: "otp", label: "OTP" },
-        { id: "nickname", label: "닉네임" },
-        { id: "home", label: "홈" },
-        { id: "compose", label: "보내기" },
-        { id: "reveal", label: "확인하기" },
-    ]
-
     const getDirection = (id: Screen): "enter" | "exit" | "idle" => {
         if (id === screen) return "enter"
         if (id === prevScreen) return "exit"
@@ -1737,54 +1727,6 @@ export default function LovePickApp(props: {
                 <RevealScreen go={go} active={screen === "reveal"} />
             </ScreenWrap>
 
-            {/* demo nav */}
-            <div
-                style={{
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    background: "rgba(12,11,15,0.92)",
-                    borderTop: `1px solid ${T.border}`,
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    padding: "10px 16px 20px",
-                    display: "flex",
-                    gap: 6,
-                    zIndex: 999,
-                    overflowX: "auto",
-                }}
-            >
-                {SCREENS.map((s) => (
-                    <button
-                        key={s.id}
-                        onClick={() => go(s.id)}
-                        style={{
-                            flexShrink: 0,
-                            padding: "7px 14px",
-                            borderRadius: 20,
-                            fontSize: 11,
-                            letterSpacing: "0.06em",
-                            cursor: "pointer",
-                            border:
-                                screen === s.id
-                                    ? `1px solid ${T.borderRose}`
-                                    : `1px solid ${T.border}`,
-                            background:
-                                screen === s.id
-                                    ? T.roseSoft
-                                    : "transparent",
-                            color:
-                                screen === s.id ? T.rose : T.textMuted,
-                            fontFamily: T.font,
-                            whiteSpace: "nowrap",
-                            transition: "all 0.2s",
-                        }}
-                    >
-                        {s.label}
-                    </button>
-                ))}
-            </div>
         </div>
     )
 }
