@@ -916,16 +916,152 @@ function NicknameScreen({
 // ═══════════════════════════════════════════════════════════
 // SCREEN 5 — HOME
 // ═══════════════════════════════════════════════════════════
+// ─── DELETE CONFIRM MODAL ─────────────────────────────────
+function DeleteModal({
+    pick,
+    onConfirm,
+    onCancel,
+}: {
+    pick: PickItem
+    onConfirm: () => void
+    onCancel: () => void
+}) {
+    return (
+        <div
+            onClick={onCancel}
+            style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.65)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 28,
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                    width: "100%",
+                    maxWidth: 320,
+                    background: T.surface,
+                    border: `1px solid ${T.borderRose}`,
+                    borderRadius: 24,
+                    padding: "36px 28px 28px",
+                    textAlign: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                }}
+            >
+                <div
+                    style={{
+                        position: "absolute",
+                        top: -40,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 180,
+                        height: 180,
+                        background:
+                            "radial-gradient(circle, rgba(223,160,160,0.08) 0%, transparent 60%)",
+                        pointerEvents: "none",
+                    }}
+                />
+                <div style={{ fontSize: 32, marginBottom: 16 }}>💔</div>
+                <div
+                    style={{
+                        fontFamily: T.fontSerif,
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: T.text,
+                        marginBottom: 8,
+                        letterSpacing: "0.04em",
+                    }}
+                >
+                    마음을 비울까요?
+                </div>
+                <div
+                    style={{
+                        fontSize: 13,
+                        color: T.textDim,
+                        lineHeight: 1.8,
+                        marginBottom: 8,
+                        letterSpacing: "0.03em",
+                    }}
+                >
+                    <span style={{ color: T.rose, fontFamily: T.fontSerif }}>
+                        "{pick.word}"
+                    </span>
+                    이라고 표현한 마음이에요
+                </div>
+                <div
+                    style={{
+                        fontSize: 12,
+                        color: T.textMuted,
+                        marginBottom: 28,
+                        letterSpacing: "0.03em",
+                    }}
+                >
+                    {pick.maskedPhone} · {pick.date}
+                </div>
+                <button
+                    onClick={onConfirm}
+                    style={{
+                        width: "100%",
+                        padding: 16,
+                        borderRadius: 14,
+                        background: "rgba(223,120,120,0.15)",
+                        border: "1px solid rgba(223,120,120,0.3)",
+                        color: "#e08080",
+                        fontFamily: T.font,
+                        fontSize: 14,
+                        letterSpacing: "0.06em",
+                        cursor: "pointer",
+                        marginBottom: 10,
+                    }}
+                >
+                    마음 비우기
+                </button>
+                <button
+                    onClick={onCancel}
+                    style={{
+                        width: "100%",
+                        padding: 14,
+                        borderRadius: 14,
+                        background: "transparent",
+                        border: `1px solid ${T.border}`,
+                        color: T.textMuted,
+                        fontFamily: T.font,
+                        fontSize: 13,
+                        letterSpacing: "0.06em",
+                        cursor: "pointer",
+                    }}
+                >
+                    돌아가기
+                </button>
+            </div>
+        </div>
+    )
+}
+
 function HomeScreen({
     go,
     active,
     nick,
+    sentPicks,
+    onDeletePick,
 }: {
     go: (s: Screen) => void
     active: boolean
     nick: string
+    sentPicks: PickItem[]
+    onDeletePick: (id: string) => void
 }) {
-    const slots = [true, true, false, false, false]
+    const [deleteTarget, setDeleteTarget] = useState<PickItem | null>(null)
+    const usedCount = sentPicks.length
+    const slots = Array.from({ length: 5 }, (_, i) => i < usedCount)
 
     return (
         <>
@@ -1108,18 +1244,23 @@ function HomeScreen({
                             letterSpacing: "0.05em",
                         }}
                     >
-                        2 / 5
+                        {usedCount} / 5
                     </span>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                     {slots.map((used, i) => {
                         const isNext =
                             !used && slots.slice(0, i).every(Boolean)
+                        const pickForSlot = used ? sentPicks[i] : null
                         return (
                             <div
                                 key={i}
                                 onClick={
-                                    isNext ? () => go("compose") : undefined
+                                    used && pickForSlot
+                                        ? () => setDeleteTarget(pickForSlot)
+                                        : isNext
+                                          ? () => go("compose")
+                                          : undefined
                                 }
                                 style={{
                                     flex: 1,
@@ -1129,7 +1270,7 @@ function HomeScreen({
                                     alignItems: "center",
                                     justifyContent: "center",
                                     fontSize: 18,
-                                    cursor: isNext ? "pointer" : "default",
+                                    cursor: used || isNext ? "pointer" : "default",
                                     transition: "all 0.2s",
                                     ...(used
                                         ? {
@@ -1198,7 +1339,7 @@ function HomeScreen({
                         보낸 기록
                     </span>
                 </div>
-                {SENT_PICKS.map((p) => (
+                {sentPicks.map((p) => (
                     <div
                         key={p.id}
                         style={{
@@ -1288,6 +1429,17 @@ function HomeScreen({
             </Anim>
 
             <div style={{ height: 80 }} />
+
+            {deleteTarget && (
+                <DeleteModal
+                    pick={deleteTarget}
+                    onConfirm={() => {
+                        onDeletePick(deleteTarget.id)
+                        setDeleteTarget(null)
+                    }}
+                    onCancel={() => setDeleteTarget(null)}
+                />
+            )}
         </>
     )
 }
@@ -1619,6 +1771,7 @@ export default function LovePickApp(props: {
     const [screen, setScreen] = useState<Screen>(initialScreen)
     const [prevScreen, setPrevScreen] = useState<Screen | null>(null)
     const [nick, setNick] = useState("달빛")
+    const [sentPicks, setSentPicks] = useState<PickItem[]>([...SENT_PICKS])
     const containerRef = useRef<HTMLDivElement>(null)
     const [containerH, setContainerH] = useState(800)
 
@@ -1704,7 +1857,13 @@ export default function LovePickApp(props: {
                 direction={getDirection("home")}
                 style={{ overflowY: screen === "home" ? "auto" : "hidden" }}
             >
-                <HomeScreen go={go} active={screen === "home"} nick={nick} />
+                <HomeScreen
+                    go={go}
+                    active={screen === "home"}
+                    nick={nick}
+                    sentPicks={sentPicks}
+                    onDeletePick={(id) => setSentPicks((prev) => prev.filter((p) => p.id !== id))}
+                />
             </ScreenWrap>
 
             <ScreenWrap
