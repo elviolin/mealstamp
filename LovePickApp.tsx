@@ -4,12 +4,15 @@ import { addPropertyControls, ControlType } from "framer"
 // ─── TYPES ───────────────────────────────────────────────
 type Screen =
     | "splash"
+    | "gender"
     | "phone"
     | "otp"
     | "nickname"
     | "home"
     | "compose"
     | "reveal"
+
+type Gender = "female" | "male"
 
 interface PickItem {
     id: string
@@ -25,6 +28,7 @@ interface ReceivedItem {
     word: string
     aiText: string
     date: string
+    gender: Gender
 }
 
 // ─── DESIGN TOKENS ───────────────────────────────────────
@@ -54,18 +58,21 @@ const RECEIVED_PICKS: ReceivedItem[] = [
         word: "따뜻한",
         aiText: "겨울날 햇살처럼,\n곁에 있으면 모든 게\n괜찮아지는 사람",
         date: "2025년 2월 24일",
+        gender: "male",
     },
     {
         id: "2",
         word: "눈부신",
         aiText: "아무 말 없이 있어도\n함께라면 빛이 나는,\n그런 존재예요",
         date: "2025년 2월 20일",
+        gender: "female",
     },
     {
         id: "3",
         word: "조용한",
         aiText: "소란스럽지 않아도\n오래 기억에 남는,\n잔잔한 여운 같은 사람",
         date: "2025년 2월 14일",
+        gender: "male",
     },
 ]
 
@@ -518,7 +525,7 @@ function SplashScreen({
             </div>
             <div style={{ flex: 1 }} />
             <Anim active={active} delay={0.21}>
-                <Btn onClick={() => go("phone")}>시작하기</Btn>
+                <Btn onClick={() => go("gender")}>시작하기</Btn>
                 <div style={{ height: 12 }} />
                 <Btn variant="ghost" onClick={() => go("home")}>
                     받은 마음 확인하기
@@ -542,7 +549,94 @@ function SplashScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 2 — PHONE
+// SCREEN 2 — GENDER
+// ═══════════════════════════════════════════════════════════
+function GenderScreen({
+    go,
+    active,
+    setGender,
+}: {
+    go: (s: Screen) => void
+    active: boolean
+    setGender: (g: Gender) => void
+}) {
+    const [selected, setSelected] = useState<Gender | null>(null)
+
+    const options: { value: Gender; emoji: string; label: string }[] = [
+        { value: "female", emoji: "👩", label: "여자" },
+        { value: "male", emoji: "👨", label: "남자" },
+    ]
+
+    return (
+        <>
+            <div style={{ flex: 1 }} />
+            <div style={{ textAlign: "center" }}>
+                <Anim active={active} delay={0.05}>
+                    <Label>기본 정보</Label>
+                    <Title>성별을 알려주세요</Title>
+                    <Subtitle>상대방에게 성별 힌트로 전달돼요</Subtitle>
+                </Anim>
+                <div style={{ height: 40 }} />
+                <Anim active={active} delay={0.13}>
+                    <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
+                        {options.map((opt) => {
+                            const isSelected = selected === opt.value
+                            return (
+                                <div
+                                    key={opt.value}
+                                    onClick={() => setSelected(opt.value)}
+                                    style={{
+                                        width: 140,
+                                        padding: "32px 20px 28px",
+                                        borderRadius: 22,
+                                        background: isSelected ? T.roseSoft : T.surface,
+                                        border: isSelected
+                                            ? `1px solid ${T.borderRose}`
+                                            : `1px solid ${T.border}`,
+                                        cursor: "pointer",
+                                        transition: "all 0.25s",
+                                        transform: isSelected ? "scale(1.03)" : "scale(1)",
+                                    }}
+                                >
+                                    <div style={{ fontSize: 40, marginBottom: 14 }}>{opt.emoji}</div>
+                                    <div
+                                        style={{
+                                            fontFamily: T.fontSerif,
+                                            fontSize: 17,
+                                            color: isSelected ? T.rose : T.textDim,
+                                            letterSpacing: "0.08em",
+                                            fontWeight: isSelected ? 700 : 400,
+                                        }}
+                                    >
+                                        {opt.label}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </Anim>
+            </div>
+            <div style={{ flex: 1 }} />
+            <Anim active={active} delay={0.21}>
+                <Btn
+                    onClick={() => {
+                        if (selected) {
+                            setGender(selected)
+                            go("phone")
+                        }
+                    }}
+                    style={{ opacity: selected ? 1 : 0.35, pointerEvents: selected ? "auto" : "none" }}
+                >
+                    다음
+                </Btn>
+                <div style={{ height: 64 }} />
+            </Anim>
+        </>
+    )
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCREEN 3 — PHONE
 // ═══════════════════════════════════════════════════════════
 function PhoneScreen({
     go,
@@ -987,24 +1081,33 @@ function DeleteModal({
                         fontSize: 13,
                         color: T.textDim,
                         lineHeight: 1.8,
-                        marginBottom: 8,
+                        marginBottom: 20,
                         letterSpacing: "0.03em",
                     }}
                 >
-                    <span style={{ color: T.rose, fontFamily: T.fontSerif }}>
+                    <span style={{ fontFamily: T.fontSerif, fontSize: 22, color: T.rose, display: "block", marginBottom: 8 }}>
                         "{pick.word}"
                     </span>
                     이라고 표현한 마음이에요
                 </div>
                 <div
                     style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
                         fontSize: 12,
                         color: T.textMuted,
                         marginBottom: 28,
-                        letterSpacing: "0.03em",
+                        padding: "10px 16px",
+                        background: "rgba(255,255,255,0.03)",
+                        borderRadius: 10,
+                        letterSpacing: "0.04em",
                     }}
                 >
-                    {pick.maskedPhone} · {pick.date}
+                    <span>{pick.maskedPhone}</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>{pick.date}</span>
                 </div>
                 <button
                     onClick={onConfirm}
@@ -1174,9 +1277,9 @@ function HomeScreen({
                             marginBottom: 20,
                         }}
                     >
-                        당신을 마음에 담아둔 사람이 있어요
+                        당신에게 도착한 카드를
                         <br />
-                        광고를 보면 단어를 확인할 수 있어요
+                        확인해보세요
                     </div>
                     <div
                         onClick={() => go("reveal")}
@@ -1198,7 +1301,7 @@ function HomeScreen({
                                 letterSpacing: "0.05em",
                             }}
                         >
-                            단어 확인하기
+                            카드함 확인하기
                         </span>
                         <span
                             style={{
@@ -1210,7 +1313,7 @@ function HomeScreen({
                                 letterSpacing: "0.1em",
                             }}
                         >
-                            광고 시청
+                            AD
                         </span>
                     </div>
                 </div>
@@ -1620,6 +1723,13 @@ function RevealScreen({
     go: (s: Screen) => void
     active: boolean
 }) {
+    const [unlockedIds, setUnlockedIds] = useState<string[]>([])
+
+    const handleUnlock = (id: string) => {
+        // 실제로는 광고 시청 후 콜백에서 호출
+        setUnlockedIds((prev) => [...prev, id])
+    }
+
     return (
         <>
             <div style={{ height: 64 }} />
@@ -1627,7 +1737,7 @@ function RevealScreen({
                 <BackBtn onClick={() => go("home")} />
             </Anim>
             <Anim active={active} delay={0.13}>
-                <Label>받은 마음 · 3</Label>
+                <Label>받은 마음 · {RECEIVED_PICKS.length}</Label>
                 <Title>
                     누군가 당신을
                     <br />
@@ -1644,116 +1754,169 @@ function RevealScreen({
                         gap: 16,
                     }}
                 >
-                    {RECEIVED_PICKS.map((p) => (
-                        <div
-                            key={p.id}
-                            style={{
-                                background: T.surface,
-                                border: "1px solid rgba(223,160,160,0.12)",
-                                borderRadius: 28,
-                                padding: "44px 32px",
-                                textAlign: "center",
-                                position: "relative",
-                                overflow: "hidden",
-                            }}
-                        >
+                    {RECEIVED_PICKS.map((p) => {
+                        const isUnlocked = unlockedIds.includes(p.id)
+                        return (
                             <div
+                                key={p.id}
                                 style={{
-                                    position: "absolute",
-                                    top: -60,
-                                    left: "50%",
-                                    transform: "translateX(-50%)",
-                                    width: 220,
-                                    height: 220,
-                                    background:
-                                        "radial-gradient(circle, rgba(223,160,160,0.1) 0%, transparent 60%)",
-                                    pointerEvents: "none",
-                                }}
-                            />
-                            <div
-                                style={{
-                                    fontSize: 10,
-                                    letterSpacing: "0.22em",
-                                    color: T.textMuted,
-                                    textTransform: "uppercase",
-                                    marginBottom: 32,
+                                    background: T.surface,
+                                    border: "1px solid rgba(223,160,160,0.12)",
+                                    borderRadius: 28,
+                                    padding: "44px 32px",
+                                    textAlign: "center",
+                                    position: "relative",
+                                    overflow: "hidden",
                                 }}
                             >
-                                누군가의 마음
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        top: -60,
+                                        left: "50%",
+                                        transform: "translateX(-50%)",
+                                        width: 220,
+                                        height: 220,
+                                        background:
+                                            "radial-gradient(circle, rgba(223,160,160,0.1) 0%, transparent 60%)",
+                                        pointerEvents: "none",
+                                    }}
+                                />
+                                {/* gender badge */}
+                                <div
+                                    style={{
+                                        display: "inline-flex",
+                                        alignItems: "center",
+                                        gap: 6,
+                                        padding: "6px 14px",
+                                        borderRadius: 20,
+                                        background: isUnlocked
+                                            ? T.roseSoft
+                                            : "rgba(255,255,255,0.04)",
+                                        border: isUnlocked
+                                            ? `1px solid ${T.borderRose}`
+                                            : `1px solid ${T.border}`,
+                                        marginBottom: 24,
+                                        cursor: isUnlocked ? "default" : "pointer",
+                                        transition: "all 0.3s",
+                                    }}
+                                    onClick={!isUnlocked ? () => handleUnlock(p.id) : undefined}
+                                >
+                                    {isUnlocked ? (
+                                        <>
+                                            <span style={{ fontSize: 14 }}>
+                                                {p.gender === "female" ? "👩" : "👨"}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    fontSize: 11,
+                                                    color: T.rose,
+                                                    letterSpacing: "0.06em",
+                                                }}
+                                            >
+                                                {p.gender === "female" ? "여자" : "남자"}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span style={{ fontSize: 12 }}>🔒</span>
+                                            <span
+                                                style={{
+                                                    fontSize: 10,
+                                                    color: T.textMuted,
+                                                    letterSpacing: "0.06em",
+                                                }}
+                                            >
+                                                광고 보고 성별 확인
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
+                                <div
+                                    style={{
+                                        fontSize: 10,
+                                        letterSpacing: "0.22em",
+                                        color: T.textMuted,
+                                        textTransform: "uppercase",
+                                        marginBottom: 32,
+                                    }}
+                                >
+                                    누군가의 마음
+                                </div>
+                                <div
+                                    style={{
+                                        fontFamily: T.fontSerif,
+                                        fontSize: 13,
+                                        color: T.textMuted,
+                                        letterSpacing: "0.1em",
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    당신은
+                                </div>
+                                <div
+                                    style={{
+                                        fontFamily: T.fontSerif,
+                                        fontSize: 46,
+                                        fontWeight: 700,
+                                        color: T.rose,
+                                        textShadow:
+                                            "0 0 40px rgba(223,160,160,0.35)",
+                                        letterSpacing: "0.06em",
+                                        lineHeight: 1.1,
+                                        marginBottom: 10,
+                                    }}
+                                >
+                                    {p.word}
+                                </div>
+                                <div
+                                    style={{
+                                        fontFamily: T.fontSerif,
+                                        fontSize: 13,
+                                        color: T.textMuted,
+                                        letterSpacing: "0.1em",
+                                        marginBottom: 28,
+                                    }}
+                                >
+                                    사람이에요
+                                </div>
+                                <div
+                                    style={{
+                                        width: 40,
+                                        height: 1,
+                                        background: T.border,
+                                        margin: "0 auto 24px",
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        fontSize: 13.5,
+                                        color: T.textDim,
+                                        lineHeight: 2,
+                                        letterSpacing: "0.04em",
+                                        fontStyle: "italic",
+                                    }}
+                                >
+                                    {p.aiText.split("\n").map((line, i) => (
+                                        <span key={i}>
+                                            {line}
+                                            <br />
+                                        </span>
+                                    ))}
+                                </div>
+                                <div
+                                    style={{
+                                        fontSize: 11,
+                                        color: T.textMuted,
+                                        letterSpacing: "0.1em",
+                                        marginTop: 24,
+                                    }}
+                                >
+                                    {p.date}
+                                </div>
                             </div>
-                            <div
-                                style={{
-                                    fontFamily: T.fontSerif,
-                                    fontSize: 13,
-                                    color: T.textMuted,
-                                    letterSpacing: "0.1em",
-                                    marginBottom: 10,
-                                }}
-                            >
-                                당신은
-                            </div>
-                            <div
-                                style={{
-                                    fontFamily: T.fontSerif,
-                                    fontSize: 46,
-                                    fontWeight: 700,
-                                    color: T.rose,
-                                    textShadow:
-                                        "0 0 40px rgba(223,160,160,0.35)",
-                                    letterSpacing: "0.06em",
-                                    lineHeight: 1.1,
-                                    marginBottom: 10,
-                                }}
-                            >
-                                {p.word}
-                            </div>
-                            <div
-                                style={{
-                                    fontFamily: T.fontSerif,
-                                    fontSize: 13,
-                                    color: T.textMuted,
-                                    letterSpacing: "0.1em",
-                                    marginBottom: 28,
-                                }}
-                            >
-                                사람이에요
-                            </div>
-                            <div
-                                style={{
-                                    width: 40,
-                                    height: 1,
-                                    background: T.border,
-                                    margin: "0 auto 24px",
-                                }}
-                            />
-                            <div
-                                style={{
-                                    fontSize: 13.5,
-                                    color: T.textDim,
-                                    lineHeight: 2,
-                                    letterSpacing: "0.04em",
-                                    fontStyle: "italic",
-                                }}
-                            >
-                                {p.aiText.split("\n").map((line, i) => (
-                                    <span key={i}>
-                                        {line}
-                                        <br />
-                                    </span>
-                                ))}
-                            </div>
-                            <div
-                                style={{
-                                    fontSize: 11,
-                                    color: T.textMuted,
-                                    letterSpacing: "0.1em",
-                                    marginTop: 24,
-                                }}
-                            >
-                                {p.date}
-                            </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </Anim>
             <div style={{ height: 80 }} />
@@ -1771,6 +1934,7 @@ export default function LovePickApp(props: {
     const [screen, setScreen] = useState<Screen>(initialScreen)
     const [prevScreen, setPrevScreen] = useState<Screen | null>(null)
     const [nick, setNick] = useState("달빛")
+    const [gender, setGender] = useState<Gender>("female")
     const [sentPicks, setSentPicks] = useState<PickItem[]>([...SENT_PICKS])
     const containerRef = useRef<HTMLDivElement>(null)
     const [containerH, setContainerH] = useState(800)
@@ -1825,6 +1989,18 @@ export default function LovePickApp(props: {
                 }}
             >
                 <SplashScreen go={go} active={screen === "splash"} />
+            </ScreenWrap>
+
+            <ScreenWrap
+                active={screen === "gender"}
+                direction={getDirection("gender")}
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                }}
+            >
+                <GenderScreen go={go} active={screen === "gender"} setGender={setGender} />
             </ScreenWrap>
 
             <ScreenWrap
@@ -1896,6 +2072,7 @@ addPropertyControls(LovePickApp, {
         title: "시작 화면",
         options: [
             "splash",
+            "gender",
             "phone",
             "otp",
             "nickname",
@@ -1905,6 +2082,7 @@ addPropertyControls(LovePickApp, {
         ],
         optionTitles: [
             "스플래시",
+            "성별",
             "전화번호",
             "OTP",
             "닉네임",
