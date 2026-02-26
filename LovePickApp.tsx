@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback, addPropertyControls, ControlType } from "framer"
-import type { ComponentType } from "react"
+import React, { useState, useEffect, useRef, useCallback } from "react"
+import { addPropertyControls, ControlType } from "framer"
 
 // ─── TYPES ───────────────────────────────────────────────
 type Screen =
@@ -342,7 +342,7 @@ function Label({ children }: { children: React.ReactNode }) {
                 fontSize: 10,
                 letterSpacing: "0.22em",
                 color: T.textMuted,
-                textTransform: "uppercase" as const,
+                textTransform: "uppercase",
                 marginBottom: 14,
             }}
         >
@@ -621,7 +621,7 @@ function PhoneScreen({
                             fontSize: 16,
                             letterSpacing: "0.08em",
                             outline: "none",
-                            WebkitAppearance: "none" as any,
+                            WebkitAppearance: "none",
                         }}
                         type="tel"
                         placeholder="010 1234 5678"
@@ -743,7 +743,7 @@ function OTPScreen({
                                 textAlign: "center",
                                 outline: "none",
                                 caretColor: T.rose,
-                                WebkitAppearance: "none" as any,
+                                WebkitAppearance: "none",
                             }}
                             type="tel"
                             maxLength={1}
@@ -846,7 +846,7 @@ function NicknameScreen({
                         fontSize: 16,
                         letterSpacing: "0.06em",
                         outline: "none",
-                        WebkitAppearance: "none" as any,
+                        WebkitAppearance: "none",
                     }}
                     type="text"
                     placeholder="닉네임 입력"
@@ -993,7 +993,7 @@ function HomeScreen({
                             fontSize: 10,
                             letterSpacing: "0.2em",
                             color: T.textMuted,
-                            textTransform: "uppercase" as const,
+                            textTransform: "uppercase",
                             marginBottom: 18,
                         }}
                     >
@@ -1096,7 +1096,7 @@ function HomeScreen({
                             fontSize: 10,
                             letterSpacing: "0.2em",
                             color: T.textMuted,
-                            textTransform: "uppercase" as const,
+                            textTransform: "uppercase",
                         }}
                     >
                         보낸 마음
@@ -1192,7 +1192,7 @@ function HomeScreen({
                             fontSize: 10,
                             letterSpacing: "0.2em",
                             color: T.textMuted,
-                            textTransform: "uppercase" as const,
+                            textTransform: "uppercase",
                         }}
                     >
                         보낸 기록
@@ -1334,7 +1334,7 @@ function ComposeScreen({
                         fontSize: 16,
                         letterSpacing: "0.08em",
                         outline: "none",
-                        WebkitAppearance: "none" as any,
+                        WebkitAppearance: "none",
                     }}
                     type="tel"
                     placeholder="받는 사람 번호"
@@ -1424,7 +1424,7 @@ function ComposeScreen({
                         textAlign: "center",
                         letterSpacing: "0.1em",
                         outline: "none",
-                        WebkitAppearance: "none" as any,
+                        WebkitAppearance: "none",
                     }}
                     type="text"
                     placeholder="따뜻한"
@@ -1523,7 +1523,7 @@ function RevealScreen({
                                     fontSize: 10,
                                     letterSpacing: "0.22em",
                                     color: T.textMuted,
-                                    textTransform: "uppercase" as const,
+                                    textTransform: "uppercase",
                                     marginBottom: 32,
                                 }}
                             >
@@ -1777,7 +1777,7 @@ export default function LovePickApp(props: {
                             color:
                                 screen === s.id ? T.rose : T.textMuted,
                             fontFamily: T.font,
-                            whiteSpace: "nowrap" as const,
+                            whiteSpace: "nowrap",
                             transition: "all 0.2s",
                         }}
                     >
