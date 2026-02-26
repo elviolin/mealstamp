@@ -4,10 +4,10 @@ import { addPropertyControls, ControlType } from "framer"
 // ─── TYPES ───────────────────────────────────────────────
 type Screen =
     | "splash"
-    | "gender"
     | "phone"
     | "otp"
     | "nickname"
+    | "profile"
     | "home"
     | "compose"
     | "reveal"
@@ -29,6 +29,7 @@ interface ReceivedItem {
     aiText: string
     date: string
     gender: Gender
+    mbti: string | null
 }
 
 // ─── DESIGN TOKENS ───────────────────────────────────────
@@ -51,44 +52,55 @@ const T = {
     fontSerif: "'Gowun Batang', serif",
 }
 
+// ─── MBTI TYPES ──────────────────────────────────────────
+const MBTI_TYPES = [
+    "ISTJ", "ISFJ", "INFJ", "INTJ",
+    "ISTP", "ISFP", "INFP", "INTP",
+    "ESTP", "ESFP", "ENFP", "ENTP",
+    "ESTJ", "ESFJ", "ENFJ", "ENTJ",
+]
+
 // ─── MOCK DATA ───────────────────────────────────────────
-const RECEIVED_PICKS: ReceivedItem[] = [
+const INITIAL_RECEIVED: ReceivedItem[] = [
     {
         id: "1",
-        word: "따뜻한",
-        aiText: "겨울날 햇살처럼,\n곁에 있으면 모든 게\n괜찮아지는 사람",
-        date: "2025년 2월 24일",
+        word: "\uB530\uB73B\uD55C",
+        aiText: "\uACA8\uC6B8\uB0A0 \uD587\uC0B4\uCC98\uB7FC,\n\uACE1\uC5D0 \uC788\uC73C\uBA74 \uBAA8\uB4E0 \uAC8C\n\uAD1C\uCC2E\uC544\uC9C0\uB294 \uC0AC\uB78C",
+        date: "2025\uB144 2\uC6D4 24\uC77C",
         gender: "male",
+        mbti: "INFP",
     },
     {
         id: "2",
-        word: "눈부신",
-        aiText: "아무 말 없이 있어도\n함께라면 빛이 나는,\n그런 존재예요",
-        date: "2025년 2월 20일",
+        word: "\uB208\uBD80\uC2E0",
+        aiText: "\uC544\uBB34 \uB9D0 \uC5C6\uC774 \uC788\uC5B4\uB3C4\n\uD568\uAED8\uB77C\uBA74 \uBE5B\uC774 \uB098\uB294,\n\uADF8\uB7F0 \uC874\uC7AC\uC608\uC694",
+        date: "2025\uB144 2\uC6D4 20\uC77C",
         gender: "female",
+        mbti: null,
     },
     {
         id: "3",
-        word: "조용한",
-        aiText: "소란스럽지 않아도\n오래 기억에 남는,\n잔잔한 여운 같은 사람",
-        date: "2025년 2월 14일",
+        word: "\uC870\uC6A9\uD55C",
+        aiText: "\uC18C\uB780\uC2A4\uB7FD\uC9C0 \uC54A\uC544\uB3C4\n\uC624\uB798 \uAE30\uC5B5\uC5D0 \uB0A8\uB294,\n\uC794\uC794\uD55C \uC5EC\uC6B4 \uAC19\uC740 \uC0AC\uB78C",
+        date: "2025\uB144 2\uC6D4 14\uC77C",
         gender: "male",
+        mbti: "ENTJ",
     },
 ]
 
-const SENT_PICKS: PickItem[] = [
+const INITIAL_SENT: PickItem[] = [
     {
         id: "1",
-        maskedPhone: "010 •••• 2341",
-        word: "눈부신",
+        maskedPhone: "010 \u2022\u2022\u2022\u2022 2341",
+        word: "\uB208\uBD80\uC2E0",
         aiText: "",
         date: "2.24",
         status: "sent",
     },
     {
         id: "2",
-        maskedPhone: "010 •••• 8827",
-        word: "따뜻한",
+        maskedPhone: "010 \u2022\u2022\u2022\u2022 8827",
+        word: "\uB530\uB73B\uD55C",
         aiText: "",
         date: "2.26",
         status: "scheduled",
@@ -112,7 +124,48 @@ function FontLoader() {
                 from { opacity: 0; transform: translateY(16px); }
                 to { opacity: 1; transform: translateY(0); }
             }
+            @keyframes adProgress {
+                from { width: 0%; }
+                to { width: 100%; }
+            }
         `}</style>
+    )
+}
+
+// ─── ICON COMPONENTS ────────────────────────────────────
+function HeartIcon({ size = 16, color = "currentColor", filled = false }: { size?: number; color?: string; filled?: boolean }) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ display: "block" }}>
+            <path
+                d="M8 14S1.5 10 1.5 5.8C1.5 3.2 3.5 1.5 5.5 1.5C6.9 1.5 7.6 2.2 8 3C8.4 2.2 9.1 1.5 10.5 1.5C12.5 1.5 14.5 3.2 14.5 5.8C14.5 10 8 14 8 14Z"
+                fill={filled ? color : "none"}
+                stroke={color}
+                strokeWidth="1.2"
+                strokeLinejoin="round"
+            />
+        </svg>
+    )
+}
+
+function LockIcon({ size = 14, color = "currentColor" }: { size?: number; color?: string }) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
+            <rect x="3" y="6.5" width="8" height="5.5" rx="1.5" stroke={color} strokeWidth="1.1" />
+            <path d="M5 6.5V4.5C5 3.1 5.9 2 7 2C8.1 2 9 3.1 9 4.5V6.5" stroke={color} strokeWidth="1.1" strokeLinecap="round" />
+        </svg>
+    )
+}
+
+function MoonIcon({ size = 14, color = "currentColor" }: { size?: number; color?: string }) {
+    return (
+        <svg width={size} height={size} viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
+            <path
+                d="M11.5 8C10.5 10.2 8.5 11.5 6 11.5C3.2 11.5 1 9.3 1 6.5C1 4 2.3 2 4 1C3.2 2.5 3.2 4.8 4.5 6.5C5.8 8.2 8.5 9 11.5 8Z"
+                stroke={color}
+                strokeWidth="1.1"
+                strokeLinejoin="round"
+            />
+        </svg>
     )
 }
 
@@ -364,7 +417,7 @@ function Notice({
     children,
     variant = "gold",
 }: {
-    icon: string
+    icon: React.ReactNode
     children: React.ReactNode
     variant?: "gold" | "rose"
 }) {
@@ -388,7 +441,7 @@ function Notice({
                 border,
             }}
         >
-            <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>
+            <span style={{ flexShrink: 0, marginTop: 2 }}>
                 {icon}
             </span>
             <span
@@ -438,8 +491,275 @@ function Subtitle({ children }: { children: React.ReactNode }) {
     )
 }
 
+// ─── DELETE CONFIRM MODAL ────────────────────────────────
+function DeleteModal({
+    pick,
+    onConfirm,
+    onCancel,
+}: {
+    pick: PickItem
+    onConfirm: () => void
+    onCancel: () => void
+}) {
+    return (
+        <div
+            onClick={onCancel}
+            style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.65)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 28,
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                    width: "100%",
+                    maxWidth: 320,
+                    background: T.surface,
+                    border: `1px solid ${T.borderRose}`,
+                    borderRadius: 24,
+                    padding: "36px 28px 28px",
+                    textAlign: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                }}
+            >
+                <div
+                    style={{
+                        position: "absolute",
+                        top: -40,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        width: 180,
+                        height: 180,
+                        background:
+                            "radial-gradient(circle, rgba(223,160,160,0.08) 0%, transparent 60%)",
+                        pointerEvents: "none",
+                    }}
+                />
+                <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>
+                    <HeartIcon size={32} color="rgba(223,120,120,0.6)" />
+                </div>
+                <div
+                    style={{
+                        fontFamily: T.fontSerif,
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: T.text,
+                        marginBottom: 8,
+                        letterSpacing: "0.04em",
+                    }}
+                >
+                    마음을 비울까요?
+                </div>
+                <div
+                    style={{
+                        fontSize: 13,
+                        color: T.textDim,
+                        lineHeight: 1.8,
+                        marginBottom: 20,
+                        letterSpacing: "0.03em",
+                    }}
+                >
+                    <span style={{ fontFamily: T.fontSerif, fontSize: 22, color: T.rose, display: "block", marginBottom: 8 }}>
+                        &ldquo;{pick.word}&rdquo;
+                    </span>
+                    이라고 표현한 마음이에요
+                </div>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 8,
+                        fontSize: 12,
+                        color: T.textMuted,
+                        marginBottom: 14,
+                        padding: "10px 16px",
+                        background: "rgba(255,255,255,0.03)",
+                        borderRadius: 10,
+                        letterSpacing: "0.04em",
+                    }}
+                >
+                    <span>{pick.maskedPhone}</span>
+                    <span style={{ opacity: 0.3 }}>|</span>
+                    <span>{pick.date}</span>
+                </div>
+                <div
+                    style={{
+                        fontSize: 11,
+                        color: T.textMuted,
+                        lineHeight: 1.7,
+                        marginBottom: 24,
+                        letterSpacing: "0.03em",
+                        opacity: 0.7,
+                    }}
+                >
+                    상대방에게 도착한 카드도 함께 삭제됩니다
+                </div>
+                <button
+                    onClick={onConfirm}
+                    style={{
+                        width: "100%",
+                        padding: 16,
+                        borderRadius: 14,
+                        background: "rgba(223,120,120,0.15)",
+                        border: "1px solid rgba(223,120,120,0.3)",
+                        color: "#e08080",
+                        fontFamily: T.font,
+                        fontSize: 14,
+                        letterSpacing: "0.06em",
+                        cursor: "pointer",
+                        marginBottom: 10,
+                    }}
+                >
+                    마음 비우기
+                </button>
+                <button
+                    onClick={onCancel}
+                    style={{
+                        width: "100%",
+                        padding: 14,
+                        borderRadius: 14,
+                        background: "transparent",
+                        border: `1px solid ${T.border}`,
+                        color: T.textMuted,
+                        fontFamily: T.font,
+                        fontSize: 13,
+                        letterSpacing: "0.06em",
+                        cursor: "pointer",
+                    }}
+                >
+                    돌아가기
+                </button>
+            </div>
+        </div>
+    )
+}
+
+// ─── AD OVERLAY ──────────────────────────────────────────
+function AdOverlay({
+    onComplete,
+    onCancel,
+}: {
+    onComplete: () => void
+    onCancel: () => void
+}) {
+    const [sec, setSec] = useState(3)
+
+    useEffect(() => {
+        if (sec <= 0) {
+            onComplete()
+            return
+        }
+        const t = setTimeout(() => setSec((s) => s - 1), 1000)
+        return () => clearTimeout(t)
+    }, [sec, onComplete])
+
+    return (
+        <div
+            onClick={onCancel}
+            style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.75)",
+                backdropFilter: "blur(6px)",
+                WebkitBackdropFilter: "blur(6px)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 28,
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                    width: "100%",
+                    maxWidth: 300,
+                    background: T.surface,
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 24,
+                    padding: "40px 28px 32px",
+                    textAlign: "center",
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: 11,
+                        letterSpacing: "0.2em",
+                        color: T.textMuted,
+                        textTransform: "uppercase",
+                        marginBottom: 20,
+                    }}
+                >
+                    AD
+                </div>
+                <div
+                    style={{
+                        fontFamily: T.fontSerif,
+                        fontSize: 16,
+                        color: T.textDim,
+                        letterSpacing: "0.05em",
+                        marginBottom: 28,
+                        lineHeight: 1.8,
+                    }}
+                >
+                    광고 시청 중...
+                </div>
+                <div
+                    style={{
+                        width: "100%",
+                        height: 4,
+                        background: "rgba(255,255,255,0.06)",
+                        borderRadius: 2,
+                        overflow: "hidden",
+                        marginBottom: 20,
+                    }}
+                >
+                    <div
+                        style={{
+                            height: "100%",
+                            background: T.rose,
+                            borderRadius: 2,
+                            animation: "adProgress 3s linear forwards",
+                        }}
+                    />
+                </div>
+                <div
+                    style={{
+                        fontSize: 28,
+                        fontFamily: T.fontSerif,
+                        color: T.rose,
+                        fontWeight: 700,
+                        marginBottom: 8,
+                    }}
+                >
+                    {sec}
+                </div>
+                <div
+                    style={{
+                        fontSize: 11,
+                        color: T.textMuted,
+                        letterSpacing: "0.05em",
+                    }}
+                >
+                    잠시만 기다려주세요
+                </div>
+            </div>
+        </div>
+    )
+}
+
 // ═══════════════════════════════════════════════════════════
-// SCREEN 1 — SPLASH
+// SCREEN — SPLASH
 // ═══════════════════════════════════════════════════════════
 function SplashScreen({
     go,
@@ -525,7 +845,7 @@ function SplashScreen({
             </div>
             <div style={{ flex: 1 }} />
             <Anim active={active} delay={0.21}>
-                <Btn onClick={() => go("gender")}>시작하기</Btn>
+                <Btn onClick={() => go("phone")}>시작하기</Btn>
                 <div style={{ height: 12 }} />
                 <Btn variant="ghost" onClick={() => go("home")}>
                     받은 마음 확인하기
@@ -549,94 +869,7 @@ function SplashScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 2 — GENDER
-// ═══════════════════════════════════════════════════════════
-function GenderScreen({
-    go,
-    active,
-    setGender,
-}: {
-    go: (s: Screen) => void
-    active: boolean
-    setGender: (g: Gender) => void
-}) {
-    const [selected, setSelected] = useState<Gender | null>(null)
-
-    const options: { value: Gender; emoji: string; label: string }[] = [
-        { value: "female", emoji: "👩", label: "여자" },
-        { value: "male", emoji: "👨", label: "남자" },
-    ]
-
-    return (
-        <>
-            <div style={{ flex: 1 }} />
-            <div style={{ textAlign: "center" }}>
-                <Anim active={active} delay={0.05}>
-                    <Label>기본 정보</Label>
-                    <Title>성별을 알려주세요</Title>
-                    <Subtitle>상대방에게 성별 힌트로 전달돼요</Subtitle>
-                </Anim>
-                <div style={{ height: 40 }} />
-                <Anim active={active} delay={0.13}>
-                    <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
-                        {options.map((opt) => {
-                            const isSelected = selected === opt.value
-                            return (
-                                <div
-                                    key={opt.value}
-                                    onClick={() => setSelected(opt.value)}
-                                    style={{
-                                        width: 140,
-                                        padding: "32px 20px 28px",
-                                        borderRadius: 22,
-                                        background: isSelected ? T.roseSoft : T.surface,
-                                        border: isSelected
-                                            ? `1px solid ${T.borderRose}`
-                                            : `1px solid ${T.border}`,
-                                        cursor: "pointer",
-                                        transition: "all 0.25s",
-                                        transform: isSelected ? "scale(1.03)" : "scale(1)",
-                                    }}
-                                >
-                                    <div style={{ fontSize: 40, marginBottom: 14 }}>{opt.emoji}</div>
-                                    <div
-                                        style={{
-                                            fontFamily: T.fontSerif,
-                                            fontSize: 17,
-                                            color: isSelected ? T.rose : T.textDim,
-                                            letterSpacing: "0.08em",
-                                            fontWeight: isSelected ? 700 : 400,
-                                        }}
-                                    >
-                                        {opt.label}
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </Anim>
-            </div>
-            <div style={{ flex: 1 }} />
-            <Anim active={active} delay={0.21}>
-                <Btn
-                    onClick={() => {
-                        if (selected) {
-                            setGender(selected)
-                            go("phone")
-                        }
-                    }}
-                    style={{ opacity: selected ? 1 : 0.35, pointerEvents: selected ? "auto" : "none" }}
-                >
-                    다음
-                </Btn>
-                <div style={{ height: 64 }} />
-            </Anim>
-        </>
-    )
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCREEN 3 — PHONE
+// SCREEN — PHONE
 // ═══════════════════════════════════════════════════════════
 function PhoneScreen({
     go,
@@ -694,7 +927,7 @@ function PhoneScreen({
                             padding: "19px 0",
                         }}
                     >
-                        🇰🇷 +82
+                        KR +82
                     </span>
                     <div
                         style={{
@@ -747,7 +980,7 @@ function PhoneScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 3 — OTP
+// SCREEN — OTP
 // ═══════════════════════════════════════════════════════════
 function OTPScreen({
     go,
@@ -888,7 +1121,7 @@ function OTPScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 4 — NICKNAME
+// SCREEN — NICKNAME
 // ═══════════════════════════════════════════════════════════
 function NicknameScreen({
     go,
@@ -987,7 +1220,7 @@ function NicknameScreen({
                         <span style={{ color: T.rose, fontStyle: "normal" }}>
                             {val || "닉네임"}
                         </span>{" "}
-                        님 🤍
+                        님
                     </span>
                 </div>
             </Anim>
@@ -996,10 +1229,10 @@ function NicknameScreen({
                 <Btn
                     onClick={() => {
                         setNick(val || "달빛")
-                        go("home")
+                        go("profile")
                     }}
                 >
-                    시작하기
+                    다음
                 </Btn>
             </Anim>
             <div style={{ height: 64 }} />
@@ -1008,158 +1241,210 @@ function NicknameScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 5 — HOME
+// SCREEN — PROFILE (gender + MBTI)
 // ═══════════════════════════════════════════════════════════
-// ─── DELETE CONFIRM MODAL ─────────────────────────────────
-function DeleteModal({
-    pick,
-    onConfirm,
-    onCancel,
+function ProfileScreen({
+    go,
+    active,
+    setGender,
+    setMbti,
 }: {
-    pick: PickItem
-    onConfirm: () => void
-    onCancel: () => void
+    go: (s: Screen) => void
+    active: boolean
+    setGender: (g: Gender) => void
+    setMbti: (m: string | null) => void
 }) {
+    const [selectedGender, setSelectedGender] = useState<Gender | null>(null)
+    const [selectedMbti, setSelectedMbti] = useState<string | null>(null)
+    const [mbtiPrivate, setMbtiPrivate] = useState(false)
+
+    const genderOptions: { value: Gender; label: string }[] = [
+        { value: "female", label: "여자" },
+        { value: "male", label: "남자" },
+    ]
+
     return (
-        <div
-            onClick={onCancel}
-            style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 9999,
-                background: "rgba(0,0,0,0.65)",
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 28,
-            }}
-        >
-            <div
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    width: "100%",
-                    maxWidth: 320,
-                    background: T.surface,
-                    border: `1px solid ${T.borderRose}`,
-                    borderRadius: 24,
-                    padding: "36px 28px 28px",
-                    textAlign: "center",
-                    position: "relative",
-                    overflow: "hidden",
-                }}
-            >
-                <div
-                    style={{
-                        position: "absolute",
-                        top: -40,
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        width: 180,
-                        height: 180,
-                        background:
-                            "radial-gradient(circle, rgba(223,160,160,0.08) 0%, transparent 60%)",
-                        pointerEvents: "none",
-                    }}
-                />
-                <div style={{ fontSize: 32, marginBottom: 16 }}>💔</div>
-                <div
-                    style={{
-                        fontFamily: T.fontSerif,
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: T.text,
-                        marginBottom: 8,
-                        letterSpacing: "0.04em",
-                    }}
-                >
-                    마음을 비울까요?
+        <>
+            <div style={{ height: 72 }} />
+            <Anim active={active} delay={0.05}>
+                <BackBtn onClick={() => go("nickname")} />
+            </Anim>
+            <Anim active={active} delay={0.13}>
+                <Label>프로필 설정</Label>
+                <Title>
+                    마지막으로
+                    <br />
+                    알려주세요
+                </Title>
+                <Subtitle>상대방에게 힌트로 전달돼요</Subtitle>
+            </Anim>
+            <div style={{ height: 32 }} />
+
+            {/* Gender */}
+            <Anim active={active} delay={0.21}>
+                <div style={{ fontSize: 11, letterSpacing: "0.15em", color: T.textMuted, marginBottom: 12 }}>
+                    성별
                 </div>
-                <div
-                    style={{
-                        fontSize: 13,
-                        color: T.textDim,
-                        lineHeight: 1.8,
-                        marginBottom: 20,
-                        letterSpacing: "0.03em",
-                    }}
-                >
-                    <span style={{ fontFamily: T.fontSerif, fontSize: 22, color: T.rose, display: "block", marginBottom: 8 }}>
-                        "{pick.word}"
-                    </span>
-                    이라고 표현한 마음이에요
+                <div style={{ display: "flex", gap: 12 }}>
+                    {genderOptions.map((opt) => {
+                        const isSel = selectedGender === opt.value
+                        return (
+                            <div
+                                key={opt.value}
+                                onClick={() => setSelectedGender(opt.value)}
+                                style={{
+                                    flex: 1,
+                                    padding: "20px 0",
+                                    borderRadius: 16,
+                                    textAlign: "center",
+                                    background: isSel ? T.roseSoft : T.surface,
+                                    border: isSel ? `1px solid ${T.borderRose}` : `1px solid ${T.border}`,
+                                    cursor: "pointer",
+                                    transition: "all 0.25s",
+                                    transform: isSel ? "scale(1.02)" : "scale(1)",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        fontFamily: T.fontSerif,
+                                        fontSize: 16,
+                                        color: isSel ? T.rose : T.textDim,
+                                        letterSpacing: "0.08em",
+                                        fontWeight: isSel ? 700 : 400,
+                                    }}
+                                >
+                                    {opt.label}
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
+            </Anim>
+            <div style={{ height: 28 }} />
+
+            {/* MBTI */}
+            <Anim active={active} delay={0.29}>
                 <div
                     style={{
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center",
-                        gap: 8,
-                        fontSize: 12,
-                        color: T.textMuted,
-                        marginBottom: 28,
-                        padding: "10px 16px",
-                        background: "rgba(255,255,255,0.03)",
-                        borderRadius: 10,
-                        letterSpacing: "0.04em",
+                        justifyContent: "space-between",
+                        marginBottom: 12,
                     }}
                 >
-                    <span>{pick.maskedPhone}</span>
-                    <span style={{ opacity: 0.3 }}>|</span>
-                    <span>{pick.date}</span>
+                    <span style={{ fontSize: 11, letterSpacing: "0.15em", color: T.textMuted }}>
+                        MBTI
+                    </span>
+                    <div
+                        onClick={() => {
+                            setMbtiPrivate(!mbtiPrivate)
+                            if (!mbtiPrivate) setSelectedMbti(null)
+                        }}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            cursor: "pointer",
+                            fontSize: 11,
+                            color: mbtiPrivate ? T.rose : T.textMuted,
+                            letterSpacing: "0.05em",
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: 16,
+                                height: 16,
+                                borderRadius: 4,
+                                border: mbtiPrivate ? `1px solid ${T.borderRose}` : `1px solid ${T.border}`,
+                                background: mbtiPrivate ? T.roseSoft : "transparent",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            {mbtiPrivate && (
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                    <path d="M2 5L4 7L8 3" stroke={T.rose} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            )}
+                        </div>
+                        비공개
+                    </div>
                 </div>
-                <button
-                    onClick={onConfirm}
+                {!mbtiPrivate && (
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(4, 1fr)",
+                            gap: 8,
+                        }}
+                    >
+                        {MBTI_TYPES.map((type) => {
+                            const isSel = selectedMbti === type
+                            return (
+                                <div
+                                    key={type}
+                                    onClick={() => setSelectedMbti(type)}
+                                    style={{
+                                        padding: "12px 0",
+                                        borderRadius: 12,
+                                        textAlign: "center",
+                                        fontSize: 12,
+                                        letterSpacing: "0.05em",
+                                        fontWeight: isSel ? 700 : 400,
+                                        background: isSel ? T.roseSoft : T.surface,
+                                        border: isSel ? `1px solid ${T.borderRose}` : `1px solid ${T.border}`,
+                                        color: isSel ? T.rose : T.textDim,
+                                        cursor: "pointer",
+                                        transition: "all 0.2s",
+                                    }}
+                                >
+                                    {type}
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+            </Anim>
+            <div style={{ flex: 1, minHeight: 24 }} />
+            <Anim active={active} delay={0.37}>
+                <Btn
+                    onClick={() => {
+                        if (selectedGender) {
+                            setGender(selectedGender)
+                            setMbti(mbtiPrivate ? null : selectedMbti)
+                            go("home")
+                        }
+                    }}
                     style={{
-                        width: "100%",
-                        padding: 16,
-                        borderRadius: 14,
-                        background: "rgba(223,120,120,0.15)",
-                        border: "1px solid rgba(223,120,120,0.3)",
-                        color: "#e08080",
-                        fontFamily: T.font,
-                        fontSize: 14,
-                        letterSpacing: "0.06em",
-                        cursor: "pointer",
-                        marginBottom: 10,
+                        opacity: selectedGender ? 1 : 0.35,
+                        pointerEvents: selectedGender ? "auto" : "none",
                     }}
                 >
-                    마음 비우기
-                </button>
-                <button
-                    onClick={onCancel}
-                    style={{
-                        width: "100%",
-                        padding: 14,
-                        borderRadius: 14,
-                        background: "transparent",
-                        border: `1px solid ${T.border}`,
-                        color: T.textMuted,
-                        fontFamily: T.font,
-                        fontSize: 13,
-                        letterSpacing: "0.06em",
-                        cursor: "pointer",
-                    }}
-                >
-                    돌아가기
-                </button>
-            </div>
-        </div>
+                    완료
+                </Btn>
+                <div style={{ height: 64 }} />
+            </Anim>
+        </>
     )
 }
 
+// ═══════════════════════════════════════════════════════════
+// SCREEN — HOME
+// ═══════════════════════════════════════════════════════════
 function HomeScreen({
     go,
     active,
     nick,
     sentPicks,
+    receivedCount,
     onDeletePick,
 }: {
     go: (s: Screen) => void
     active: boolean
     nick: string
     sentPicks: PickItem[]
+    receivedCount: number
     onDeletePick: (id: string) => void
 }) {
     const [deleteTarget, setDeleteTarget] = useState<PickItem | null>(null)
@@ -1256,7 +1541,7 @@ function HomeScreen({
                                     "0 0 30px rgba(223,160,160,0.3)",
                             }}
                         >
-                            3
+                            {receivedCount}
                         </span>
                         <span
                             style={{
@@ -1372,7 +1657,6 @@ function HomeScreen({
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    fontSize: 18,
                                     cursor: used || isNext ? "pointer" : "default",
                                     transition: "all 0.2s",
                                     ...(used
@@ -1394,7 +1678,7 @@ function HomeScreen({
                                 }}
                             >
                                 {used ? (
-                                    "🤍"
+                                    <HeartIcon size={18} color={T.rose} filled />
                                 ) : isNext ? (
                                     <span
                                         style={{
@@ -1462,11 +1746,10 @@ function HomeScreen({
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                fontSize: 15,
                                 flexShrink: 0,
                             }}
                         >
-                            🤍
+                            <HeartIcon size={15} color={T.rose} />
                         </div>
                         <div style={{ flex: 1 }}>
                             <div
@@ -1548,7 +1831,7 @@ function HomeScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 6 — COMPOSE
+// SCREEN — COMPOSE
 // ═══════════════════════════════════════════════════════════
 function ComposeScreen({
     go,
@@ -1690,7 +1973,7 @@ function ComposeScreen({
             </Anim>
             <div style={{ height: 20 }} />
             <Anim active={active} delay={0.37}>
-                <Notice icon="🌙" variant="gold">
+                <Notice icon={<MoonIcon size={14} color="rgba(201,169,110,0.85)" />} variant="gold">
                     내일 오전 10시에 전달돼요
                     <br />
                     <span style={{ opacity: 0.65 }}>
@@ -1702,7 +1985,7 @@ function ComposeScreen({
             <Anim active={active} delay={0.45}>
                 <Btn onClick={() => go("home")}>마음 담아두기</Btn>
                 <div style={{ height: 12 }} />
-                <Notice icon="🔒" variant="rose">
+                <Notice icon={<LockIcon size={14} color={T.textDim} />} variant="rose">
                     한 번 보내면 취소나 삭제가 불가해요
                     <br />
                     신중하게 전해주세요
@@ -1714,21 +1997,22 @@ function ComposeScreen({
 }
 
 // ═══════════════════════════════════════════════════════════
-// SCREEN 7 — REVEAL
+// SCREEN — REVEAL
 // ═══════════════════════════════════════════════════════════
 function RevealScreen({
     go,
     active,
+    receivedPicks,
+    unlockedIds,
+    onRequestUnlock,
 }: {
     go: (s: Screen) => void
     active: boolean
+    receivedPicks: ReceivedItem[]
+    unlockedIds: string[]
+    onRequestUnlock: (id: string) => void
 }) {
-    const [unlockedIds, setUnlockedIds] = useState<string[]>([])
-
-    const handleUnlock = (id: string) => {
-        // 실제로는 광고 시청 후 콜백에서 호출
-        setUnlockedIds((prev) => [...prev, id])
-    }
+    const [adTarget, setAdTarget] = useState<string | null>(null)
 
     return (
         <>
@@ -1737,7 +2021,7 @@ function RevealScreen({
                 <BackBtn onClick={() => go("home")} />
             </Anim>
             <Anim active={active} delay={0.13}>
-                <Label>받은 마음 · {RECEIVED_PICKS.length}</Label>
+                <Label>받은 마음 · {receivedPicks.length}</Label>
                 <Title>
                     누군가 당신을
                     <br />
@@ -1754,7 +2038,7 @@ function RevealScreen({
                         gap: 16,
                     }}
                 >
-                    {RECEIVED_PICKS.map((p) => {
+                    {receivedPicks.map((p) => {
                         const isUnlocked = unlockedIds.includes(p.id)
                         return (
                             <div
@@ -1782,56 +2066,100 @@ function RevealScreen({
                                         pointerEvents: "none",
                                     }}
                                 />
-                                {/* gender badge */}
-                                <div
-                                    style={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        gap: 6,
-                                        padding: "6px 14px",
-                                        borderRadius: 20,
-                                        background: isUnlocked
-                                            ? T.roseSoft
-                                            : "rgba(255,255,255,0.04)",
-                                        border: isUnlocked
-                                            ? `1px solid ${T.borderRose}`
-                                            : `1px solid ${T.border}`,
-                                        marginBottom: 24,
-                                        cursor: isUnlocked ? "default" : "pointer",
-                                        transition: "all 0.3s",
-                                    }}
-                                    onClick={!isUnlocked ? () => handleUnlock(p.id) : undefined}
-                                >
-                                    {isUnlocked ? (
-                                        <>
-                                            <span style={{ fontSize: 14 }}>
-                                                {p.gender === "female" ? "👩" : "👨"}
-                                            </span>
-                                            <span
-                                                style={{
-                                                    fontSize: 11,
-                                                    color: T.rose,
-                                                    letterSpacing: "0.06em",
-                                                }}
-                                            >
-                                                {p.gender === "female" ? "여자" : "남자"}
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span style={{ fontSize: 12 }}>🔒</span>
-                                            <span
-                                                style={{
-                                                    fontSize: 10,
-                                                    color: T.textMuted,
-                                                    letterSpacing: "0.06em",
-                                                }}
-                                            >
-                                                광고 보고 성별 확인
-                                            </span>
-                                        </>
-                                    )}
-                                </div>
+                                {/* info badge */}
+                                {isUnlocked ? (
+                                    <div
+                                        style={{
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: 10,
+                                            padding: "8px 16px",
+                                            borderRadius: 20,
+                                            background: T.roseSoft,
+                                            border: `1px solid ${T.borderRose}`,
+                                            marginBottom: 24,
+                                        }}
+                                    >
+                                        <span
+                                            style={{
+                                                fontSize: 12,
+                                                color: T.rose,
+                                                letterSpacing: "0.06em",
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            {p.gender === "female" ? "여자" : "남자"}
+                                        </span>
+                                        {p.mbti && (
+                                            <>
+                                                <span style={{ width: 1, height: 12, background: T.borderRose, display: "inline-block" }} />
+                                                <span
+                                                    style={{
+                                                        fontSize: 12,
+                                                        color: T.rose,
+                                                        letterSpacing: "0.06em",
+                                                        fontWeight: 600,
+                                                    }}
+                                                >
+                                                    {p.mbti}
+                                                </span>
+                                            </>
+                                        )}
+                                        {!p.mbti && (
+                                            <>
+                                                <span style={{ width: 1, height: 12, background: T.borderRose, display: "inline-block" }} />
+                                                <span
+                                                    style={{
+                                                        fontSize: 11,
+                                                        color: T.textMuted,
+                                                        letterSpacing: "0.04em",
+                                                    }}
+                                                >
+                                                    MBTI 비공개
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div
+                                        onClick={() => setAdTarget(p.id)}
+                                        style={{
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: 8,
+                                            padding: "8px 16px",
+                                            borderRadius: 20,
+                                            background: "rgba(255,255,255,0.04)",
+                                            border: `1px solid ${T.border}`,
+                                            marginBottom: 24,
+                                            cursor: "pointer",
+                                            transition: "all 0.25s",
+                                        }}
+                                    >
+                                        <LockIcon size={12} color={T.textMuted} />
+                                        <span
+                                            style={{
+                                                fontSize: 11,
+                                                color: T.textMuted,
+                                                letterSpacing: "0.05em",
+                                            }}
+                                        >
+                                            정보 보기
+                                        </span>
+                                        <span
+                                            style={{
+                                                fontSize: 9,
+                                                color: T.textMuted,
+                                                background: "rgba(255,255,255,0.05)",
+                                                padding: "2px 8px",
+                                                borderRadius: 10,
+                                                letterSpacing: "0.1em",
+                                            }}
+                                        >
+                                            AD
+                                        </span>
+                                    </div>
+                                )}
                                 <div
                                     style={{
                                         fontSize: 10,
@@ -1920,6 +2248,16 @@ function RevealScreen({
                 </div>
             </Anim>
             <div style={{ height: 80 }} />
+
+            {adTarget && (
+                <AdOverlay
+                    onComplete={() => {
+                        onRequestUnlock(adTarget)
+                        setAdTarget(null)
+                    }}
+                    onCancel={() => setAdTarget(null)}
+                />
+            )}
         </>
     )
 }
@@ -1935,7 +2273,10 @@ export default function LovePickApp(props: {
     const [prevScreen, setPrevScreen] = useState<Screen | null>(null)
     const [nick, setNick] = useState("달빛")
     const [gender, setGender] = useState<Gender>("female")
-    const [sentPicks, setSentPicks] = useState<PickItem[]>([...SENT_PICKS])
+    const [mbti, setMbti] = useState<string | null>(null)
+    const [sentPicks, setSentPicks] = useState<PickItem[]>([...INITIAL_SENT])
+    const [receivedPicks, setReceivedPicks] = useState<ReceivedItem[]>([...INITIAL_RECEIVED])
+    const [unlockedIds, setUnlockedIds] = useState<string[]>([])
     const containerRef = useRef<HTMLDivElement>(null)
     const [containerH, setContainerH] = useState(800)
 
@@ -1958,6 +2299,14 @@ export default function LovePickApp(props: {
         if (id === prevScreen) return "exit"
         return "idle"
     }
+
+    const handleDeletePick = useCallback((id: string) => {
+        setSentPicks((prev) => prev.filter((p) => p.id !== id))
+    }, [])
+
+    const handleUnlock = useCallback((id: string) => {
+        setUnlockedIds((prev) => [...prev, id])
+    }, [])
 
     return (
         <div
@@ -1992,18 +2341,6 @@ export default function LovePickApp(props: {
             </ScreenWrap>
 
             <ScreenWrap
-                active={screen === "gender"}
-                direction={getDirection("gender")}
-                style={{
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center",
-                }}
-            >
-                <GenderScreen go={go} active={screen === "gender"} setGender={setGender} />
-            </ScreenWrap>
-
-            <ScreenWrap
                 active={screen === "phone"}
                 direction={getDirection("phone")}
             >
@@ -2029,6 +2366,19 @@ export default function LovePickApp(props: {
             </ScreenWrap>
 
             <ScreenWrap
+                active={screen === "profile"}
+                direction={getDirection("profile")}
+                style={{ overflowY: screen === "profile" ? "auto" : "hidden" }}
+            >
+                <ProfileScreen
+                    go={go}
+                    active={screen === "profile"}
+                    setGender={setGender}
+                    setMbti={setMbti}
+                />
+            </ScreenWrap>
+
+            <ScreenWrap
                 active={screen === "home"}
                 direction={getDirection("home")}
                 style={{ overflowY: screen === "home" ? "auto" : "hidden" }}
@@ -2038,7 +2388,8 @@ export default function LovePickApp(props: {
                     active={screen === "home"}
                     nick={nick}
                     sentPicks={sentPicks}
-                    onDeletePick={(id) => setSentPicks((prev) => prev.filter((p) => p.id !== id))}
+                    receivedCount={receivedPicks.length}
+                    onDeletePick={handleDeletePick}
                 />
             </ScreenWrap>
 
@@ -2059,7 +2410,13 @@ export default function LovePickApp(props: {
                     overflowY: screen === "reveal" ? "auto" : "hidden",
                 }}
             >
-                <RevealScreen go={go} active={screen === "reveal"} />
+                <RevealScreen
+                    go={go}
+                    active={screen === "reveal"}
+                    receivedPicks={receivedPicks}
+                    unlockedIds={unlockedIds}
+                    onRequestUnlock={handleUnlock}
+                />
             </ScreenWrap>
 
         </div>
@@ -2072,20 +2429,20 @@ addPropertyControls(LovePickApp, {
         title: "시작 화면",
         options: [
             "splash",
-            "gender",
             "phone",
             "otp",
             "nickname",
+            "profile",
             "home",
             "compose",
             "reveal",
         ],
         optionTitles: [
             "스플래시",
-            "성별",
             "전화번호",
             "OTP",
             "닉네임",
+            "프로필",
             "홈",
             "보내기",
             "확인하기",
